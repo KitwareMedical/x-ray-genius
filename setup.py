@@ -42,9 +42,8 @@ setup(
         'django-configurations[database,email]',
         'django-extensions',
         'django-filter',
+        'django-ninja',
         'django-oauth-toolkit',
-        'djangorestframework',
-        'drf-yasg',
         # Production-only
         'django-composed-configuration[prod]>=0.20',
         'django-s3-file-field[boto3]',
