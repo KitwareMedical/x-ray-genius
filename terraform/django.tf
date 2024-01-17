@@ -1,6 +1,6 @@
 data "aws_route53_zone" "this" {
   # This must be created by hand in the AWS console
-  name = "xray_genius.test"
+  name = "xray-genius.com"
 }
 
 data "heroku_team" "this" {
