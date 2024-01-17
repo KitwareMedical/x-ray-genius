@@ -15,4 +15,5 @@ module "django" {
   route53_zone_id  = data.aws_route53_zone.this.zone_id
   heroku_team_name = data.heroku_team.this.name
   subdomain_name   = "www"
+  storage_bucket_name = "xray-genius"
 }
