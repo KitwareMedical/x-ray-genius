@@ -1,0 +1,39 @@
+{
+  "name": "xray-genius",
+  "private": true,
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.17",
+    "browser-sync": "^3.0.2",
+    "daisyui": "^4.6.0",
+    "npm-run-all": "^4.1.5",
+    "parcel": "^2.11.0",
+    "postcss": "^8.4.33",
+    "remixicon": "^4.1.0",
+    "rimraf": "^5.0.5",
+    "tailwindcss": "^3.4.1"
+  },
+  "scripts": {
+    "build": "npm-run-all --sequential build:clean build:parcel",
+    "build:clean": "rimraf ./xray_genius/core/static/core/dist",
+    "build:parcel": "parcel build",
+    "start": "npm-run-all --parallel start:parcel start:sync",
+    "start:parcel": "parcel watch",
+    "start:sync": "browser-sync start --config ./dev/browser-sync.config.js"
+  },
+  "targets": {
+    "styles": {
+      "source": "./node-src/styles.pcss",
+      "distDir": "./xray_genius/core/static/core/dist"
+    }
+  },
+  "browserslist": "> 0.5%",
+  "postcss": {
+    "plugins": {
+      "postcss-nested": {},
+      "tailwindcss": {}
+    }
+  }
+}
