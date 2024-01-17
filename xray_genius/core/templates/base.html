@@ -1,0 +1,19 @@
+{% load static %}
+
+<!doctype html>
+<html data-theme="winter">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>X-Ray Genius</title>
+
+    <link rel="stylesheet" href="{% static 'core/dist/styles.css' %}">
+
+    {% block head_extra %}{% endblock %}
+  </head>
+  <body>
+    {% block body %}
+    {% endblock body %}
+  </body>
+</html>
