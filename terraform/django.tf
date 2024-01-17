@@ -18,4 +18,8 @@ module "django" {
 
   # We're using EC2 workers instead.
   heroku_worker_dyno_quantity = 0
+
+  additional_django_vars = {
+    DJANGO_SENTRY_DSN = data.sentry_key.this.dsn_public
+  }
 }
