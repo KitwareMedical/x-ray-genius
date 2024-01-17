@@ -22,4 +22,8 @@ module "django" {
   additional_django_vars = {
     DJANGO_SENTRY_DSN = data.sentry_key.this.dsn_public
   }
+
+  # This is needed in order to run the node build process for
+  # the Django server-rendered templates
+  heroku_additional_buildpacks = ["heroku/nodejs"]
 }
