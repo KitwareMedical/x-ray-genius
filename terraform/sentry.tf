@@ -17,6 +17,9 @@ resource "sentry_project" "this" {
   slug  = "xray-genius"
 
   platform = "python-django"
+
+  default_key   = false
+  default_rules = false
 }
 
 data "sentry_key" "this" {
