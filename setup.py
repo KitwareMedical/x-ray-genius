@@ -47,14 +47,14 @@ setup(
         'django-oauth-toolkit',
         # Production-only
         'django-composed-configuration[prod]>=0.20',
-        'django-s3-file-field[boto3]',
+        'django-s3-file-field[s3]>=1.0.0',
         'gunicorn',
     ],
     extras_require={
         'dev': [
             'django-composed-configuration[dev]>=0.18',
             'django-debug-toolbar',
-            'django-s3-file-field[minio]',
+            'django-s3-file-field[minio]>=1.0.0',
             'ipython',
             'tox',
         ]
