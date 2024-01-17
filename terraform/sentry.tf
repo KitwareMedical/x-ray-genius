@@ -18,8 +18,8 @@ resource "sentry_project" "this" {
 
   platform = "python-django"
 
-  default_key   = false
-  default_rules = false
+  default_key   = true
+  default_rules = true
 }
 
 data "sentry_key" "this" {
