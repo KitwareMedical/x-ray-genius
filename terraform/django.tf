@@ -20,7 +20,9 @@ module "django" {
   heroku_worker_dyno_quantity = 0
 
   additional_django_vars = {
-    DJANGO_SENTRY_DSN = data.sentry_key.this.dsn_public
+    DJANGO_GOOGLE_OAUTH_CLIENT_ID = var.google_oauth_client_id
+    DJANGO_GOOGLE_OAUTH_SECRET    = var.google_oauth_secret
+    DJANGO_SENTRY_DSN             = data.sentry_key.this.dsn_public
   }
 
   # This is needed in order to run the node build process for
