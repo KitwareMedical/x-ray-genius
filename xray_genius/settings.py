@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from composed_configuration import (
@@ -28,7 +29,19 @@ class XrayGeniusMixin(ConfigMixin):
         # Install additional apps
         configuration.INSTALLED_APPS += [
             's3_file_field',
+            'allauth.socialaccount.providers.google',
         ]
+
+        # Configure Google OAuth provider
+        configuration.SOCIALACCOUNT_PROVIDERS = {
+            'google': {
+                'APP': {
+                    'client_id': os.environ.get('DJANGO_GOOGLE_OAUTH_CLIENT_ID'),
+                    'secret': os.environ.get('DJANGO_GOOGLE_OAUTH_SECRET'),
+                    'key': '',
+                }
+            }
+        }
 
 
 class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
