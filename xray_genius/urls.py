@@ -3,6 +3,8 @@ from django.contrib import admin
 from django.urls import include, path
 from ninja import NinjaAPI
 
+from .core import views
+
 api = NinjaAPI(title='X-Ray Genius', version='0.1.0')
 
 urlpatterns = [
@@ -11,6 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/s3-upload/', include('s3_file_field.urls')),
     path('api/v1/', api.urls),
+    path('', views.dashboard, name='dashboard'),
 ]
 
 if settings.DEBUG:

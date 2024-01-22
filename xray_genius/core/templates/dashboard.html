@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="container mx-auto mt-8">
+  <div
+    class="bg-gray-800 rounded-lg p-4 flex justify-between items-center mb-4"
+  >
+    <div class="text-2xl font-bold">{{ user.username }}</div>
+    <button class="bg-green-500 text-white py-2 px-4 rounded">
+      New Simulation Session <i class="ri-add-line"></i>
+    </button>
+  </div>
+
+  {% if sessions %}
+  <h2 class="text-2xl font-bold mb-2">Your Sessions:</h2>
+  <table class="min-w-full bg-gray-800 text-white border border-gray-600">
+    <thead>
+      <tr>
+        <th class="py-2 px-4 border-b text-left">Session #</th>
+        <th class="py-2 px-4 border-b text-left">Simulation Parameters</th>
+        <th class="py-2 px-4 border-b text-left">Status</th>
+        <th class="py-2 px-4 border-b text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for session in sessions %}
+      <tr>
+        <td class="py-2 px-4 border-b">{{ session.id }}</td>
+        <td class="py-2 px-4 border-b">
+          {{ session.parameters|default:"N/A" }}
+        </td>
+        <td class="py-2 px-4 border-b">
+          Running
+        </td>
+        <td class="py-2 px-4 border-b">
+          <button class="bg-primary text-white py-1 px-2 rounded mr-2">
+            Visualize <i class="ri-eye-line"></i>
+          </button>
+          <button class="bg-primary text-white py-1 px-2 rounded mr-2">
+            Export <i class="ri-download-line"></i>
+          </button>
+          <button class="bg-info text-white py-1 px-2 rounded">
+            Clone <i class="ri-add-line"></i>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-lg">No sessions found.</p>
+  {% endif %}
+</div>
+
+{% endblock body %}
