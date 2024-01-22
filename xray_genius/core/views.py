@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
-from django.http import HttpRequest
 from django.db import transaction
-from .models import Session, CTInputFile
+from django.http import HttpRequest
+from django.shortcuts import redirect, render
+
 from .forms import CTInputFileUploadForm
+from .models import Session
 
 
 def dashboard(request: HttpRequest):
