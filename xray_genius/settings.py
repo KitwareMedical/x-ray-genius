@@ -19,6 +19,8 @@ class XrayGeniusMixin(ConfigMixin):
 
     BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
+    LOGIN_REQUIRED_IGNORE_PATHS = [r'/accounts/']
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         # Install local apps first, to ensure any overridden resources are found first
@@ -31,6 +33,9 @@ class XrayGeniusMixin(ConfigMixin):
             's3_file_field',
             'allauth.socialaccount.providers.google',
         ]
+
+        # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware
+        configuration.MIDDLEWARE.append('login_required.middleware.LoginRequiredMiddleware')
 
         # Configure Google OAuth provider
         configuration.SOCIALACCOUNT_PROVIDERS = {
