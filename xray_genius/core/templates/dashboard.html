@@ -8,7 +8,9 @@
   >
     <div class="text-2xl font-bold">{{ user.username }}</div>
     <button class="bg-green-500 text-white py-2 px-4 rounded">
-      New Simulation Session <i class="ri-add-line"></i>
+       <a href="{% url 'create-session' %}" class="text-white no-underline">
+        New Simulation Session <i class="ri-add-line"></i>
+      </a>
     </button>
   </div>
 
