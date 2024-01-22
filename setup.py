@@ -42,6 +42,7 @@ setup(
         'django-configurations[database,email]',
         'django-extensions',
         'django-filter',
+        'django-login-required-middleware',
         'django-ninja',
         'django-oauth-toolkit',
         # Production-only
