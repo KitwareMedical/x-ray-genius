@@ -45,6 +45,7 @@ setup(
         'django-login-required-middleware',
         'django-ninja',
         'django-oauth-toolkit',
+        'django-widget-tweaks',
         # Production-only
         'django-composed-configuration[prod]>=0.20',
         'django-s3-file-field[s3]>=1.0.0',
