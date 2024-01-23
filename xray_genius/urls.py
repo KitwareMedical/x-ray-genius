@@ -14,7 +14,12 @@ urlpatterns = [
     path('api/v1/s3-upload/', include('s3_file_field.urls')),
     path('api/v1/', api.urls),
     path('', views.dashboard, name='dashboard'),
-    path('new-session/', views.upload_ct_input_file, name='create-session'),
+    path('session/', views.upload_ct_input_file, name='create-session'),
+    path(
+        'session/<uuid:session_pk>/input-ct-file/',
+        views.download_ct_file,
+        name='download-input-ct-file',
+    ),
 ]
 
 if settings.DEBUG:
