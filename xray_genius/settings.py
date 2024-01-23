@@ -32,6 +32,7 @@ class XrayGeniusMixin(ConfigMixin):
         configuration.INSTALLED_APPS += [
             's3_file_field',
             'allauth.socialaccount.providers.google',
+            'widget_tweaks',
         ]
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware

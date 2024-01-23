@@ -1,19 +1,42 @@
 {% load static %}
 
-<!doctype html>
-<html data-theme="winter">
+<!DOCTYPE html>
+<html data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>X-Ray Genius</title>
 
-    <link rel="stylesheet" href="{% static 'core/dist/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'core/dist/styles.css' %}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.min.css"
+      rel="stylesheet"
+    />
 
     {% block head_extra %}{% endblock %}
   </head>
   <body>
-    {% block body %}
-    {% endblock body %}
+    <div class="navbar bg-gray-800 p-4">
+      <div class="mr-5 prose lg:prose-xl">
+        <h4>X-Ray Genius</h4>
+      </div>
+      <div class="bg-neutral p-1 rounded-lg">
+        <button class="btn btn-accent btn-sm mx-1 rounded-lg">
+          <a href="{% url 'dashboard' %}">
+            <i class="ri-dashboard-line"></i>
+            Dashboard
+          </a>
+        </button>
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <button class="btn btn-accent btn-sm mx-1 rounded-lg">
+            <i class="ri-logout-box-line"></i>
+            Logout
+          </button>
+        </form>
+      </div>
+    </div>
+    {% block body %} {% endblock body %}
   </body>
 </html>
