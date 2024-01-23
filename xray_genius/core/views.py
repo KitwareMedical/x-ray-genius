@@ -1,6 +1,6 @@
 from django.db import transaction
 from django.http import HttpRequest
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CTInputFileUploadForm
 from .models import Session
@@ -28,3 +28,8 @@ def upload_ct_input_file(request: HttpRequest):
             'form': form,
         },
     )
+
+
+def download_ct_file(request: HttpRequest, session_pk: str):
+    session = get_object_or_404(Session, pk=session_pk)
+    return redirect(session.input_scan.file.url)
