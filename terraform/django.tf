@@ -19,6 +19,10 @@ module "django" {
   # We're using EC2 workers instead.
   heroku_worker_dyno_quantity = 0
 
+  ec2_worker_instance_quantity = 1
+  ec2_worker_instance_type     = "g4dn.xlarge"
+  ec2_worker_ssh_public_key    = var.ec2_worker_ssh_public_key
+
   additional_django_vars = {
     DJANGO_GOOGLE_OAUTH_CLIENT_ID = var.google_oauth_client_id
     DJANGO_GOOGLE_OAUTH_SECRET    = var.google_oauth_secret
