@@ -17,8 +17,8 @@ def upload_ct_input_file(request: HttpRequest):
         if form.is_valid():
             with transaction.atomic():
                 file = form.save()
-                Session.objects.create(owner=request.user, input_scan=file)
-            return redirect('dashboard')
+                session = Session.objects.create(owner=request.user, input_scan=file)
+            return redirect('viewer', session_pk=session.pk)
     else:
         form = CTInputFileUploadForm()
     return render(
@@ -33,3 +33,8 @@ def upload_ct_input_file(request: HttpRequest):
 def download_ct_file(request: HttpRequest, session_pk: str):
     session = get_object_or_404(Session, pk=session_pk)
     return redirect(session.input_scan.file.url)
+
+
+def volview_viewer(request: HttpRequest, session_pk: str):
+    session = get_object_or_404(Session, pk=session_pk)
+    return render(request, 'viewer.html', context={'session': session})

@@ -4,8 +4,10 @@ from django.urls import include, path
 from ninja import NinjaAPI
 
 from .core import views
+from .core.rest.session import session_router
 
 api = NinjaAPI(title='X-Ray Genius', version='0.1.0')
+api.add_router('/session/', session_router)
 
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
@@ -19,6 +21,11 @@ urlpatterns = [
         'session/<uuid:session_pk>/input-ct-file/',
         views.download_ct_file,
         name='download-input-ct-file',
+    ),
+    path(
+        'session/<uuid:session_pk>/viewer/',
+        views.volview_viewer,
+        name='viewer',
     ),
 ]
 
