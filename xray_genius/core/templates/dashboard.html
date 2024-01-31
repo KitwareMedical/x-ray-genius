@@ -30,7 +30,13 @@
       <tr>
         <td class="py-2 px-4 border-b">{{ session.id }}</td>
         <td class="py-2 px-4 border-b">
-          {{ session.parameters|default:"N/A" }}
+          {% if session.parameters %}
+          Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br>
+          C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;<br>
+          C-Arm Beta: {{ session.parameters.carm_beta }}&deg;<br>
+          {% else %}
+          N/A
+          {% endif %}
         </td>
         <td class="py-2 px-4 border-b">
           Running

@@ -1,0 +1,23 @@
+from django.shortcuts import get_object_or_404
+from ninja import ModelSchema, Router
+from pydantic.types import UUID4
+
+from xray_genius.core.models import InputParameters, Session
+
+session_router = Router()
+
+
+class ParametersRequestSchema(ModelSchema):
+    class Config:
+        model = InputParameters
+        model_fields = ['carm_alpha', 'carm_beta', 'source_to_detector_distance']
+
+
+@session_router.patch('/{session_pk}/')
+def set_parameters(request, session_pk: UUID4, parameter_data: ParametersRequestSchema):
+    session = get_object_or_404(Session, pk=session_pk)
+
+    InputParameters.objects.create(session=session, **parameter_data.dict())
+
+    # TODO: what do we return to VolView here?
+    return 200

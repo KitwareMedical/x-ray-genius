@@ -12,4 +12,3 @@ class Session(models.Model):
     created = CreationDateTimeField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
     input_scan = models.ForeignKey(CTInputFile, on_delete=models.CASCADE, related_name='sessions')
-    parameters = models.JSONField(null=True, blank=True)  # TODO: what are these?
