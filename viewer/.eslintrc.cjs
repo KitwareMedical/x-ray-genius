@@ -1,0 +1,1 @@
+const config = require('./core/VolView/.eslintrc.cjs');
