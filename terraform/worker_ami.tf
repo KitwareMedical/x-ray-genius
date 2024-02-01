@@ -142,7 +142,6 @@ resource "aws_imagebuilder_infrastructure_configuration" "image_builder" {
   description                   = "EC2 image builder config for xray-genius celery worker"
   instance_profile_name         = aws_iam_instance_profile.image_builder.name
   instance_types                = [var.ec2_worker_instance_type]
-  security_group_ids            = ["sg-08ab32ac44f0c609a"]
   terminate_instance_on_failure = true
 }
 
