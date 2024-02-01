@@ -21,7 +21,7 @@ module "django" {
 
   ec2_worker_instance_quantity = 1
   ec2_worker_instance_type     = var.ec2_worker_instance_type
-  ec2_worker_launch_ami_id     = aws_imagebuilder_image.image_builder.id
+  ec2_worker_launch_ami_id     = tolist(aws_imagebuilder_image.image_builder.output_resources[0].amis)[0].image
   ec2_worker_ssh_public_key    = var.ec2_worker_ssh_public_key
 
   additional_django_vars = {
