@@ -61,6 +61,6 @@ setup(
             'django-s3-file-field[minio]>=1.0.0',
             'ipython',
             'tox',
-        ]
+        ],
     },
 )
