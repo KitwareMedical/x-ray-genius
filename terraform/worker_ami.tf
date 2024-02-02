@@ -141,7 +141,7 @@ resource "aws_imagebuilder_image_recipe" "image_builder" {
     device_name = "/dev/sda1"
     ebs {
       delete_on_termination = true
-      volume_size           = 40
+      volume_size           = 100
       volume_type           = "gp3"
     }
   }
