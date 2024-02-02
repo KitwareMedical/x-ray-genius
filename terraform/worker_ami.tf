@@ -103,8 +103,6 @@ resource "aws_imagebuilder_component" "image_builder" {
               "export PATH=/usr/lib/postgresql/X.Y/bin/:$PATH",
               # Install nvidia drivers
               "sudo apt-get --yes install nvidia-headless-no-dkms-535 nvidia-cuda-dev",
-              # Reboot system to load nvidia drivers
-              "sudo reboot now",
               # Create celery user/group for systemd service
               "sudo useradd celery",
               "sudo mkdir /home/celery",
@@ -116,9 +114,6 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Create and activate a virtual environment
               "python3.11 -m venv venv",
               "source venv/bin/activate",
-              # Install xray-genius dependencies
-              "pip install --upgrade pip",
-              "pip install .[worker]",
               # Ensure celery log/run directories exists
               "sudo mkdir -p /var/log/celery /var/run/celery",
               # Give `celery` user ownership of the home directory + log/run directories
@@ -184,7 +179,7 @@ Group=celery
 EnvironmentFile=${local.celery_conf_location}
 WorkingDirectory=/home/celery/xray-genius/
 RuntimeDirectory=celery
-ExecStartPre=git pull origin main
+ExecStartPre=git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install .[worker]
 ExecStart=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi start $${CELERYD_NODES} \
     --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
     --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS}"
