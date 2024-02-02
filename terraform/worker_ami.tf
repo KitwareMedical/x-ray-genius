@@ -99,8 +99,10 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Install Git
               "sudo apt-get --yes install git",
               # Install psycopg2 dependencies
-              "sudo apt-get --yes install gcc libpq-dev",
+              "sudo apt-get --yes install gcc g++ libpq-dev",
               "export PATH=/usr/lib/postgresql/X.Y/bin/:$PATH",
+              # Install nvidia drivers
+              "sudo ubuntu-drivers install --gpgpu",
               # Create celery user/group for systemd service
               "sudo useradd celery",
               "sudo mkdir /home/celery",
@@ -114,7 +116,7 @@ resource "aws_imagebuilder_component" "image_builder" {
               "source venv/bin/activate",
               # Install xray-genius dependencies
               "pip install --upgrade pip",
-              "pip install .",
+              "pip install .[worker]",
               # Ensure celery log/run directories exists
               "sudo mkdir -p /var/log/celery /var/run/celery",
               # Give `celery` user ownership of the home directory + log/run directories

@@ -17,7 +17,7 @@ variable "ec2_worker_ssh_public_key" {
 variable "ec2_worker_instance_type" {
   type        = string
   description = "The instance type to use for the EC2 worker."
-  default     = "t2.micro"
+  default     = "g4dn.xlarge"
 }
 
 variable "git_repository" {

@@ -6,5 +6,5 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def test_task() -> None:
-    print("Test task")
-    logger.info("Testing logger")
+    print('Test task')
+    logger.info('Testing logger')
