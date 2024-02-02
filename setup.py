@@ -52,6 +52,9 @@ setup(
         'gunicorn',
     ],
     extras_require={
+        'worker': [
+            'deepdrr',
+        ],
         'dev': [
             'django-composed-configuration[dev]>=0.18',
             'django-debug-toolbar',

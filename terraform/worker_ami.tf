@@ -116,7 +116,7 @@ resource "aws_imagebuilder_component" "image_builder" {
               "source venv/bin/activate",
               # Install xray-genius dependencies
               "pip install --upgrade pip",
-              "pip install .",
+              "pip install .[worker]",
               # Ensure celery log/run directories exists
               "sudo mkdir -p /var/log/celery /var/run/celery",
               # Give `celery` user ownership of the home directory + log/run directories
