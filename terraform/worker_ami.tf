@@ -179,7 +179,7 @@ Group=celery
 EnvironmentFile=${local.celery_conf_location}
 WorkingDirectory=/home/celery/xray-genius/
 RuntimeDirectory=celery
-ExecStartPre=git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install .[worker]
+ExecStartPre=bash -c "git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install .[worker]"
 ExecStart=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi start $${CELERYD_NODES} \
     --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
     --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS}"
