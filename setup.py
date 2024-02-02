@@ -37,6 +37,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'celery',
+        'deepdrr',
         'django<4.2',
         'django-allauth',
         'django-configurations[database,email]',

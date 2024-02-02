@@ -39,9 +39,17 @@
           {% endif %}
         </td>
         <td class="py-2 px-4 border-b">
-          Running
+          {{ session.get_status_display }}
         </td>
         <td class="py-2 px-4 border-b">
+        {% if session.status == SessionStatus.NOT_STARTED %}
+          <form method="post" action="{% url 'initiate-batch-run' session.pk %}">
+            {% csrf_token %}
+            <button class="bg-primary text-white py-1 px-2 rounded mr-2" {% if not session.parameters %}disabled="disabled"{% endif %}>
+              Batch <i class="ri-server-line"></i>
+            </button>
+          </form>
+        {% elif session.status == SessionStatus.PROCESSED %}
           <button class="bg-primary text-white py-1 px-2 rounded mr-2">
             Visualize <i class="ri-eye-line"></i>
           </button>
@@ -51,6 +59,7 @@
           <button class="bg-info text-white py-1 px-2 rounded">
             Clone <i class="ri-add-line"></i>
           </button>
+        {% endif %}
         </td>
       </tr>
       {% endfor %}
