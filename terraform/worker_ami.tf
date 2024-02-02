@@ -133,12 +133,23 @@ resource "aws_imagebuilder_component" "image_builder" {
 }
 
 resource "aws_imagebuilder_image_recipe" "image_builder" {
-  component {
-    component_arn = aws_imagebuilder_component.image_builder.arn
-  }
   name         = "xray-genius-worker"
   parent_image = data.aws_ami.ec2_worker_launch_default.id
   version      = "1.0.0"
+
+  component {
+    component_arn = aws_imagebuilder_component.image_builder.arn
+  }
+
+  block_device_mapping {
+    # The root volume, confirmed with `aws ec2 describe-images` command
+    device_name = "/dev/sda1"
+    ebs {
+      delete_on_termination = true
+      volume_size           = 40
+      volume_type           = "gp3"
+    }
+  }
 }
 
 resource "aws_imagebuilder_infrastructure_configuration" "image_builder" {
