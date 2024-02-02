@@ -101,8 +101,8 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Install psycopg2 dependencies
               "sudo apt-get --yes install gcc g++ libpq-dev",
               "export PATH=/usr/lib/postgresql/X.Y/bin/:$PATH",
-              # Install nvidia drivers
-              "sudo apt-get --yes install nvidia-headless-no-dkms-535 nvidia-cuda-dev",
+              # Install nvidia drivers + required libraries
+              "sudo apt-get --yes install nvidia-driver-535-server nvidia-dkms-535 nvidia-cuda-dev libxrender1",
               # Create celery user/group for systemd service
               "sudo useradd celery",
               "sudo mkdir /home/celery",
@@ -180,6 +180,7 @@ EnvironmentFile=${local.celery_conf_location}
 WorkingDirectory=/home/celery/xray-genius/
 RuntimeDirectory=celery
 TimeoutStartSec=1200
+# ExecStartPre=bash -c "git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 --upgrade && pip install .[worker]"
 ExecStartPre=bash -c "git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install .[worker]"
 ExecStart=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi start $${CELERYD_NODES} \
     --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
