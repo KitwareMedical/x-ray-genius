@@ -101,8 +101,10 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Install psycopg2 dependencies
               "sudo apt-get --yes install gcc g++ libpq-dev",
               "export PATH=/usr/lib/postgresql/X.Y/bin/:$PATH",
-              # Install nvidia drivers + required libraries
-              "sudo apt-get --yes install nvidia-driver-535-server nvidia-dkms-535 nvidia-cuda-dev libxrender1",
+              # Install nvidia drivers + CUDA
+              "sudo apt-get --yes install ubuntu-drivers-common",
+              "sudo ubuntu-drivers install",
+              "sudo apt-get --yes install nvidia-cuda-toolkit nvidia-cuda-dev",
               # Create celery user/group for systemd service
               "sudo useradd celery",
               "sudo mkdir /home/celery",
