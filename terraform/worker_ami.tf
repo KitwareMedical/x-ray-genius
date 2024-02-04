@@ -186,13 +186,13 @@ TimeoutStartSec=1200
 ExecStartPre=bash -c "git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install .[worker]"
 ExecStart=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi start $${CELERYD_NODES} \
     --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
-    --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS}"
+    --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS} --pool solo"
 ExecStop=bash -c "$${CELERY_BIN} multi stopwait $${CELERYD_NODES} \
     --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
-    --loglevel=$${CELERYD_LOG_LEVEL}"
+    --loglevel=$${CELERYD_LOG_LEVEL} --pool solo"
 ExecReload=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi restart $${CELERYD_NODES} \
     --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
-    --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS}"
+    --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS} --pool solo"
 Restart=always
 
 [Install]
