@@ -8,7 +8,7 @@
   >
     <div class="text-2xl font-bold">{{ user.username }}</div>
     <button class="bg-green-500 text-white py-2 px-4 rounded">
-       <a href="{% url 'create-session' %}" class="text-white no-underline">
+      <a href="{% url 'create-session' %}" class="text-white no-underline">
         New Simulation Session <i class="ri-add-line"></i>
       </a>
     </button>
@@ -31,17 +31,16 @@
         <td class="py-2 px-4 border-b">{{ session.id }}</td>
         <td class="py-2 px-4 border-b">
           {% if session.parameters %}
-          Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br>
-          C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;<br>
-          C-Arm Beta: {{ session.parameters.carm_beta }}&deg;<br>
+          Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
+          C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;<br />
+          C-Arm Beta: {{ session.parameters.carm_beta }}&deg;<br />
           {% else %}
           N/A
           {% endif %}
         </td>
+        <td class="py-2 px-4 border-b">{{ session.get_status_display }}</td>
         <td class="py-2 px-4 border-b">
-          Running
-        </td>
-        <td class="py-2 px-4 border-b">
+          {% if session.status == SessionStatus.PROCESSED %}
           <button class="bg-primary text-white py-1 px-2 rounded mr-2">
             Visualize <i class="ri-eye-line"></i>
           </button>
@@ -51,6 +50,17 @@
           <button class="bg-info text-white py-1 px-2 rounded">
             Clone <i class="ri-add-line"></i>
           </button>
+          {% elif session.status == SessionStatus.NOT_STARTED %}
+          <form
+            action="{% url 'initiate-batch-run' session.pk %}"
+            method="post"
+          >
+            {% csrf_token %}
+            <button class="bg-green-500 text-white py-1 px-2 rounded mr-2">
+              Run <i class="ri-play-line"></i>
+            </button>
+          </form>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}
