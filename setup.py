@@ -46,6 +46,7 @@ setup(
         'django-ninja',
         'django-oauth-toolkit',
         'django-widget-tweaks',
+        'pydantic',
         # Production-only
         'django-composed-configuration[prod]>=0.20',
         'django-s3-file-field[s3]>=1.0.0',
@@ -54,6 +55,7 @@ setup(
     extras_require={
         'worker': [
             'deepdrr',
+            'pillow',
         ],
         'dev': [
             'django-composed-configuration[dev]>=0.18',
