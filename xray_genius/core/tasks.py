@@ -1,6 +1,5 @@
 from tempfile import NamedTemporaryFile
 
-from PIL import Image
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.files import File
@@ -13,6 +12,7 @@ logger = get_task_logger(__name__)
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
     # Import here to avoid attempting to load CUDA on the web server
+    from PIL import Image
     from deepdrr import MobileCArm, Volume
     from deepdrr.projector import Projector  # separate import for CUDA init
 
