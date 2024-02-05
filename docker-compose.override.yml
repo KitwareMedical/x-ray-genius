@@ -26,7 +26,9 @@ services:
       "--app", "xray_genius.celery",
       "worker",
       "--loglevel", "INFO",
-      "--without-heartbeat"
+      "--without-heartbeat",
+      "--pool",
+      "solo",
     ]
     # Docker Compose does not set the TTY width, which causes Celery errors
     tty: false

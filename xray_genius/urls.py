@@ -27,6 +27,11 @@ urlpatterns = [
         views.volview_viewer,
         name='viewer',
     ),
+    path(
+        'session/<uuid:session_pk>/initiate-batch-run/',
+        views.initiate_batch_run,
+        name='initiate-batch-run',
+    ),
 ]
 
 if settings.DEBUG:
