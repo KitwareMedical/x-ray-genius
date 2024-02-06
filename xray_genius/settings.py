@@ -33,6 +33,7 @@ class XrayGeniusMixin(ConfigMixin):
             's3_file_field',
             'allauth.socialaccount.providers.google',
             'widget_tweaks',
+            'django_vite',
         ]
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware
@@ -48,6 +49,12 @@ class XrayGeniusMixin(ConfigMixin):
                 }
             }
         }
+
+        configuration.DJANGO_VITE_MANIFEST_PATH = (
+            configuration.BASE_DIR / 'viewer' / 'dist' / 'manifest.json'
+        )
+
+        configuration.STATICFILES_DIRS.append(configuration.BASE_DIR / 'viewer' / 'dist')
 
 
 class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):

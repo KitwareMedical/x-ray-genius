@@ -45,6 +45,7 @@ setup(
         'django-login-required-middleware',
         'django-ninja',
         'django-oauth-toolkit',
+        'django-vite',
         'django-widget-tweaks',
         'pydantic',
         # Production-only

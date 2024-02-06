@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views import static
+from django.views.generic import RedirectView
 from ninja import NinjaAPI
 
 from .core import views
@@ -31,6 +33,12 @@ urlpatterns = [
         'session/<uuid:session_pk>/initiate-batch-run/',
         views.initiate_batch_run,
         name='initiate-batch-run',
+    ),
+    # TODO: these are hardcoded because the frontend refers to them directly as absolute URLs
+    path(
+        'itk/<path:path>',
+        RedirectView.as_view(url='/static/itk/%(path)s', permanent=True),
+        name='itk',
     ),
 ]
 

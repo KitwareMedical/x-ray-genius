@@ -18,5 +18,14 @@ export default defineConfig(async (configEnv) => {
   viteConfig.plugins ||= [];
   viteConfig.plugins!.unshift(OverrideResolverPlugin);
 
+  viteConfig.build = {
+    ...(viteConfig.build || {}),
+    outDir: path.resolve(ProjectRoot, 'dist'),
+    manifest: true,
+    assetsDir: 'static',
+  };
+
+
+
   return viteConfig;
 });

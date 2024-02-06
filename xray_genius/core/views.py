@@ -1,6 +1,9 @@
+from urllib.parse import urlencode
+
 from django.db import transaction
 from django.http import HttpRequest, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from .forms import CTInputFileUploadForm
@@ -27,7 +30,12 @@ def upload_ct_input_file(request: HttpRequest):
             with transaction.atomic():
                 file = form.save()
                 session = Session.objects.create(owner=request.user, input_scan=file)
-            return redirect('viewer', session_pk=session.pk)
+            # Redirect to VolView viewer with the uploaded file
+            return redirect(
+                reverse('viewer', kwargs={'session_pk': session.pk})
+                + '?'
+                + urlencode({'urls': file.file.url})
+            )
     else:
         form = CTInputFileUploadForm()
     return render(
