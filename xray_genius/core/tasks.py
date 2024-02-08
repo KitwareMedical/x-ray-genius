@@ -1,6 +1,7 @@
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
+from uuid import uuid4
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -50,7 +51,7 @@ def run_deepdrr_task(session_pk: str) -> None:
     with TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir) / 'image.png'
         image_utils.save(dest, image)
-        img = File(BytesIO(dest.read_bytes()), name='image.png')
+        img = File(BytesIO(dest.read_bytes()), name=f'{uuid4()}.png')
         output_image = OutputImage.objects.create(file=img, session=session)
 
     Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
