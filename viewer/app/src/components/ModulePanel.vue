@@ -34,13 +34,7 @@
 </template>
 
 <script lang="ts">
-import { Component, defineComponent, ref, watch } from 'vue';
-
-import DataBrowser from '@/src/components/DataBrowser.vue';
-import RenderingModule from '@/src/components/RenderingModule.vue';
-import AnnotationsModule from '@/src/components/AnnotationsModule.vue';
-import { useToolStore } from '@/src/store/tools';
-import { Tools } from '@/src/store/tools/types';
+import { Component, defineComponent, ref } from 'vue';
 import CArmControls from './CArmControls.vue';
 
 interface Module {
@@ -57,26 +51,10 @@ const Modules: Module[] = [
   },
 ];
 
-const autoSwitchToAnnotationsTools = [
-  Tools.Rectangle,
-  Tools.Ruler,
-  Tools.Polygon,
-  Tools.Paint,
-];
-
 export default defineComponent({
   name: 'ModulePanel',
   setup() {
     const selectedModuleIndex = ref(0);
-
-    const toolStore = useToolStore();
-    watch(
-      () => toolStore.currentTool,
-      (newTool) => {
-        if (autoSwitchToAnnotationsTools.includes(newTool))
-          selectedModuleIndex.value = 1;
-      }
-    );
 
     return {
       selectedModuleIndex,
