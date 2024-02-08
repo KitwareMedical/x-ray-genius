@@ -41,9 +41,11 @@
         <td class="py-2 px-4 border-b">{{ session.get_status_display }}</td>
         <td class="py-2 px-4 border-b">
           {% if session.status == SessionStatus.PROCESSED %}
-          <button class="bg-primary text-white py-1 px-2 rounded mr-2">
-            Visualize <i class="ri-eye-line"></i>
-          </button>
+          <a href="{% url 'viewer' session.pk %}?urls={{ session.output_images.first.file.url }}">
+            <button class="bg-primary text-white py-1 px-2 rounded mr-2">
+              Visualize <i class="ri-eye-line"></i>
+            </button>
+          </a>
           <button class="bg-primary text-white py-1 px-2 rounded mr-2">
             Export <i class="ri-download-line"></i>
           </button>
