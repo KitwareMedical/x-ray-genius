@@ -1,4 +1,6 @@
-from tempfile import NamedTemporaryFile
+from io import BytesIO
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -12,15 +14,18 @@ logger = get_task_logger(__name__)
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
     # Import here to avoid attempting to load CUDA on the web server
-    from PIL import Image
     from deepdrr import MobileCArm, Volume
     from deepdrr.projector import Projector  # separate import for CUDA init
+    from deepdrr.utils import image_utils
 
     session = Session.objects.select_related('parameters', 'input_scan').get(pk=session_pk)
 
     with NamedTemporaryFile() as f:
         f.write(session.input_scan.file.read())
-        ct = Volume.from_nrrd(f.name)
+        if session.input_scan.file.name.endswith('.nrrd'):
+            ct = Volume.from_nrrd(f.name)
+        else:
+            ct = Volume.from_dicom(f.name)
 
     # Parameters
     source_to_detector_distance: float = session.parameters.source_to_detector_distance
@@ -40,12 +45,13 @@ def run_deepdrr_task(session_pk: str) -> None:
         carm.move_to(alpha=carm_alpha, beta=carm_beta, degrees=True)
 
         # Run projection
-        image_array = projector()
+        image = projector()
 
-        # Save the image
-        image = Image.fromarray(image_array)
-
-        output_image = OutputImage.objects.create(file=File(image), session=session)
+    with TemporaryDirectory() as tmpdir:
+        dest = Path(tmpdir) / 'image.png'
+        image_utils.save(dest, image)
+        img = File(BytesIO(dest.read_bytes()), name='image.png')
+        output_image = OutputImage.objects.create(file=img, session=session)
 
     Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
     logger.info(f'Created output image {output_image.pk} for session {session_pk}')
