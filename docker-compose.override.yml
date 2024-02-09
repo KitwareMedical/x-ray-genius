@@ -39,3 +39,15 @@ services:
       - postgres
       - rabbitmq
       - minio
+
+  node:
+    build:
+      context: .
+      dockerfile: ./dev/node.Dockerfile
+    command: ["npm", "run", "start"]
+    tty: true
+    volumes:
+      - .:/opt/django-project
+      - /opt/django-project/node_modules
+    ports:
+      - 8383:8383
