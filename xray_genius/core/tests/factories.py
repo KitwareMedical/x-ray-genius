@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 import factory.django
 
-from xray_genius.core.models import CTInputFile, InputParameters, Session
+from xray_genius.core.models import CTInputFile, InputParameters, OutputImage, Session
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -42,3 +42,11 @@ class InputParametersFactory(factory.django.DjangoModelFactory):
     carm_alpha = factory.Faker('pyint', min_value=0, max_value=360)
     carm_beta = factory.Faker('pyint', min_value=0, max_value=360)
     source_to_detector_distance = factory.Faker('pyfloat', min_value=0.0, max_value=500.0)
+
+
+class OutputImageFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OutputImage
+
+    session = factory.SubFactory(SessionFactory)
+    image = factory.django.ImageField(filename='test_image.png', data=b'fakeimage')
