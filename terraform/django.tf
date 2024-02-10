@@ -33,5 +33,8 @@ module "django" {
 
   # This is needed in order to run the node build process for
   # the Django server-rendered templates
-  heroku_additional_buildpacks = ["heroku/nodejs"]
+  heroku_additional_buildpacks = [
+    "https://github.com/dmathieu/heroku-buildpack-submodules.git",
+    "heroku/nodejs",
+  ]
 }
