@@ -52,7 +52,7 @@ def run_deepdrr_task(session_pk: str) -> None:
         dest = Path(tmpdir) / 'image.png'
         image_utils.save(dest, image)
         img = File(BytesIO(dest.read_bytes()), name=f'{uuid4()}.png')
-        output_image = OutputImage.objects.create(file=img, session=session)
+        output_image = OutputImage.objects.create(image=img, session=session)
 
     Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
     logger.info(f'Created output image {output_image.pk} for session {session_pk}')
