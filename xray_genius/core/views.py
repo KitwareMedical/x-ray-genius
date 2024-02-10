@@ -3,14 +3,14 @@ from typing import ParamSpec, TypeVar
 from urllib.parse import urlencode
 
 from django.db import transaction
-from django.http import HttpRequest, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from .forms import CTInputFileUploadForm
-from .models import Session
+from .models import OutputImage, Session
 from .tasks import run_deepdrr_task
 
 T = TypeVar('T')
@@ -92,3 +92,11 @@ def initiate_batch_run(request: HttpRequest, session_pk: str):
         session.save()
     run_deepdrr_task.delay(session_pk)
     return redirect('dashboard')
+
+
+@permission_check
+def output_image_thumbnail(request: HttpRequest, session_pk: str, output_image_pk: int):
+    output_image = get_object_or_404(OutputImage, pk=output_image_pk, session_id=session_pk)
+    response = HttpResponse(content_type='image/png')
+    output_image.thumbnail.save(response, format='PNG')
+    return response
