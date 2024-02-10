@@ -1,3 +1,4 @@
+from django.http import Http404, HttpRequest
 from django.shortcuts import get_object_or_404
 from ninja import ModelSchema, Router
 from pydantic.types import UUID4
@@ -14,8 +15,13 @@ class ParametersRequestSchema(ModelSchema):
 
 
 @session_router.patch('/{session_pk}/')
-def set_parameters(request, session_pk: UUID4, parameter_data: ParametersRequestSchema):
+def set_parameters(
+    request: HttpRequest, session_pk: UUID4, parameter_data: ParametersRequestSchema
+):
     session = get_object_or_404(Session, pk=session_pk)
+
+    if session.owner != request.user:
+        raise Http404()
 
     InputParameters.objects.create(session=session, **parameter_data.dict())
 
