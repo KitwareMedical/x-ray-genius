@@ -47,6 +47,7 @@ setup(
         'django-oauth-toolkit',
         'django-vite',
         'django-widget-tweaks',
+        'pillow',
         'pydantic',
         # Production-only
         'django-composed-configuration[prod]>=0.20',
@@ -56,7 +57,6 @@ setup(
     extras_require={
         'worker': [
             'deepdrr',
-            'pillow',
         ],
         'dev': [
             'django-composed-configuration[dev]>=0.18',
