@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from composed_configuration import (
     ComposedConfiguration,
@@ -11,6 +12,9 @@ from composed_configuration import (
     ProductionBaseConfiguration,
     TestingBaseConfiguration,
 )
+
+if TYPE_CHECKING:
+    from django_autotyping.typing import AutotypingSettingsDict
 
 
 class XrayGeniusMixin(ConfigMixin):
@@ -58,7 +62,16 @@ class XrayGeniusMixin(ConfigMixin):
 
 
 class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
-    pass
+    @staticmethod
+    def mutate_configuration(configuration: ComposedConfiguration) -> None:
+        configuration.INSTALLED_APPS.append('django_autotyping')
+
+        autotyping_config: AutotypingSettingsDict = {
+            'STUBS_GENERATION': {
+                'LOCAL_STUBS_DIR': Path(configuration.BASE_DIR, 'typings'),
+            }
+        }
+        configuration.AUTOTYPING = autotyping_config
 
 
 class TestingConfiguration(XrayGeniusMixin, TestingBaseConfiguration):

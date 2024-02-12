@@ -126,3 +126,5 @@ dmypy.json
 node_modules/
 .parcel-cache/
 dist/
+
+typings/

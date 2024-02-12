@@ -59,9 +59,11 @@ setup(
             'deepdrr',
         ],
         'dev': [
+            'django-autotyping',
             'django-composed-configuration[dev]>=0.18',
             'django-debug-toolbar',
             'django-s3-file-field[minio]>=1.0.0',
+            'django-stubs',
             'ipython',
             'tox',
         ],
