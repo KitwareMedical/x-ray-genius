@@ -27,48 +27,48 @@
         <input type="number" name="carm_beta" id="carm_beta" required />
         <br />
         <label for="source_to_detector_distance"
-          >source_to_detector_distance:</label
-        >
-        <input
-          type="number"
-          name="source_to_detector_distance"
-          id="source_to_detector_distance"
-          required
-        />
-        <br />
-        <button class="v-btn v-theme--kw-dark text-secondary v-btn--density-default v-btn--size-default v-btn--variant-tonal mt-2" type="button" onclick="submitForm()">Submit</button>
-      </form>
-    </div>
-    <div id="app"></div>
+        >source_to_detector_distance:</label
+          >
+          <input
+            type="number"
+            name="source_to_detector_distance"
+            id="source_to_detector_distance"
+            required
+          />
+          <br />
+          <button class="v-btn v-theme--kw-dark text-secondary v-btn--density-default v-btn--size-default v-btn--variant-tonal mt-2" type="button" onclick="submitForm()">Submit</button>
+        </form>
+      </div>
+      <div id="app"></div>
 
-    <script>
-      function submitForm() {
+      <script>
+        function submitForm() {
         // Placeholder form submission until Vue app is integrated with API
-        var carmAlpha = $("#carm_alpha").val();
-        var carmBeta = $("#carm_beta").val();
-        var sourceToDetectorDistance = $("#source_to_detector_distance").val();
+          var carmAlpha = $("#carm_alpha").val();
+          var carmBeta = $("#carm_beta").val();
+          var sourceToDetectorDistance = $("#source_to_detector_distance").val();
 
-        var data = {
-          carm_alpha: carmAlpha,
-          carm_beta: carmBeta,
-          source_to_detector_distance: sourceToDetectorDistance,
-        };
+          var data = {
+            carm_alpha: carmAlpha,
+            carm_beta: carmBeta,
+            source_to_detector_distance: sourceToDetectorDistance,
+          };
 
-        $.ajax({
-          url: "/api/v1/session/{{ session.pk }}/",
-          type: "PATCH",
-          contentType: "application/json",
-          data: JSON.stringify(data),
-          success: function (response) {
-            console.log("Request successful:", response);
-            window.location.href = "/";
-          },
-          error: function (error) {
-            console.error("Error in request:", error);
-            alert("Error in request, see console for details");
-          },
-        });
-      }
-    </script>
-  </body>
-</html>
+          $.ajax({
+            url: "/api/v1/session/{{ session.pk }}/",
+            type: "PATCH",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              console.log("Request successful:", response);
+              window.location.href = "/";
+            },
+            error: function (error) {
+              console.error("Error in request:", error);
+              alert("Error in request, see console for details");
+            },
+          });
+        }
+      </script>
+    </body>
+  </html>

@@ -2,75 +2,75 @@
 
 {% block body %}
 
-<div class="container mx-auto mt-8">
-  <div
-    class="bg-gray-800 rounded-lg p-4 flex justify-between items-center mb-4"
-  >
-    <div class="text-2xl font-bold">{{ user.username }}</div>
-    <button class="bg-green-500 text-white py-2 px-4 rounded">
-      <a href="{% url 'create-session' %}" class="text-white no-underline">
-        New Simulation Session <i class="ri-add-line"></i>
-      </a>
-    </button>
-  </div>
+  <div class="container mx-auto mt-8">
+    <div
+      class="bg-gray-800 rounded-lg p-4 flex justify-between items-center mb-4"
+    >
+      <div class="text-2xl font-bold">{{ user.username }}</div>
+      <button class="bg-green-500 text-white py-2 px-4 rounded">
+        <a href="{% url 'create-session' %}" class="text-white no-underline">
+          New Simulation Session <i class="ri-add-line"></i>
+        </a>
+      </button>
+    </div>
 
-  {% if sessions %}
-  <h2 class="text-2xl font-bold mb-2">Your Sessions:</h2>
-  <table class="min-w-full bg-gray-800 text-white border border-gray-600">
-    <thead>
-      <tr>
-        <th class="py-2 px-4 border-b text-left">Session #</th>
-        <th class="py-2 px-4 border-b text-left">Simulation Parameters</th>
-        <th class="py-2 px-4 border-b text-left">Status</th>
-        <th class="py-2 px-4 border-b text-left">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for session in sessions %}
-      <tr>
-        <td class="py-2 px-4 border-b">{{ session.id }}</td>
-        <td class="py-2 px-4 border-b">
-          {% if session.parameters %}
-          Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
-          C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;<br />
-          C-Arm Beta: {{ session.parameters.carm_beta }}&deg;<br />
-          {% else %}
-          N/A
-          {% endif %}
-        </td>
-        <td class="py-2 px-4 border-b">{{ session.get_status_display }}</td>
-        <td class="py-2 px-4 border-b">
-          {% if session.status == SessionStatus.PROCESSED %}
-          <a href="{% url 'viewer' session.pk %}?urls={{ session.output_images.first.image.url|urlencode }}">
-            <button class="bg-primary text-white py-1 px-2 rounded mr-2">
-              Visualize <i class="ri-eye-line"></i>
-            </button>
-          </a>
-          <button class="bg-primary text-white py-1 px-2 rounded mr-2">
-            Export <i class="ri-download-line"></i>
-          </button>
-          <button class="bg-info text-white py-1 px-2 rounded">
-            Clone <i class="ri-add-line"></i>
-          </button>
-          {% elif session.status == SessionStatus.NOT_STARTED %}
-          <form
-            action="{% url 'initiate-batch-run' session.pk %}"
-            method="post"
-          >
-            {% csrf_token %}
-            <button class="bg-green-500 text-white py-1 px-2 rounded mr-2">
-              Run <i class="ri-play-line"></i>
-            </button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="text-lg">No sessions found.</p>
-  {% endif %}
-</div>
+    {% if sessions %}
+      <h2 class="text-2xl font-bold mb-2">Your Sessions:</h2>
+      <table class="min-w-full bg-gray-800 text-white border border-gray-600">
+        <thead>
+          <tr>
+            <th class="py-2 px-4 border-b text-left">Session #</th>
+            <th class="py-2 px-4 border-b text-left">Simulation Parameters</th>
+            <th class="py-2 px-4 border-b text-left">Status</th>
+            <th class="py-2 px-4 border-b text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for session in sessions %}
+            <tr>
+              <td class="py-2 px-4 border-b">{{ session.id }}</td>
+              <td class="py-2 px-4 border-b">
+                {% if session.parameters %}
+                  Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
+                  C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;<br />
+                  C-Arm Beta: {{ session.parameters.carm_beta }}&deg;<br />
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
+              <td class="py-2 px-4 border-b">{{ session.get_status_display }}</td>
+              <td class="py-2 px-4 border-b">
+                {% if session.status == SessionStatus.PROCESSED %}
+                  <a href="{% url 'viewer' session.pk %}?urls={{ session.output_images.first.image.url|urlencode }}">
+                    <button class="bg-primary text-white py-1 px-2 rounded mr-2">
+                      Visualize <i class="ri-eye-line"></i>
+                    </button>
+                  </a>
+                  <button class="bg-primary text-white py-1 px-2 rounded mr-2">
+                    Export <i class="ri-download-line"></i>
+                  </button>
+                  <button class="bg-info text-white py-1 px-2 rounded">
+                    Clone <i class="ri-add-line"></i>
+                  </button>
+                {% elif session.status == SessionStatus.NOT_STARTED %}
+                  <form
+                    action="{% url 'initiate-batch-run' session.pk %}"
+                    method="post"
+                  >
+                    {% csrf_token %}
+                    <button class="bg-green-500 text-white py-1 px-2 rounded mr-2">
+                      Run <i class="ri-play-line"></i>
+                    </button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-lg">No sessions found.</p>
+    {% endif %}
+  </div>
 
 {% endblock body %}

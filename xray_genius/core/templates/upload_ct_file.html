@@ -3,36 +3,36 @@
 {% load widget_tweaks %}
 
 {% block body %}
-<head>
-  {{ form.media }}
-</head>
-<form
-  method="post"
-  enctype="multipart/form-data"
-  action="{% url 'create-session' %}"
->
-  <div
-    class="bg-gray-800 border-dashed border-4 border-neutral p-8 m-4 rounded-lg text-center"
+  <head>
+    {{ form.media }}
+  </head>
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    action="{% url 'create-session' %}"
   >
-    {% csrf_token %}
-    <label for="fileInput" class="btn btn-accent">
-      Choose Files to Upload
-    </label>
-    {% render_field form.file id="fileInput" class="hidden" %}
+    <div
+      class="bg-gray-800 border-dashed border-4 border-neutral p-8 m-4 rounded-lg text-center"
+    >
+      {% csrf_token %}
+      <label for="fileInput" class="btn btn-accent">
+        Choose Files to Upload
+      </label>
+      {% render_field form.file id="fileInput" class="hidden" %}
 
-    <p class="mt-4 text-gray-500">or drag and drop them here</p>
-  </div>
-  {% if form.errors %}
-  <div class="alert alert-error" role="alert">
-    <i class="ri-error-warning-fill"></i>
-    <div>
-      {{ form.errors }}
+      <p class="mt-4 text-gray-500">or drag and drop them here</p>
     </div>
-  </div>
-  {% endif %}
-  <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">
-    Start session
-  </button>
-</form>
+    {% if form.errors %}
+      <div class="alert alert-error" role="alert">
+        <i class="ri-error-warning-fill"></i>
+        <div>
+          {{ form.errors }}
+        </div>
+      </div>
+    {% endif %}
+    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">
+      Start session
+    </button>
+  </form>
 
 {% endblock %}
