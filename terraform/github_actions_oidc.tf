@@ -42,6 +42,7 @@ resource "aws_iam_role" "github_actions" {
           "Effect" : "Allow",
           "Resource" : "*",
           "Action" : [
+            "ec2:DescribeInstances",
             "ec2:RebootInstances",
           ]
         }
