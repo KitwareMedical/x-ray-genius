@@ -28,10 +28,6 @@ const My = computed(
   () => cy.value + Math.sqrt(radius.value ** 2 - (gap.value / 2) ** 2)
 );
 
-const handleX = ref(0);
-const handleY = ref(0);
-const dragging = ref(false);
-
 // x, y expected to be in SVG coordinates
 function percentAlongGaugeArc(x: number, y: number) {
   // get normalized vector to x,y
@@ -57,6 +53,10 @@ function percentAlongGaugeArc(x: number, y: number) {
   return percentAlongPath;
 }
 
+const handleX = ref(0);
+const handleY = ref(0);
+const dragging = ref(false);
+
 function drawCArmMarker(percent: number) {
   if (!cArmPath.value) return;
   const el = cArmPath.value;
@@ -66,25 +66,27 @@ function drawCArmMarker(percent: number) {
   handleY.value = pt.y;
 }
 
-function onPointerMove(ev: PointerEvent) {
+function updateHandlePosition(ev: PointerEvent) {
   if (!dragging.value || !svg.value || !cArmPath.value) return;
   const { clientX, clientY } = ev;
   const svgBbox = svg.value.getBoundingClientRect();
   const svgX = clientX - svgBbox.left;
   const svgY = clientY - svgBbox.top;
-  percentModel.value = percentAlongGaugeArc(svgX, svgY);
-  drawCArmMarker(percentModel.value);
+  const percent = percentAlongGaugeArc(svgX, svgY);
+  drawCArmMarker(percent);
+  percentModel.value = percent;
 }
 
-function startDrag() {
+function startDrag(ev: PointerEvent) {
   dragging.value = true;
+  updateHandlePosition(ev);
 }
 
 function endDrag() {
   dragging.value = false;
 }
 
-useEventListener(window, 'pointermove', onPointerMove);
+useEventListener(window, 'pointermove', updateHandlePosition);
 useEventListener(window, 'pointerup', endDrag);
 
 onMounted(() => {
@@ -100,6 +102,8 @@ onMounted(() => {
       fill="transparent"
       stroke="gray"
       stroke-width="10"
+      @pointerdown="startDrag"
+      class="path"
     />
     <circle
       :cx="handleX"
@@ -116,5 +120,9 @@ onMounted(() => {
 <style type="text/css" scoped>
 .handle {
   cursor: move;
+}
+
+.path {
+  cursor: pointer;
 }
 </style>
