@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from uuid import uuid4
 
+from PIL import Image
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.files import File
@@ -52,7 +53,14 @@ def run_deepdrr_task(session_pk: str) -> None:
         dest = Path(tmpdir) / 'image.png'
         image_utils.save(dest, image)
         img = File(BytesIO(dest.read_bytes()), name=f'{uuid4()}.png')
-        output_image = OutputImage.objects.create(image=img, session=session)
+
+        thumbnail_dest = Path(tmpdir) / 'thumbnail.png'
+        thumnail_img = Image.open(dest)
+        thumnail_img.thumbnail((64, 64))
+        thumnail_img.save(thumbnail_dest)
+        thumbnail = File(BytesIO(thumbnail_dest.read_bytes()), name=f'{uuid4()}_thumbnail.png')
+
+        output_image = OutputImage.objects.create(image=img, thumbnail=thumbnail, session=session)
 
     Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
     logger.info(f'Created output image {output_image.pk} for session {session_pk}')

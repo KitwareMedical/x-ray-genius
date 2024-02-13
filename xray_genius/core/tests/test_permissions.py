@@ -57,37 +57,6 @@ def test_permissions_views(
 
 
 @pytest.mark.django_db()
-def test_permissions_image_thumbnail(user, user_factory, output_image_factory, client: Client):
-    client.force_login(user)
-
-    # Make sure the user can't access other users' images
-    not_owned_output_image = output_image_factory(session__owner=user_factory())
-    response = client.get(
-        reverse(
-            'output-image-thumbnail',
-            kwargs={
-                'session_pk': not_owned_output_image.session.pk,
-                'output_image_pk': not_owned_output_image.pk,
-            },
-        )
-    )
-    assert response.status_code == 404
-
-    # Make sure the user can access their own images
-    owned_output_image = output_image_factory(session__owner=user)
-    response = client.get(
-        reverse(
-            'output-image-thumbnail',
-            kwargs={
-                'session_pk': owned_output_image.session.pk,
-                'output_image_pk': owned_output_image.pk,
-            },
-        )
-    )
-    assert response.status_code == 200
-
-
-@pytest.mark.django_db()
 def test_permissions_parameters_rest_endpoint(
     user, user_factory, ct_input_file_factory, client: Client
 ):
