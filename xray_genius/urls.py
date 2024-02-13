@@ -33,11 +33,6 @@ urlpatterns = [
         views.initiate_batch_run,
         name='initiate-batch-run',
     ),
-    path(
-        'session/<uuid:session_pk>/thumbnail/<int:output_image_pk>.png',
-        views.output_image_thumbnail,
-        name='output-image-thumbnail',
-    ),
     # TODO: these are hardcoded because the frontend refers to them directly as absolute URLs
     path(
         'itk/<path:path>',

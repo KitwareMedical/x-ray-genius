@@ -5,7 +5,7 @@
       {% for img in session.output_images.all %}
         <div class="card bg-base-100 shadow-xl text-sm ma-5">
           <figure>
-            <img src="{% url 'output-image-thumbnail' session.pk img.pk %}" />
+            <img src="{{ img.thumbnail.url }}" />
           </figure>
           <div class="card-body">
             <p class="text-xs">Source-detector distance: XX</p>
