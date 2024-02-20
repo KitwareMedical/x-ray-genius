@@ -11,6 +11,7 @@ import useCArmStore from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
 import vtkCubeSource from '@kitware/vtk.js/Filters/Sources/CubeSource';
+import { storeToRefs } from 'pinia';
 
 function useActor(viewProxy: MaybeRef<vtkViewProxy>, source: any) {
   const actor = vtkActor.newInstance();
@@ -60,10 +61,9 @@ function useAnchorPoly(viewProxy: MaybeRef<vtkViewProxy>) {
   return cube;
 }
 
-export function useCArm(
+export function useCArmModel(
   viewProxy: MaybeRef<vtkViewProxy>,
-  imageID: MaybeRef<Maybe<string>>,
-  radius: MaybeRef<number>
+  imageID: MaybeRef<Maybe<string>>
 ) {
   const emitterPoly = useEmitterPoly(viewProxy);
   const detectorPoly = useDetectorPoly(viewProxy);
@@ -79,6 +79,7 @@ export function useCArm(
   const defaultAnchorVec = [-1, 0, 0] as Vector3; // Right
 
   const cArmStore = useCArmStore();
+  const { sourceToDetectorDistance, detectorDiameter } = storeToRefs(cArmStore);
   // rotation angle around Z
   const armRotation = computed(() => {
     // map [0,1] to [-0.5,0.5] * range
@@ -91,13 +92,10 @@ export function useCArm(
     return (cArmStore.tilt - 0.5) * Math.PI;
   });
   const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
-  // X/Sagittal
-  const xTranslation = computed(() => {
-    return (cArmStore.xTranslation - 0.5) * dimensions.value[0];
-  });
-  // Z/Axial
-  const zTranslation = computed(() => {
-    return (cArmStore.zTranslation - 0.5) * dimensions.value[2];
+  const armTranslation = computed(() => {
+    return cArmStore.translation.map(
+      (v, i) => (v - 0.5) * dimensions.value[i]
+    ) as Vector3;
   });
 
   const emitterVec = computed(() => {
@@ -116,9 +114,9 @@ export function useCArm(
 
   const transformToWorldPos = (vec: vec3) => {
     const pos = vec3.create();
-    vec3.scale(pos, vec, unref(radius));
+    vec3.scale(pos, vec, sourceToDetectorDistance.value / 2);
     vec3.add(pos, pos, imageCenter.value);
-    vec3.add(pos, pos, [xTranslation.value, 0, zTranslation.value]);
+    vec3.add(pos, pos, armTranslation.value);
     return pos as Vector3;
   };
 
@@ -133,6 +131,8 @@ export function useCArm(
 
     detectorPoly.setCenter(...detectorPos.value);
     detectorPoly.setRotations(armTiltDeg.value, 0, armRotationDeg.value);
+    detectorPoly.setXLength(detectorDiameter.value);
+    detectorPoly.setZLength(detectorDiameter.value);
 
     anchorPoly.setCenter(...anchorPos.value);
     anchorPoly.setRotations(armTiltDeg.value, 0, 0);

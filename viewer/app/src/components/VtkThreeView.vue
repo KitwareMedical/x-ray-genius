@@ -74,7 +74,7 @@ import { ViewProxyType } from '@/src/core/proxies';
 import useVolumeColoringStore from '@/src/store/view-configs/volume-coloring';
 import useViewCameraStore from '@/src/store/view-configs/camera';
 import { useResetViewsEvents } from '@/src/components/tools/ResetViews.vue';
-import { useCArm } from '../composables/useCArm';
+import { useCArmModel } from '../composables/useCArmModel';
 
 export default defineComponent({
   props: {
@@ -136,7 +136,7 @@ export default defineComponent({
     const { representation: baseImageRep } =
       useProxyRepresentation<vtkVolumeRepresentationProxy>(curImageID, viewID);
 
-    useCArm(viewProxy, curImageID, 200);
+    useCArmModel(viewProxy, curImageID);
 
     // --- picking --- //
 

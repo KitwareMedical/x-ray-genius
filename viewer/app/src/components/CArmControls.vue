@@ -40,13 +40,19 @@ const tilt = computed({
   },
 });
 const xTranslation = computed({
-  get: () => store.xTranslation,
+  get: () => store.translation[0],
   set: (v) => {
     store.setXTranslation(v);
   },
 });
+const yTranslation = computed({
+  get: () => store.translation[1],
+  set: (v) => {
+    store.setYTranslation(v);
+  },
+});
 const zTranslation = computed({
-  get: () => store.zTranslation,
+  get: () => store.translation[2],
   set: (v) => {
     store.setZTranslation(v);
   },
@@ -70,6 +76,14 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="X Translation"
+    ></v-slider>
+    <v-slider
+      v-model="yTranslation"
+      min="0"
+      max="1"
+      step="0.01"
+      style="width: 80%"
+      label="Y Translation"
     ></v-slider>
     <v-slider
       v-model="zTranslation"
