@@ -69,7 +69,7 @@ def test_permissions_parameters_rest_endpoint(
     not_owned_session: Session = Session.objects.create(
         owner=user_factory(), input_scan=ct_input_file_factory()
     )
-    response = client.patch(
+    response = client.post(
         reverse('api-0.1.0:set_parameters', kwargs={'session_pk': not_owned_session.pk}),
         content_type='application/json',
         data={
@@ -82,7 +82,7 @@ def test_permissions_parameters_rest_endpoint(
 
     # Make sure the user can modify their own session parameters
     owned_session: Session = Session.objects.create(owner=user, input_scan=ct_input_file_factory())
-    response = client.patch(
+    response = client.post(
         reverse('api-0.1.0:set_parameters', kwargs={'session_pk': owned_session.pk}),
         content_type='application/json',
         data={
