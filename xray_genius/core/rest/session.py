@@ -14,7 +14,7 @@ class ParametersRequestSchema(ModelSchema):
         model_fields = ['carm_alpha', 'carm_beta', 'source_to_detector_distance']
 
 
-@session_router.patch('/{session_pk}/')
+@session_router.post('/{session_pk}/parameters/')
 def set_parameters(
     request: HttpRequest, session_pk: UUID4, parameter_data: ParametersRequestSchema
 ):

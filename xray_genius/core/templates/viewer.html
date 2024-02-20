@@ -55,8 +55,8 @@
           };
 
           $.ajax({
-            url: "/api/v1/session/{{ session.pk }}/",
-            type: "PATCH",
+            url: "/api/v1/session/{{ session.pk }}/parameters/",
+            type: "POST",
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function (response) {
