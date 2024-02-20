@@ -6,7 +6,7 @@ import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import { Vector3 } from '@kitware/vtk.js/types';
 import { computed } from '@vue/reactivity';
 import { vec3 } from 'gl-matrix';
-import { MaybeRef, unref, watchEffect, watchPostEffect } from 'vue';
+import { MaybeRef, unref, watchEffect, watchPostEffect, toRef } from 'vue';
 import useCArmStore from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
@@ -61,22 +61,18 @@ function useAnchorPoly(viewProxy: MaybeRef<vtkViewProxy>) {
   return cube;
 }
 
-export function useCArmModel(
+export function useCArmPosition(
   viewProxy: MaybeRef<vtkViewProxy>,
   imageID: MaybeRef<Maybe<string>>
 ) {
-  const emitterPoly = useEmitterPoly(viewProxy);
-  const detectorPoly = useDetectorPoly(viewProxy);
-  const anchorPoly = useAnchorPoly(viewProxy);
-
   const { metadata } = useImage(imageID);
   const imageCenter = computed(() => {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
   });
   const dimensions = computed(() => metadata.value.dimensions);
 
-  const defaultEmitterVec = [0, -1, 0] as Vector3; // Anterior
-  const defaultAnchorVec = [-1, 0, 0] as Vector3; // Right
+  const defaultEmitterDir = [0, -1, 0] as Vector3; // Anterior
+  const defaultAnchorDir = [-1, 0, 0] as Vector3; // Right
 
   const cArmStore = useCArmStore();
   const { sourceToDetectorDistance, detectorDiameter } = storeToRefs(cArmStore);
@@ -98,17 +94,19 @@ export function useCArmModel(
     ) as Vector3;
   });
 
-  const emitterVec = computed(() => {
+  // origin -> emitter
+  const emitterDir = computed(() => {
     const vec = vec3.create();
-    vec3.copy(vec, defaultEmitterVec);
+    vec3.copy(vec, defaultEmitterDir);
     vec3.rotateZ(vec, vec, [0, 0, 0], armRotation.value);
     vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
     return vec;
   });
 
-  const detectorVec = computed(() => {
+  // origin -> detector
+  const detectorDir = computed(() => {
     const vec = vec3.create();
-    vec3.negate(vec, emitterVec.value);
+    vec3.negate(vec, emitterDir.value);
     return vec as Vector3;
   });
 
@@ -120,14 +118,45 @@ export function useCArmModel(
     return pos as Vector3;
   };
 
-  const emitterPos = computed(() => transformToWorldPos(emitterVec.value));
-  const detectorPos = computed(() => transformToWorldPos(detectorVec.value));
-  const anchorPos = computed(() => transformToWorldPos(defaultAnchorVec));
+  const emitterPos = computed(() => transformToWorldPos(emitterDir.value));
+  const detectorPos = computed(() => transformToWorldPos(detectorDir.value));
+  const anchorPos = computed(() => transformToWorldPos(defaultAnchorDir));
+
+  return {
+    emitterPos,
+    detectorPos,
+    anchorPos,
+    armTiltDeg,
+    armRotationDeg,
+    detectorDiameter,
+    detectorDir,
+    emitterDir,
+    anchorDir: toRef(defaultAnchorDir),
+  };
+}
+
+export function useCArmModel(
+  viewProxy: MaybeRef<vtkViewProxy>,
+  imageID: MaybeRef<Maybe<string>>
+) {
+  const emitterPoly = useEmitterPoly(viewProxy);
+  const detectorPoly = useDetectorPoly(viewProxy);
+  const anchorPoly = useAnchorPoly(viewProxy);
+
+  const {
+    emitterPos,
+    detectorPos,
+    anchorPos,
+    detectorDiameter,
+    detectorDir,
+    armTiltDeg,
+    armRotationDeg,
+  } = useCArmPosition(viewProxy, imageID);
 
   watchEffect(() => {
     emitterPoly.setCenter(...emitterPos.value);
     // points towards detector
-    emitterPoly.setDirection(...detectorVec.value);
+    emitterPoly.setDirection(...detectorDir.value);
 
     detectorPoly.setCenter(...detectorPos.value);
     detectorPoly.setRotations(armTiltDeg.value, 0, armRotationDeg.value);
