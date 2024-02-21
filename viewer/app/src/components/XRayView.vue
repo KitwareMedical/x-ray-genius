@@ -11,6 +11,7 @@ import { toRaw } from 'vue';
 import { provide } from 'vue';
 import { VtkViewContext } from '@/src/components/vtk/context';
 import { useCArmCamera } from '../composables/useCArmCamera';
+import { useViewAnimationListener } from '@/src/composables/useViewAnimationListener';
 
 interface Props {
   id: string;
@@ -31,6 +32,8 @@ onUnmounted(() => {
 });
 
 view.renderer.setBackground(0, 0, 0);
+
+useViewAnimationListener(view, viewId, 'XRay');
 
 const volumeColoringStore = useVolumeColoringStore();
 const { currentImageID } = useCurrentImage();

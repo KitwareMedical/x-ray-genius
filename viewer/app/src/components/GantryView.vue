@@ -8,6 +8,7 @@ import VtkVolumeView from '@/src/components/vtk/VtkVolumeView.vue';
 import VtkBaseVolumeRepresentation from '@/src/components/vtk/VtkBaseVolumeRepresentation.vue';
 import useVolumeColoringStore from '@/src/store/view-configs/volume-coloring';
 import CArmModel from './CArmModel.vue';
+import { useViewAnimationListener } from '@/src/composables/useViewAnimationListener';
 
 interface Props {
   id: string;
@@ -17,11 +18,13 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { id: viewId, viewDirection, viewUp } = toRefs(props);
+const { id: viewId, type: viewType, viewDirection, viewUp } = toRefs(props);
 
 const vtkView = ref<VtkViewApi>();
 const volumeColoringStore = useVolumeColoringStore();
 const { currentImageID } = useCurrentImage();
+
+useViewAnimationListener(vtkView, viewId, viewType);
 
 // watchPost so we can initialize the default volume coloring config
 watchPostEffect(() => {

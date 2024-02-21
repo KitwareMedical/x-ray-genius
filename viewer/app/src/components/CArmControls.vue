@@ -7,6 +7,8 @@ import { useImageStore } from '@/src/store/datasets-images';
 import { mat3 } from 'gl-matrix';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import type { Vector3 } from '@kitware/vtk.js/types';
+import useViewAnimationStore from '@/src/store/view-animation';
+import { useEventListener } from '@vueuse/core';
 
 const imageStore = useImageStore();
 
@@ -63,11 +65,29 @@ const dialPosition = computed({
     store.setRotation(v);
   },
 });
+
+const viewAnimationStore = useViewAnimationStore();
+const animationKey = Symbol('CArmControls');
+
+const startDrag = () => {
+  viewAnimationStore.requestAnimation(animationKey);
+};
+
+const endDrag = () => {
+  viewAnimationStore.cancelAnimation(animationKey);
+};
+
+useEventListener(window, 'pointerup', endDrag);
 </script>
 
 <template>
   <div class="controls">
-    <c-arm-dial v-model="dialPosition" :size="200"></c-arm-dial>
+    <c-arm-dial
+      v-model="dialPosition"
+      :size="200"
+      @start-drag="startDrag"
+      @end-drag="endDrag"
+    ></c-arm-dial>
     <div>{{ (dialPosition * 100).toFixed(0) }}%</div>
     <v-slider
       v-model="xTranslation"
@@ -76,6 +96,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="X Translation"
+      @pointerdown="startDrag"
     ></v-slider>
     <v-slider
       v-model="yTranslation"
@@ -84,6 +105,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="Y Translation"
+      @pointerdown="startDrag"
     ></v-slider>
     <v-slider
       v-model="zTranslation"
@@ -92,6 +114,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="Z Translation"
+      @pointerdown="startDrag"
     ></v-slider>
     <v-slider
       v-model="tilt"
@@ -100,6 +123,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="Tilt"
+      @pointerdown="startDrag"
     ></v-slider>
   </div>
 </template>
