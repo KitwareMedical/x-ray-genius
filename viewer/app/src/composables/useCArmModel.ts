@@ -12,59 +12,57 @@ import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
 import vtkCubeSource from '@kitware/vtk.js/Filters/Sources/CubeSource';
 import { storeToRefs } from 'pinia';
+import { View } from '@/src/core/vtk/useVtkView';
 
-function useActor(viewProxy: MaybeRef<vtkViewProxy>, source: any) {
+function useActor(view: View, source: any) {
   const actor = vtkActor.newInstance();
   const mapper = vtkMapper.newInstance();
   mapper.addInputConnection(source.getOutputPort());
   actor.setMapper(mapper);
 
-  watchPostEffect((onCleanup) => {
-    const view = unref(viewProxy);
-    view.getRenderer().addActor(actor);
-    view.renderLater();
+  watchEffect((onCleanup) => {
+    const { renderer } = view;
+    renderer.addActor(actor);
+    view.requestRender();
 
     onCleanup(() => {
-      view.getRenderer().removeActor(actor);
+      renderer.removeActor(actor);
     });
   });
 
   return { actor, mapper };
 }
 
-function useEmitterPoly(viewProxy: MaybeRef<vtkViewProxy>) {
+function useEmitterPoly(view: View) {
   const cone = vtkConeSource.newInstance({ radius: 30, height: -60 });
-  const { actor } = useActor(viewProxy, cone);
+  const { actor } = useActor(view, cone);
   actor.getProperty().setColor(1, 1, 0);
   return cone;
 }
 
-function useDetectorPoly(viewProxy: MaybeRef<vtkViewProxy>) {
+function useDetectorPoly(view: View) {
   const cube = vtkCubeSource.newInstance({
     xLength: 50,
     yLength: 1,
     zLength: 50,
   });
-  const { actor } = useActor(viewProxy, cube);
+  const { actor } = useActor(view, cube);
   actor.getProperty().setColor(1, 0, 0);
   return cube;
 }
 
-function useAnchorPoly(viewProxy: MaybeRef<vtkViewProxy>) {
+function useAnchorPoly(view: View) {
   const cube = vtkCubeSource.newInstance({
     xLength: 30,
     yLength: 30,
     zLength: 30,
   });
-  const { actor } = useActor(viewProxy, cube);
+  const { actor } = useActor(view, cube);
   actor.getProperty().setColor(1, 1, 1);
   return cube;
 }
 
-export function useCArmPosition(
-  viewProxy: MaybeRef<vtkViewProxy>,
-  imageID: MaybeRef<Maybe<string>>
-) {
+export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
   const { metadata } = useImage(imageID);
   const imageCenter = computed(() => {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
@@ -72,6 +70,7 @@ export function useCArmPosition(
   const dimensions = computed(() => metadata.value.dimensions);
 
   const defaultEmitterDir = [0, -1, 0] as Vector3; // Anterior
+  const defaultEmitterUpDir = [0, 0, 1] as Vector3; // Superior
   const defaultAnchorDir = [-1, 0, 0] as Vector3; // Right
 
   const cArmStore = useCArmStore();
@@ -100,7 +99,14 @@ export function useCArmPosition(
     vec3.copy(vec, defaultEmitterDir);
     vec3.rotateZ(vec, vec, [0, 0, 0], armRotation.value);
     vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
-    return vec;
+    return vec as Vector3;
+  });
+
+  const emitterUpDir = computed(() => {
+    const vec = vec3.create();
+    vec3.copy(vec, defaultEmitterUpDir);
+    vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
+    return vec as Vector3;
   });
 
   // origin -> detector
@@ -131,27 +137,26 @@ export function useCArmPosition(
     detectorDiameter,
     detectorDir,
     emitterDir,
+    emitterUpDir,
     anchorDir: toRef(defaultAnchorDir),
   };
 }
 
-export function useCArmModel(
-  viewProxy: MaybeRef<vtkViewProxy>,
-  imageID: MaybeRef<Maybe<string>>
-) {
-  const emitterPoly = useEmitterPoly(viewProxy);
-  const detectorPoly = useDetectorPoly(viewProxy);
-  const anchorPoly = useAnchorPoly(viewProxy);
+export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
+  const emitterPoly = useEmitterPoly(view);
+  const detectorPoly = useDetectorPoly(view);
+  const anchorPoly = useAnchorPoly(view);
 
   const {
     emitterPos,
     detectorPos,
     anchorPos,
-    detectorDiameter,
     detectorDir,
     armTiltDeg,
     armRotationDeg,
-  } = useCArmPosition(viewProxy, imageID);
+  } = useCArmPosition(view, imageID);
+
+  const { detectorDiameter } = storeToRefs(useCArmStore());
 
   watchEffect(() => {
     emitterPoly.setCenter(...emitterPos.value);
@@ -166,6 +171,6 @@ export function useCArmModel(
     anchorPoly.setCenter(...anchorPos.value);
     anchorPoly.setRotations(armTiltDeg.value, 0, 0);
 
-    unref(viewProxy).renderLater();
+    view.requestRender();
   });
 }

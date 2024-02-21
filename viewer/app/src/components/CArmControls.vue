@@ -6,7 +6,7 @@ import { onImageAdded } from '../composables/onImageAdded';
 import { useImageStore } from '@/src/store/datasets-images';
 import { mat3 } from 'gl-matrix';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
-import { Vector3 } from '@kitware/vtk.js/types';
+import type { Vector3 } from '@kitware/vtk.js/types';
 
 const imageStore = useImageStore();
 

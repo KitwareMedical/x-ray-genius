@@ -3,30 +3,32 @@ import { MaybeRef, computed, unref, watchEffect } from 'vue';
 import useCArmStore from '../store/c-arm';
 import { useCArmPosition } from './useCArmModel';
 import { Maybe } from '@/src/types';
-import { vec3 } from 'gl-matrix';
-import { Vector3 } from '@kitware/vtk.js/types';
+import { storeToRefs } from 'pinia';
+import { View } from '@/src/core/vtk/useVtkView';
 
-export function useCArmCamera(
-  viewProxy: MaybeRef<vtkViewProxy>,
-  imageID: MaybeRef<Maybe<string>>
-) {
-  const camera = computed(() => unref(viewProxy).getCamera());
-  const store = useCArmStore();
+export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
+  const { detectorDiameter, sourceToDetectorDistance } = storeToRefs(
+    useCArmStore()
+  );
 
-  const { emitterPos, detectorDir, anchorDir } = useCArmPosition(
-    viewProxy,
+  const { emitterPos, detectorDir, emitterUpDir } = useCArmPosition(
+    view,
     imageID
   );
 
   watchEffect(() => {
-    const viewUp = vec3.create() as Vector3;
-    vec3.cross(viewUp, detectorDir.value, anchorDir.value);
+    const viewAngle =
+      (180 / Math.PI) *
+      2 *
+      Math.atan2(detectorDiameter.value / 2, sourceToDetectorDistance.value);
 
-    const cam = unref(camera);
+    const cam = view.renderer.getActiveCamera();
     cam.setPosition(...emitterPos.value);
     cam.setDirectionOfProjection(...detectorDir.value);
-    cam.setViewUp(...viewUp);
+    cam.setViewUp(...emitterUpDir.value);
+    cam.setViewAngle(viewAngle * 4);
 
-    unref(viewProxy).renderLater();
+    view.renderer.resetCameraClippingRange();
+    view.requestRender();
   });
 }

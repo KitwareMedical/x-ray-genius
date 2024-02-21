@@ -1,135 +1,80 @@
+<script setup lang="ts">
+import { ref, toRefs, watchPostEffect } from 'vue';
+import type { VtkViewApi } from '@/src/types/vtk-types';
+import { useCurrentImage } from '@/src/composables/useCurrentImage';
+import VtkBaseVolumeRepresentation from '@/src/components/vtk/VtkBaseVolumeRepresentation.vue';
+import useVolumeColoringStore from '@/src/store/view-configs/volume-coloring';
+import { effectScope } from 'vue';
+import { useVtkView } from '@/src/core/vtk/useVtkView';
+import { onUnmounted } from 'vue';
+import { toRaw } from 'vue';
+import { provide } from 'vue';
+import { VtkViewContext } from '@/src/components/vtk/context';
+import { useCArmCamera } from '../composables/useCArmCamera';
+
+interface Props {
+  id: string;
+  type: string;
+}
+
+const props = defineProps<Props>();
+const { id: viewId } = toRefs(props);
+
+const vtkContainerRef = ref<HTMLElement>();
+
+// use a detached scope so that actors can be removed from
+// the renderer before the renderer is deleted.
+const scope = effectScope(true);
+const view = scope.run(() => useVtkView(vtkContainerRef))!;
+onUnmounted(() => {
+  scope.stop();
+});
+
+view.renderer.setBackground(0, 0, 0);
+
+const volumeColoringStore = useVolumeColoringStore();
+const { currentImageID } = useCurrentImage();
+
+// watchPost so we can initialize the default volume coloring config
+watchPostEffect(() => {
+  const imageId = currentImageID.value;
+  if (!imageId) return;
+
+  // disable CVR
+  volumeColoringStore.updateCVRParameters(viewId.value, imageId, {
+    enabled: false,
+  });
+
+  // set x-ray preset
+  volumeColoringStore.setColorPreset(viewId.value, imageId, 'CT-X-ray');
+});
+
+useCArmCamera(view, currentImageID);
+
+// exposed API
+const api: VtkViewApi = toRaw({
+  ...view,
+  // no-op
+  resetCamera: () => {},
+});
+
+defineExpose(api);
+provide(VtkViewContext, api);
+</script>
+
 <template>
-  <div class="vtk-container-wrapper vtk-three-container">
-    <div class="vtk-container">
-      <div class="vtk-sub-container">
-        <div
-          class="vtk-view"
-          ref="vtkContainerRef"
-          data-testid="vtk-view vtk-three-view"
-        />
+  <div class="vtk-container">
+    <div class="vtk-sub-container">
+      <div ref="vtkContainerRef" class="vtk-view">
+        <vtk-base-volume-representation
+          :view-id="id"
+          :view-type="type"
+          :image-id="currentImageID"
+        ></vtk-base-volume-representation>
+        <slot></slot>
       </div>
-      <transition name="loading">
-        <div v-if="isImageLoading" class="overlay-no-events loading">
-          <div>Loading the image</div>
-          <div>
-            <v-progress-circular indeterminate color="blue" />
-          </div>
-        </div>
-      </transition>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  PropType,
-  ref,
-  toRefs,
-  watch,
-  watchEffect,
-} from 'vue';
-
-import vtkVolumeRepresentationProxy from '@kitware/vtk.js/Proxy/Representations/VolumeRepresentationProxy';
-import { useProxyRepresentation } from '@/src/composables/useProxyRepresentations';
-import { useColoringEffect } from '@/src/composables/useColoringEffect';
-import { useResizeObserver } from '@/src/composables/useResizeObserver';
-import { useCurrentImage } from '@/src/composables/useCurrentImage';
-import vtkLPSView3DProxy from '@/src/vtk/LPSView3DProxy';
-import { LPSAxisDir } from '@/src/types/lps';
-import { useViewProxy } from '@/src/composables/useViewProxy';
-import { ViewProxyType } from '@/src/core/proxies';
-import useVolumeColoringStore from '@/src/store/view-configs/volume-coloring';
-import { useCArmModel } from '../composables/useCArmModel';
-import { useCArmCamera } from '../composables/useCArmCamera';
-
-export default defineComponent({
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props) {
-    const volumeColoringStore = useVolumeColoringStore();
-
-    const { id: viewID } = toRefs(props);
-
-    const vtkContainerRef = ref<HTMLElement>();
-
-    // --- computed vars --- //
-
-    const { currentImageID: curImageID, isImageLoading } = useCurrentImage();
-
-    // --- view proxy setup --- //
-
-    const { viewProxy } = useViewProxy<vtkLPSView3DProxy>(
-      viewID,
-      ViewProxyType.XRay
-    );
-
-    onMounted(() => {
-      viewProxy.value.setOrientationAxesVisibility(true);
-      viewProxy.value.setOrientationAxesType('cube');
-      viewProxy.value.setBackground([0, 0, 0, 0]);
-      viewProxy.value.setContainer(vtkContainerRef.value ?? null);
-    });
-
-    onBeforeUnmount(() => {
-      viewProxy.value.setContainer(null);
-    });
-
-    useResizeObserver(vtkContainerRef, () => viewProxy.value.resize());
-
-    // --- scene setup --- //
-
-    const { representation: baseImageRep } =
-      useProxyRepresentation<vtkVolumeRepresentationProxy>(curImageID, viewID);
-
-    // --- coloring setup --- //
-
-    const volumeColorConfig = computed(() =>
-      volumeColoringStore.getConfig(viewID.value, curImageID.value)
-    );
-
-    // --- coloring --- //
-
-    watchEffect(() => {
-      if (!curImageID.value) return;
-      volumeColoringStore.updateColorBy(viewID.value, curImageID.value, {
-        arrayName: String(Math.random()),
-      });
-      volumeColoringStore.setColorPreset(
-        viewID.value,
-        curImageID.value,
-        'CT-X-ray'
-      );
-    });
-
-    useColoringEffect(volumeColorConfig, baseImageRep, viewProxy);
-
-    useCArmCamera(viewProxy, curImageID);
-
-    // --- template vars --- //
-
-    return {
-      vtkContainerRef,
-      viewID,
-      isImageLoading,
-    };
-  },
-});
-</script>
-
 <style scoped src="@/src/components/styles/vtk-view.css"></style>
-<style scoped src="@/src/components/styles/utils.css"></style>
-
-<style scoped>
-.vtk-three-container {
-  background-color: black;
-  grid-template-columns: auto;
-}
-</style>
