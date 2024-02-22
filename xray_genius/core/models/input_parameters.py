@@ -15,9 +15,9 @@ class InputParameters(models.Model):
     carm_push_pull = models.FloatField(null=True, blank=True)
     carm_head_foot_translation = models.FloatField(null=True, blank=True)
     carm_raise_lower = models.FloatField(null=True, blank=True)
-    carm_alpha = models.IntegerField(
+    carm_alpha = models.FloatField(
         null=True, blank=True, help_text='The desired alpha angulation of the C-arm in degrees.'
     )
-    carm_beta = models.IntegerField(
+    carm_beta = models.FloatField(
         null=True, blank=True, help_text='The desired secondary angulation of the C-arm in degrees.'
     )
