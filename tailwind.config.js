@@ -8,7 +8,7 @@ module.exports = {
     ],
     theme: {
       fontFamily: {
-        'sans': 'Nunito, sans-serif',
+        'sans': 'Roboto, sans-serif',
       },
     },
     plugins: [
@@ -17,7 +17,22 @@ module.exports = {
       require('daisyui'),
     ],
     daisyui: {
-      themes: ["dark"],
+      themes: [
+        {
+          xrg_dark: {
+            "primary": "#0D9488",
+            "primary-content":  "#99F6E4",
+            "neutral": "#3F3F46",
+            "base-100": "#27272A",
+            "base-200": "#3F3F46",
+            "base-300": "#71717A",
+            "info": "#93C5FD",
+            "success": "#86EFAC",
+            "warning": "#F59E0B",
+            "error": "#F87171",
+          },
+        },
+      ],
       logs: false,
     },
   }
