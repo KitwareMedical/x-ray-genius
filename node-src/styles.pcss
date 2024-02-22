@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .menu {
+        .active {
+            @apply !bg-primary !text-white;
+            i {
+                @apply !text-primary-content;
+            }
+        }
+    }
+}
