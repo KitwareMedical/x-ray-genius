@@ -78,15 +78,23 @@
                     Clone <i class="ri-add-line"></i>
                   </button>
                 {% elif session.status == SessionStatus.NOT_STARTED %}
-                  <form
-                    action="{% url 'initiate-batch-run' session.pk %}"
-                    method="post"
-                  >
-                    {% csrf_token %}
-                    <button class="bg-green-500 text-white py-1 px-2 rounded mr-2">
-                      Run <i class="ri-play-line"></i>
-                    </button>
-                  </form>
+                  {% if session.parameters %}
+                    <form
+                      action="{% url 'initiate-batch-run' session.pk %}"
+                      method="post"
+                    >
+                      {% csrf_token %}
+                      <button class="bg-green-500 text-white py-1 px-2 rounded mr-2">
+                        Run <i class="ri-play-line"></i>
+                      </button>
+                    </form>
+                  {% else %}
+                    <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
+                      <button class="bg-error text-white py-1 px-2 rounded mr-2">
+                        Set Batch Parameters <i class="ri-dropdown-list"></i>
+                      </button>
+                    </a>
+                  {% endif %}
                 {% endif %}
               </td>
             </tr>
