@@ -41,7 +41,36 @@
               <td class="py-2 px-4 border-b">{{ session.get_status_display }}</td>
               <td class="py-2 px-4 border-b">
                 {% if session.status == SessionStatus.PROCESSED %}
-                  {% include "snippets/output_images_modal.html" with session=session %}
+                  <button class="bg-primary text-white py-1 px-2 rounded mr-2" onclick="my_modal_{{ forloop.counter }}.showModal()">View Batch Results <i class="ri-side-bar-line"></i></button>
+                  <dialog id="my_modal_{{ forloop.counter }}" class="modal">
+                    <div class="modal-box max-w-screen-xl mx-auto">
+                      <div class="grid grid-cols-5 gap-4">
+                        {% for img in session.output_images.all %}
+                          <div class="card bg-base-100 shadow-xl text-sm ma-5">
+                            <figure>
+                              <img src="{{ img.thumbnail.url }}" />
+                            </figure>
+                            <div class="card-body">
+                              <p class="text-xs">Source-detector distance: XX</p>
+                              <p class="text-xs">C-Arm Alpha: XX&deg;</p>
+                              <p class="text-xs">C-Arm Beta: XX&deg;</p>
+                              <a href="{{ img.image.url }}">
+                                <button class="bg-primary text-white py-1 px-2 rounded mr-2">
+                                  Visualize <i class="ri-eye-line"></i>
+                                </button>
+                              </a>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <div class="modal-action">
+                        <form method="dialog">
+                          <button class="btn">Close</button>
+                        </form>
+                      </div>
+                    </div>
+                  </dialog>
+
                   <button class="bg-primary text-white py-1 px-2 rounded mr-2">
                     Export <i class="ri-download-line"></i>
                   </button>
