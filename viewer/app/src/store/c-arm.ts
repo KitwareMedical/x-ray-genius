@@ -1,6 +1,7 @@
 import { Vector3 } from '@kitware/vtk.js/types';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { CArmParameters } from '../api';
 
 const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
@@ -45,6 +46,14 @@ const useCArmStore = defineStore('cArm', () => {
     tilt.value = value;
   }
 
+  function toApiParameters(): CArmParameters {
+    return {
+      carmAlpha: rotation.value * 2 * Math.PI,
+      carmBeta: tilt.value * 2 * Math.PI,
+      sourceToDetectorDistance: sourceToDetectorDistance.value,
+    };
+  }
+
   return {
     rotation,
     setRotation,
@@ -58,6 +67,7 @@ const useCArmStore = defineStore('cArm', () => {
     setSourceToDetectorDistance,
     detectorDiameter,
     setDetectorDiameter,
+    toApiParameters,
   };
 });
 

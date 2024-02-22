@@ -9,6 +9,7 @@ import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import type { Vector3 } from '@kitware/vtk.js/types';
 import useViewAnimationStore from '@/src/store/view-animation';
 import { useEventListener } from '@vueuse/core';
+import { postCArmParameters } from '../api';
 
 const imageStore = useImageStore();
 
@@ -78,6 +79,10 @@ const endDrag = () => {
 };
 
 useEventListener(window, 'pointerup', endDrag);
+
+function submit() {
+  postCArmParameters(store.toApiParameters());
+}
 </script>
 
 <template>
@@ -125,6 +130,7 @@ useEventListener(window, 'pointerup', endDrag);
       label="Tilt"
       @pointerdown="startDrag"
     ></v-slider>
+    <v-btn @click="submit">Submit</v-btn>
   </div>
 </template>
 
