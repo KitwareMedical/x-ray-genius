@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import '@/src/vtk/ColorMaps';
 import { useEventListener } from '@vueuse/core';
-import { computed } from 'vue';
-import { toRefs } from 'vue';
-import { ref, onMounted } from 'vue';
+import { watch, computed, toRefs, ref, onMounted } from 'vue';
 
 interface Props {
   size: number;
 }
+
+type Emits = {
+  startDrag: [];
+  endDrag: [];
+};
+
+const emit = defineEmits<Emits>();
 
 const props = defineProps<Props>();
 const { size } = toRefs(props);
@@ -91,6 +96,11 @@ useEventListener(window, 'pointerup', endDrag);
 
 onMounted(() => {
   drawCArmMarker(percentModel.value);
+});
+
+watch(dragging, (isDragging) => {
+  if (isDragging) emit('startDrag');
+  else emit('endDrag');
 });
 </script>
 
