@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    .xrg-patient-info {
+        @apply leading-tight text-lg;
+        small {
+            @apply block text-xs text-base-300;
+        }
+    }
+}
+
+@layer components {
+    .btn {
+        @apply !font-medium tracking-[1px] uppercase;
+    }
+
+    .table :where(thead, tbody) :where(tr:not(:last-child)), .table :where(thead, tbody) :where(tr:first-child:last-child) {
+        @apply border-base-300;
+    }
+}
+
 @layer utilities {
     .menu {
         .active {
