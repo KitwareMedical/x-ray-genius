@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CArmDial from './CArmDial.vue';
 import useCArmStore from '../store/c-arm';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { onImageAdded } from '../composables/onImageAdded';
 import { useImageStore } from '@/src/store/datasets-images';
 import { mat3 } from 'gl-matrix';
@@ -10,6 +10,7 @@ import type { Vector3 } from '@kitware/vtk.js/types';
 import useViewAnimationStore from '@/src/store/view-animation';
 import { useEventListener } from '@vueuse/core';
 import { postCArmParameters } from '../api';
+import { useLoadingState } from '../utils/useLoadingState';
 
 const imageStore = useImageStore();
 
@@ -80,8 +81,19 @@ const endDrag = () => {
 
 useEventListener(window, 'pointerup', endDrag);
 
-function submit() {
-  postCArmParameters(store.toApiParameters());
+const submission = useLoadingState();
+const { loading: submissionLoading, error: submissionError } = submission;
+
+async function submit() {
+  submission
+    .wrapPromise(postCArmParameters(store.toApiParameters()))
+    .then(() => {
+      window.location.pathname =
+        import.meta.env.VITE_SUBMISSION_REDIRECT ?? '/';
+    })
+    .catch(() => {
+      // noop
+    });
 }
 </script>
 
@@ -130,7 +142,13 @@ function submit() {
       label="Tilt"
       @pointerdown="startDrag"
     ></v-slider>
-    <v-btn @click="submit">Submit</v-btn>
+    <v-alert v-if="submissionError" color="error" class="mb-3">
+      <div class="d-flex flex-row align-center">
+        <v-icon class="mr-2">mdi-alert</v-icon>
+        <span>Failed to submit session to the server</span>
+      </div>
+    </v-alert>
+    <v-btn :loading="submissionLoading" @click="submit">Submit</v-btn>
   </div>
 </template>
 
