@@ -61,9 +61,17 @@ class ParameterSampler:
         self.carm_raise_lower = input_parameters.carm_raise_lower or sample_gaussian_distribution(
             mean=0, std_dev=10, num_samples=self.samples
         )
-        self.carm_alpha = input_parameters.carm_alpha or sample_von_mises_angles_degrees(
-            mean_angle_deg=0, kappa=100, num_samples=self.samples
+        self.carm_alpha = (
+            [input_parameters.carm_alpha] * self.samples
+            if input_parameters.carm_alpha
+            else sample_von_mises_angles_degrees(
+                mean_angle_deg=0, kappa=100, num_samples=self.samples
+            )
         )
-        self.carm_beta = input_parameters.carm_beta or sample_von_mises_angles_degrees(
-            mean_angle_deg=0, kappa=100, num_samples=self.samples
+        self.carm_beta = (
+            [input_parameters.carm_beta] * self.samples
+            if input_parameters.carm_beta
+            else sample_von_mises_angles_degrees(
+                mean_angle_deg=0, kappa=100, num_samples=self.samples
+            )
         )
