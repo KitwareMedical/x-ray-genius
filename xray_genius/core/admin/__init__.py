@@ -2,6 +2,9 @@ from django.contrib import admin
 
 from xray_genius.core.models import CTInputFile, OutputImage, Session
 
+admin.site.site_header = 'X-Ray Genius Admin'
+admin.site.site_title = 'X-Ray Genius Admin'
+
 
 @admin.register(CTInputFile)
 class CTInputFileAdmin(admin.ModelAdmin):
