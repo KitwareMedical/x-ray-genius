@@ -1,12 +1,14 @@
 from io import BytesIO
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from uuid import uuid4
+from zipfile import ZipFile
 
 from PIL import Image
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from django.core.files import File
+from django.core.files.base import ContentFile, File
+from django.db.models import QuerySet
 
 from .models import OutputImage, Session
 from .utils import ParameterSampler
@@ -89,3 +91,30 @@ def run_deepdrr_task(session_pk: str) -> None:
 
     Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
     logger.info(f'Created output image {output_image.pk} for session {session_pk}')
+
+    zip_images_task.delay(session_pk)
+
+
+@shared_task
+def zip_images_task(session_pk: str) -> None:
+    session = Session.objects.get(pk=session_pk)
+
+    with NamedTemporaryFile() as buffer:
+        with ZipFile(buffer.name, 'w') as zip_file:
+            output_images: QuerySet[OutputImage] = session.output_images.all()
+            for output_image in output_images.iterator():
+                image_name = Path(output_image.image.name).name
+
+                with Image.open(output_image.image) as img:
+                    with TemporaryDirectory() as tmpdir:
+                        image_name = Path(tmpdir) / image_name
+                        img.save(image_name)
+                        zip_file.write(filename=image_name, arcname=image_name.name)
+
+        with NamedTemporaryFile() as zip_output:
+            buffer.seek(0)
+            zip_output.write(buffer.read())
+            buffer.seek(0)
+            session.output_images_zip.save('images.zip', ContentFile(buffer.read()), save=True)
+
+    logger.info(f'Created zip file for session {session_pk}')
