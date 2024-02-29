@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load status_class %}
 
 {% block body %}
 
@@ -47,7 +48,11 @@
                       N/A
                     {% endif %}
                   </td>
-                  <td><span class="text-info">{{ session.get_status_display }}</span></td>
+                  <td>
+                    <span class="text-{{ session.status|status_class }}">
+                      {{ session.get_status_display }}
+                    </span>
+                  </td>
                   <td>
                     {% if session.status == SessionStatus.PROCESSED %}
                       <button class="bg-primary text-white py-1 px-2 rounded mr-2" onclick="my_modal_{{ forloop.counter }}.showModal()">View Batch Results <i class="ri-side-bar-line"></i></button>
