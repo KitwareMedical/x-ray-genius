@@ -1,6 +1,6 @@
 from io import BytesIO
 from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 from uuid import uuid4
 
 from PIL import Image
@@ -23,12 +23,15 @@ def run_deepdrr_task(session_pk: str) -> None:
 
     session = Session.objects.select_related('parameters', 'input_scan').get(pk=session_pk)
 
-    with NamedTemporaryFile() as f:
-        f.write(session.input_scan.file.read())
-        if session.input_scan.file.name.endswith('.nrrd'):
-            ct = Volume.from_nrrd(f.name)
+    with TemporaryDirectory() as f:
+        dest = Path(f) / f'temp.{".".join(session.input_scan.file.name.split(".")[1:]).lower()}'
+        dest.write_bytes(session.input_scan.file.read())
+        if dest.suffix == '.nrrd':
+            ct = Volume.from_nrrd(dest)
+        elif dest.suffix == '.dcm':
+            ct = Volume.from_dicom(dest)
         else:
-            ct = Volume.from_dicom(f.name)
+            ct = Volume.from_nifti(dest)
 
     source_to_detector_distance: float = session.parameters.source_to_detector_distance
 
