@@ -29,7 +29,7 @@
           <table class="table">
             <thead>
               <tr>
-                <th>Session #</th>
+                <th>Session</th>
                 <th>Simulation Parameters</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -38,7 +38,7 @@
             <tbody>
               {% for session in sessions %}
                 <tr>
-                  <td>{{ session.id }}</td>
+                  <td>{{ session.created }}</td>
                   <td>
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
@@ -65,9 +65,9 @@
                                   <img src="{{ img.thumbnail.url }}" />
                                 </figure>
                                 <div class="card-body">
-                                  <p class="text-xs">Source-detector distance: XX</p>
-                                  <p class="text-xs">C-Arm Alpha: XX&deg;</p>
-                                  <p class="text-xs">C-Arm Beta: XX&deg;</p>
+                                  <p class="text-xs">Source-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}</p>
+                                  <p class="text-xs">C-Arm Alpha: {{ img.carm_alpha|floatformat:3 }}&deg;</p>
+                                  <p class="text-xs">C-Arm Beta: {{ img.carm_beta|floatformat:3 }}&deg;</p>
                                   <a href="{{ img.image.url }}">
                                     <button class="bg-primary text-white py-1 px-2 rounded mr-2">
                                       Visualize <i class="ri-eye-line"></i>
