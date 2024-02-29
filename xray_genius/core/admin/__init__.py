@@ -15,4 +15,4 @@ class OutputImageAdmin(admin.ModelAdmin):
 
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('created', 'owner', 'status')
