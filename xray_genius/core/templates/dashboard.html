@@ -29,7 +29,7 @@
           <table class="table">
             <thead>
               <tr>
-                <th>Session #</th>
+                <th>Session</th>
                 <th>Simulation Parameters</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -38,7 +38,7 @@
             <tbody>
               {% for session in sessions %}
                 <tr>
-                  <td>{{ session.id }}</td>
+                  <td>{{ session.created }}</td>
                   <td>
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
