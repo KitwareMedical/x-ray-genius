@@ -17,23 +17,29 @@
     {% block head_extra %}{% endblock %}
   </head>
   <body>
-    <div class="navbar bg-gray-800 p-4">
-      <div class="mr-5 prose lg:prose-xl">
-        <h4>X-Ray Genius</h4>
+    <div class="navbar bg-base-200">
+      <div class="navbar-start">
+        <button class="btn pointer-events-none text-xl normal-case">X-Ray Genius</button>
+        <ul class="menu menu-horizontal bg-base-100 p-[4px] rounded-xl">
+          <li>
+            <a href="{% url 'dashboard' %}" class="active">
+              <i class="ri-dashboard-fill"></i>
+              Dashboard
+            </a>
+          </li>
+        </ul>
       </div>
-      <div class="bg-neutral p-1 rounded-lg">
-        <button class="btn btn-accent btn-sm mx-1 rounded-lg">
-          <a href="{% url 'dashboard' %}">
-            <i class="ri-dashboard-line"></i>
-            Dashboard
-          </a>
-        </button>
+      <div class="navbar-end">
         <form method="post" action="{% url 'account_logout' %}">
           {% csrf_token %}
-          <button class="btn btn-accent btn-sm mx-1 rounded-lg">
-            <i class="ri-logout-box-line"></i>
-            Logout
-          </button>
+          <div class="menu menu-horizontal">
+            <li>
+              <button class="btn btn-accent btn-sm mx-1 rounded-lg">
+                <i class="ri-logout-box-line"></i>
+                Logout
+              </button>
+            </li>
+          </div>
         </form>
       </div>
     </div>
