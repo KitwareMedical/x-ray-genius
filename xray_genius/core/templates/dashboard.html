@@ -85,9 +85,16 @@
                         </div>
                       </dialog>
 
-                      <button class="bg-primary text-white py-1 px-2 rounded mr-2">
-                        Export <i class="ri-download-line"></i>
-                      </button>
+                      <div
+                        class="tooltip"
+                        {% if not session.output_images_zip %}
+                          data-tip="Zip file being generated. Please wait and refresh the page."
+                        {% endif %}
+                      >
+                        <button class="bg-primary text-white py-1 px-2 rounded mr-2 {% if not session.output_images_zip %}disabled bg-base-300{% endif %}">
+                          Export <i class="ri-download-line"></i>
+                        </button>
+                      </div>
                       <button class="bg-info text-white py-1 px-2 rounded">
                         Clone <i class="ri-add-line"></i>
                       </button>
