@@ -27,6 +27,14 @@
               Dashboard
             </a>
           </li>
+          {% if request.user.is_superuser %}
+            <li>
+              <a href="{% url 'admin:index' %}">
+                <i class="ri-admin-fill"></i>
+                Admin
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </div>
       <div class="navbar-end">
