@@ -11,8 +11,8 @@ InitViewIDs.XRayView = 'XRayView';
 InitViewSpecs[InitViewIDs.GantryView] = {
   viewType: 'Gantry',
   props: {
-    viewDirection: 'Posterior',
-    viewUp: 'Superior',
+    viewDirection: 'Superior',
+    viewUp: 'Anterior',
   },
 };
 

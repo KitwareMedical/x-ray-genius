@@ -16,7 +16,7 @@ const imageStore = useImageStore();
 
 onImageAdded((id) => {
   const image = imageStore.dataIndex[id];
-  const { lpsOrientation } = imageStore.metadata['id'];
+  const { lpsOrientation } = imageStore.metadata[id];
   const { Sagittal, Coronal, Axial } = lpsOrientation;
   const newDirection = mat3.create();
   [Sagittal, Coronal, Axial].forEach((column, xyzIndex) => {
@@ -26,8 +26,10 @@ onImageAdded((id) => {
     newDirection[column * 3 + 2] = xyzIndex === 2 ? 1 : 0;
   });
 
-  const bounds = image.getBounds();
-  const center = vtkBoundingBox.getCenter(bounds);
+  const spacing = image.getSpacing();
+  const center = vtkBoundingBox
+    .getCenter(image.getExtent())
+    .map((v, i) => v * spacing[i]) as Vector3;
 
   image.setDirection(newDirection);
   image.setOrigin(center.map((v) => -v) as Vector3);

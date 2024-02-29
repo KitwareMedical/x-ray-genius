@@ -1,23 +1,24 @@
+import type { vtkObject } from '@kitware/vtk.js/interfaces';
 import { useImage } from '@/src/composables/useCurrentImage';
 import { Maybe } from '@/src/types';
-import vtkViewProxy from '@kitware/vtk.js/Proxy/Core/ViewProxy';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import { Vector3 } from '@kitware/vtk.js/types';
 import { computed } from '@vue/reactivity';
 import { vec3 } from 'gl-matrix';
-import { MaybeRef, unref, watchEffect, watchPostEffect, toRef } from 'vue';
+import { MaybeRef, watchEffect, toRef } from 'vue';
 import useCArmStore from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
-import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
-import vtkCubeSource from '@kitware/vtk.js/Filters/Sources/CubeSource';
 import { storeToRefs } from 'pinia';
 import { View } from '@/src/core/vtk/useVtkView';
+import vtkOBJReader from '@kitware/vtk.js/IO/Misc/OBJReader';
 
-function useActor(view: View, source: any) {
+import CArmObj from '../../assets/c-arm-edited-2.obj?raw';
+
+function useActor(view: View, source: vtkObject) {
   const actor = vtkActor.newInstance();
   const mapper = vtkMapper.newInstance();
-  mapper.addInputConnection(source.getOutputPort());
+  mapper.setInputData(source);
   actor.setMapper(mapper);
 
   watchEffect((onCleanup) => {
@@ -33,33 +34,10 @@ function useActor(view: View, source: any) {
   return { actor, mapper };
 }
 
-function useEmitterPoly(view: View) {
-  const cone = vtkConeSource.newInstance({ radius: 30, height: -60 });
-  const { actor } = useActor(view, cone);
-  actor.getProperty().setColor(1, 1, 0);
-  return cone;
-}
-
-function useDetectorPoly(view: View) {
-  const cube = vtkCubeSource.newInstance({
-    xLength: 50,
-    yLength: 1,
-    zLength: 50,
-  });
-  const { actor } = useActor(view, cube);
-  actor.getProperty().setColor(1, 0, 0);
-  return cube;
-}
-
-function useAnchorPoly(view: View) {
-  const cube = vtkCubeSource.newInstance({
-    xLength: 30,
-    yLength: 30,
-    zLength: 30,
-  });
-  const { actor } = useActor(view, cube);
-  actor.getProperty().setColor(1, 1, 1);
-  return cube;
+function loadModel() {
+  const reader = vtkOBJReader.newInstance();
+  reader.parseAsText(CArmObj);
+  return reader.getOutputData(0);
 }
 
 export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
@@ -124,6 +102,12 @@ export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
     return pos as Vector3;
   };
 
+  const centerPos = computed(() => {
+    const pos = vec3.create();
+    vec3.add(pos, pos, armTranslation.value);
+    return pos as Vector3;
+  });
+
   const emitterPos = computed(() => transformToWorldPos(emitterDir.value));
   const detectorPos = computed(() => transformToWorldPos(detectorDir.value));
   const anchorPos = computed(() => transformToWorldPos(defaultAnchorDir));
@@ -132,6 +116,7 @@ export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
     emitterPos,
     detectorPos,
     anchorPos,
+    centerPos,
     armTiltDeg,
     armRotationDeg,
     detectorDiameter,
@@ -143,34 +128,23 @@ export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
 }
 
 export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
-  const emitterPoly = useEmitterPoly(view);
-  const detectorPoly = useDetectorPoly(view);
-  const anchorPoly = useAnchorPoly(view);
+  const geometry = loadModel();
+  const { actor } = useActor(view, geometry);
 
-  const {
-    emitterPos,
-    detectorPos,
-    anchorPos,
-    detectorDir,
-    armTiltDeg,
-    armRotationDeg,
-  } = useCArmPosition(view, imageID);
+  const { centerPos, armTiltDeg, armRotationDeg } = useCArmPosition(
+    view,
+    imageID
+  );
 
   const { detectorDiameter } = storeToRefs(useCArmStore());
 
   watchEffect(() => {
-    emitterPoly.setCenter(...emitterPos.value);
-    // points towards detector
-    emitterPoly.setDirection(...detectorDir.value);
+    const size = detectorDiameter.value * 1.5;
+    actor.setScale(size, size, size);
+    actor.setOrientation(armTiltDeg.value, 0, armRotationDeg.value);
+    actor.setPosition(...centerPos.value);
 
-    detectorPoly.setCenter(...detectorPos.value);
-    detectorPoly.setRotations(armTiltDeg.value, 0, armRotationDeg.value);
-    detectorPoly.setXLength(detectorDiameter.value);
-    detectorPoly.setZLength(detectorDiameter.value);
-
-    anchorPoly.setCenter(...anchorPos.value);
-    anchorPoly.setRotations(armTiltDeg.value, 0, 0);
-
+    view.renderer.resetCameraClippingRange();
     view.requestRender();
   });
 }
