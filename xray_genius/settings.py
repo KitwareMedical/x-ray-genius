@@ -25,6 +25,9 @@ class XrayGeniusMixin(ConfigMixin):
 
     LOGIN_REQUIRED_IGNORE_PATHS = [r'/accounts/']
 
+    ACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusAccountAdapter'
+    SOCIALACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusSocialAccountAdapter'
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         # Install local apps first, to ensure any overridden resources are found first
