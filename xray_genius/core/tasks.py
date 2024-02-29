@@ -29,7 +29,11 @@ def run_deepdrr_task(session_pk: str) -> None:
         if dest.suffix == '.nrrd':
             ct = Volume.from_nrrd(dest)
         elif dest.suffix == '.dcm':
-            ct = Volume.from_dicom(dest)
+            ct = Volume.from_dicom(
+                dest,
+                # TODO: remove this when the cache_dir is set correctly upstream.
+                cache_dir=dest.parent / 'cache',
+            )
         else:
             ct = Volume.from_nifti(dest)
 
