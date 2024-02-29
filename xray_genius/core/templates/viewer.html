@@ -11,70 +11,8 @@
 
     {% vite_hmr_client %}
     {% vite_asset 'index.html' %}
-
-    {# TODO: remove this #}
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   </head>
   <body>
-
-    <div style="position: absolute; z-index: 9999; background-color: grey; right: 0; bottom: 0;">
-      <h4>Placeholder for VolView viewer</h4>
-      <form id="form1">
-        <label for="carm_alpha">carm_alpha:</label>
-        <input type="number" name="carm_alpha" id="carm_alpha" required />
-        <br />
-        <label for="carm_beta">carm_beta:</label>
-        <input type="number" name="carm_beta" id="carm_beta" required />
-        <br />
-        <label for="source_to_detector_distance"
-        >source_to_detector_distance:</label
-          >
-          <input
-            type="number"
-            name="source_to_detector_distance"
-            id="source_to_detector_distance"
-            required
-          />
-          <br />
-          <button class="v-btn v-theme--kw-dark text-secondary v-btn--density-default v-btn--size-default v-btn--variant-tonal mt-2" type="button" onclick="submitForm()">Submit</button>
-        </form>
-      </div>
-      <div id="app"></div>
-
-      <script>
-        function submitForm() {
-        // Placeholder form submission until Vue app is integrated with API
-          var carmAlpha = $("#carm_alpha").val();
-          var carmBeta = $("#carm_beta").val();
-          var sourceToDetectorDistance = $("#source_to_detector_distance").val();
-
-          var data = {
-            source_to_detector_distance: sourceToDetectorDistance,
-          };
-
-          if (carmAlpha) {
-            data.carm_alpha = carmAlpha;
-          }
-
-          if (carmBeta) {
-            data.carm_beta = carmBeta;
-          }
-
-          $.ajax({
-            url: "/api/v1/session/{{ session.pk }}/parameters/",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success: function (response) {
-              console.log("Request successful:", response);
-              window.location.href = "/";
-            },
-            error: function (error) {
-              console.error("Error in request:", error);
-              alert("Error in request, see console for details");
-            },
-          });
-        }
-      </script>
-    </body>
-  </html>
+    <div id="app"></div>
+  </body>
+</html>

@@ -25,7 +25,7 @@ export interface CArmParameters {
 }
 
 function snakeify(s: string) {
-  return hyphenate(s).replaceAll(/-/, '_');
+  return hyphenate(s).replaceAll(/-/g, '_');
 }
 
 function snakeifyObject(obj: Record<string, any>) {
