@@ -25,5 +25,9 @@ jobs:
           instance_id=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=xray-genius-worker-0" --query "Reservations[*].Instances[*].InstanceId" --output text)
           instance_state=$(aws ec2 describe-instances --instance-ids $instance_id --query "Reservations[*].Instances[*].State.Name" --output text)
           if [ "$instance_state" == "running" ]; then
+            echo "Rebooting the EC2 worker..."
             aws ec2 reboot-instances --instance-ids $instance_id
+            echo "Done."
+          else
+            echo "EC2 worker state is $instance_state, no reboot occurred."
           fi
