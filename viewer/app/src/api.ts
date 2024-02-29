@@ -15,7 +15,7 @@ if (!ENDPOINT) console.warn('No API endpoint specified!');
 if (!SESSION_UUID) console.warn('No session UUID!');
 
 function getParameterUrl(sessionPk: string) {
-  return `${ENDPOINT}/${sessionPk}/parameters/`;
+  return `${ENDPOINT}/session/${sessionPk}/parameters/`;
 }
 
 export interface CArmParameters {
