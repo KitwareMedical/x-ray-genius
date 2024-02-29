@@ -47,8 +47,10 @@ setup(
         'django-oauth-toolkit',
         'django-vite',
         'django-widget-tweaks',
+        'numpy',
         'pillow',
         'pydantic',
+        'scipy',
         # Production-only
         'django-composed-configuration[prod]>=0.20',
         'django-s3-file-field[s3]>=1.0.0',

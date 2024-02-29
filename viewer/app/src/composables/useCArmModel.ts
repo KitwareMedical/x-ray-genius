@@ -6,77 +6,72 @@ import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import { Vector3 } from '@kitware/vtk.js/types';
 import { computed } from '@vue/reactivity';
 import { vec3 } from 'gl-matrix';
-import { MaybeRef, unref, watchEffect, watchPostEffect } from 'vue';
+import { MaybeRef, unref, watchEffect, watchPostEffect, toRef } from 'vue';
 import useCArmStore from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
 import vtkCubeSource from '@kitware/vtk.js/Filters/Sources/CubeSource';
 import { storeToRefs } from 'pinia';
+import { View } from '@/src/core/vtk/useVtkView';
 
-function useActor(viewProxy: MaybeRef<vtkViewProxy>, source: any) {
+function useActor(view: View, source: any) {
   const actor = vtkActor.newInstance();
   const mapper = vtkMapper.newInstance();
   mapper.addInputConnection(source.getOutputPort());
   actor.setMapper(mapper);
 
-  watchPostEffect((onCleanup) => {
-    const view = unref(viewProxy);
-    view.getRenderer().addActor(actor);
-    view.renderLater();
+  watchEffect((onCleanup) => {
+    const { renderer } = view;
+    renderer.addActor(actor);
+    view.requestRender();
 
     onCleanup(() => {
-      view.getRenderer().removeActor(actor);
+      renderer.removeActor(actor);
     });
   });
 
   return { actor, mapper };
 }
 
-function useEmitterPoly(viewProxy: MaybeRef<vtkViewProxy>) {
+function useEmitterPoly(view: View) {
   const cone = vtkConeSource.newInstance({ radius: 30, height: -60 });
-  const { actor } = useActor(viewProxy, cone);
+  const { actor } = useActor(view, cone);
   actor.getProperty().setColor(1, 1, 0);
   return cone;
 }
 
-function useDetectorPoly(viewProxy: MaybeRef<vtkViewProxy>) {
+function useDetectorPoly(view: View) {
   const cube = vtkCubeSource.newInstance({
     xLength: 50,
     yLength: 1,
     zLength: 50,
   });
-  const { actor } = useActor(viewProxy, cube);
+  const { actor } = useActor(view, cube);
   actor.getProperty().setColor(1, 0, 0);
   return cube;
 }
 
-function useAnchorPoly(viewProxy: MaybeRef<vtkViewProxy>) {
+function useAnchorPoly(view: View) {
   const cube = vtkCubeSource.newInstance({
     xLength: 30,
     yLength: 30,
     zLength: 30,
   });
-  const { actor } = useActor(viewProxy, cube);
+  const { actor } = useActor(view, cube);
   actor.getProperty().setColor(1, 1, 1);
   return cube;
 }
 
-export function useCArmModel(
-  viewProxy: MaybeRef<vtkViewProxy>,
-  imageID: MaybeRef<Maybe<string>>
-) {
-  const emitterPoly = useEmitterPoly(viewProxy);
-  const detectorPoly = useDetectorPoly(viewProxy);
-  const anchorPoly = useAnchorPoly(viewProxy);
-
+export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
   const { metadata } = useImage(imageID);
   const imageCenter = computed(() => {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
   });
   const dimensions = computed(() => metadata.value.dimensions);
 
-  const defaultEmitterVec = [0, -1, 0] as Vector3; // Anterior
-  const defaultAnchorVec = [-1, 0, 0] as Vector3; // Right
+  const defaultEmitterDir = [0, -1, 0] as Vector3; // Anterior
+  const defaultEmitterUpDir = [0, 0, 1] as Vector3; // Superior
+  const defaultAnchorDir = [-1, 0, 0] as Vector3; // Right
 
   const cArmStore = useCArmStore();
   const { sourceToDetectorDistance, detectorDiameter } = storeToRefs(cArmStore);
@@ -98,17 +93,26 @@ export function useCArmModel(
     ) as Vector3;
   });
 
-  const emitterVec = computed(() => {
+  // origin -> emitter
+  const emitterDir = computed(() => {
     const vec = vec3.create();
-    vec3.copy(vec, defaultEmitterVec);
+    vec3.copy(vec, defaultEmitterDir);
     vec3.rotateZ(vec, vec, [0, 0, 0], armRotation.value);
     vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
-    return vec;
+    return vec as Vector3;
   });
 
-  const detectorVec = computed(() => {
+  const emitterUpDir = computed(() => {
     const vec = vec3.create();
-    vec3.negate(vec, emitterVec.value);
+    vec3.copy(vec, defaultEmitterUpDir);
+    vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
+    return vec as Vector3;
+  });
+
+  // origin -> detector
+  const detectorDir = computed(() => {
+    const vec = vec3.create();
+    vec3.negate(vec, emitterDir.value);
     return vec as Vector3;
   });
 
@@ -120,14 +124,44 @@ export function useCArmModel(
     return pos as Vector3;
   };
 
-  const emitterPos = computed(() => transformToWorldPos(emitterVec.value));
-  const detectorPos = computed(() => transformToWorldPos(detectorVec.value));
-  const anchorPos = computed(() => transformToWorldPos(defaultAnchorVec));
+  const emitterPos = computed(() => transformToWorldPos(emitterDir.value));
+  const detectorPos = computed(() => transformToWorldPos(detectorDir.value));
+  const anchorPos = computed(() => transformToWorldPos(defaultAnchorDir));
+
+  return {
+    emitterPos,
+    detectorPos,
+    anchorPos,
+    armTiltDeg,
+    armRotationDeg,
+    detectorDiameter,
+    detectorDir,
+    emitterDir,
+    emitterUpDir,
+    anchorDir: toRef(defaultAnchorDir),
+  };
+}
+
+export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
+  const emitterPoly = useEmitterPoly(view);
+  const detectorPoly = useDetectorPoly(view);
+  const anchorPoly = useAnchorPoly(view);
+
+  const {
+    emitterPos,
+    detectorPos,
+    anchorPos,
+    detectorDir,
+    armTiltDeg,
+    armRotationDeg,
+  } = useCArmPosition(view, imageID);
+
+  const { detectorDiameter } = storeToRefs(useCArmStore());
 
   watchEffect(() => {
     emitterPoly.setCenter(...emitterPos.value);
     // points towards detector
-    emitterPoly.setDirection(...detectorVec.value);
+    emitterPoly.setDirection(...detectorDir.value);
 
     detectorPoly.setCenter(...detectorPos.value);
     detectorPoly.setRotations(armTiltDeg.value, 0, armRotationDeg.value);
@@ -137,6 +171,6 @@ export function useCArmModel(
     anchorPoly.setCenter(...anchorPos.value);
     anchorPoly.setRotations(armTiltDeg.value, 0, 0);
 
-    unref(viewProxy).renderLater();
+    view.requestRender();
   });
 }

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import CArmDial from './CArmDial.vue';
 import useCArmStore from '../store/c-arm';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { onImageAdded } from '../composables/onImageAdded';
 import { useImageStore } from '@/src/store/datasets-images';
 import { mat3 } from 'gl-matrix';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
-import { Vector3 } from '@kitware/vtk.js/types';
+import type { Vector3 } from '@kitware/vtk.js/types';
+import useViewAnimationStore from '@/src/store/view-animation';
+import { useEventListener } from '@vueuse/core';
+import { postCArmParameters } from '../api';
+import { useLoadingState } from '../utils/useLoadingState';
 
 const imageStore = useImageStore();
 
@@ -63,11 +67,44 @@ const dialPosition = computed({
     store.setRotation(v);
   },
 });
+
+const viewAnimationStore = useViewAnimationStore();
+const animationKey = Symbol('CArmControls');
+
+const startDrag = () => {
+  viewAnimationStore.requestAnimation(animationKey);
+};
+
+const endDrag = () => {
+  viewAnimationStore.cancelAnimation(animationKey);
+};
+
+useEventListener(window, 'pointerup', endDrag);
+
+const submission = useLoadingState();
+const { loading: submissionLoading, error: submissionError } = submission;
+
+async function submit() {
+  submission
+    .wrapPromise(postCArmParameters(store.toApiParameters()))
+    .then(() => {
+      window.location.pathname =
+        import.meta.env.VITE_SUBMISSION_REDIRECT ?? '/';
+    })
+    .catch(() => {
+      // noop
+    });
+}
 </script>
 
 <template>
   <div class="controls">
-    <c-arm-dial v-model="dialPosition" :size="200"></c-arm-dial>
+    <c-arm-dial
+      v-model="dialPosition"
+      :size="200"
+      @start-drag="startDrag"
+      @end-drag="endDrag"
+    ></c-arm-dial>
     <div>{{ (dialPosition * 100).toFixed(0) }}%</div>
     <v-slider
       v-model="xTranslation"
@@ -76,6 +113,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="X Translation"
+      @pointerdown="startDrag"
     ></v-slider>
     <v-slider
       v-model="yTranslation"
@@ -84,6 +122,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="Y Translation"
+      @pointerdown="startDrag"
     ></v-slider>
     <v-slider
       v-model="zTranslation"
@@ -92,6 +131,7 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="Z Translation"
+      @pointerdown="startDrag"
     ></v-slider>
     <v-slider
       v-model="tilt"
@@ -100,7 +140,15 @@ const dialPosition = computed({
       step="0.01"
       style="width: 80%"
       label="Tilt"
+      @pointerdown="startDrag"
     ></v-slider>
+    <v-alert v-if="submissionError" color="error" class="mb-3">
+      <div class="d-flex flex-row align-center">
+        <v-icon class="mr-2">mdi-alert</v-icon>
+        <span>Failed to submit session to the server</span>
+      </div>
+    </v-alert>
+    <v-btn :loading="submissionLoading" @click="submit">Submit</v-btn>
   </div>
 </template>
 
