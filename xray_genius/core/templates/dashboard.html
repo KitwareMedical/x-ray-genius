@@ -101,9 +101,9 @@
                           </button>
                         </a>
                       </div>
-                      <button class="bg-info text-white py-1 px-2 rounded">
+                      {% comment %} <button class="bg-info text-white py-1 px-2 rounded">
                         Clone <i class="ri-add-line"></i>
-                      </button>
+                      </button> {% endcomment %}
                     {% elif session.status == SessionStatus.NOT_STARTED %}
                       {% if session.parameters %}
                         <form
