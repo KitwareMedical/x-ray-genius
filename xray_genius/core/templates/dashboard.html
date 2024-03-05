@@ -42,8 +42,20 @@
                   <td>
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
-                      C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;<br />
-                      C-Arm Beta: {{ session.parameters.carm_beta }}&deg;<br />
+                      C-Arm Alpha:
+                      {% if session.parameters.carm_alpha %}
+                        {{ session.parameters.carm_alpha }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
+                      C-Arm Beta:
+                      {% if session.parameters.carm_beta %}
+                        {{ session.parameters.carm_beta }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
                     {% else %}
                       N/A
                     {% endif %}
