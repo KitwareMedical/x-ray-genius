@@ -109,7 +109,21 @@ async function submit() {
       :disabled="store.randomizeRotation"
     ></c-arm-dial>
     <div>{{ (dialPosition * 100).toFixed(0) }}%</div>
-    <v-checkbox label="Randomize rotation" v-model="store.randomizeRotation" />
+    <v-checkbox v-model="store.randomizeRotation">
+      <template v-slot:label>
+        <span class="mr-2">Randomize rotation (alpha)</span>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ props }">
+            <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+          </template>
+          <p>
+            Checking this box will randomize the rotation of the C-Arm on each batch
+            <br />
+            generation instead of fixing it to a constant value.
+          </p>
+        </v-tooltip>
+      </template>
+    </v-checkbox>
     <v-slider
       v-model="xTranslation"
       min="0"
@@ -148,7 +162,24 @@ async function submit() {
       label="Tilt"
       @pointerdown="startDrag"
     ></v-slider>
-    <v-checkbox label="Randomize tilt" v-model="store.randomizeTilt" />
+    <v-checkbox
+      v-model="store.randomizeTilt"
+      label="Randomize tilt (beta)"
+    >
+      <template v-slot:label>
+        <span class="mr-2">Randomize tilt (beta)</span>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ props }">
+            <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+          </template>
+          <p>
+            Checking this box will randomize the tilt of the C-Arm on each batch
+            <br />
+            generation instead of fixing it to a constant value.
+          </p>
+        </v-tooltip>
+      </template>
+    </v-checkbox>
     <v-alert v-if="submissionError" color="error" class="mb-3">
       <div class="d-flex flex-row align-center">
         <v-icon class="mr-2">mdi-alert</v-icon>
