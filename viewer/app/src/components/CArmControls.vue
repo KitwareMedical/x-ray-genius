@@ -106,14 +106,17 @@ async function submit() {
       :size="200"
       @start-drag="startDrag"
       @end-drag="endDrag"
+      :disabled="store.randomizeRotation"
     ></c-arm-dial>
     <div>{{ (dialPosition * 100).toFixed(0) }}%</div>
+    <v-checkbox label="Randomize rotation" v-model="store.randomizeRotation" />
     <v-slider
       v-model="xTranslation"
       min="0"
       max="1"
       step="0.01"
       style="width: 80%"
+      class="mt-5"
       label="X Translation"
       @pointerdown="startDrag"
     ></v-slider>
@@ -137,6 +140,7 @@ async function submit() {
     ></v-slider>
     <v-slider
       v-model="tilt"
+      :disabled="store.randomizeTilt"
       min="0"
       max="1"
       step="0.01"
@@ -144,6 +148,7 @@ async function submit() {
       label="Tilt"
       @pointerdown="startDrag"
     ></v-slider>
+    <v-checkbox label="Randomize tilt" v-model="store.randomizeTilt" />
     <v-alert v-if="submissionError" color="error" class="mb-3">
       <div class="d-flex flex-row align-center">
         <v-icon class="mr-2">mdi-alert</v-icon>

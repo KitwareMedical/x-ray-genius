@@ -5,6 +5,7 @@ import { watch, computed, toRefs, ref, onMounted } from 'vue';
 
 interface Props {
   size: number;
+  disabled: boolean;
 }
 
 type Emits = {
@@ -83,11 +84,17 @@ function updateHandlePosition(ev: PointerEvent) {
 }
 
 function startDrag(ev: PointerEvent) {
+  if (props.disabled) {
+    return;
+  }
   dragging.value = true;
   updateHandlePosition(ev);
 }
 
 function endDrag() {
+  if (props.disabled) {
+    return;
+  }
   dragging.value = false;
 }
 
@@ -114,6 +121,7 @@ watch(dragging, (isDragging) => {
       stroke-width="10"
       @pointerdown="startDrag"
       class="path"
+      :opacity="disabled ? 0.2 : 1"
     />
     <circle
       :cx="handleX"
@@ -123,6 +131,7 @@ watch(dragging, (isDragging) => {
       stroke="red"
       @pointerdown="startDrag"
       class="handle"
+      :opacity="disabled ? 0.2 : 1"
     ></circle>
   </svg>
 </template>

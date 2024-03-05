@@ -19,8 +19,8 @@ function getParameterUrl(sessionPk: string) {
 }
 
 export interface CArmParameters {
-  carmAlpha: number;
-  carmBeta: number;
+  carmAlpha?: number;
+  carmBeta?: number;
   sourceToDetectorDistance: number;
 }
 
