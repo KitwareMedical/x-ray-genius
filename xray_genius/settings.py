@@ -72,8 +72,8 @@ class XrayGeniusMixin(ConfigMixin):
 class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
+        # Configure django-autotyping in dev-only
         configuration.INSTALLED_APPS.append('django_autotyping')
-
         autotyping_config: AutotypingSettingsDict = {
             'STUBS_GENERATION': {
                 'LOCAL_STUBS_DIR': Path(configuration.BASE_DIR, 'typings'),
@@ -81,6 +81,11 @@ class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
         }
         configuration.AUTOTYPING = autotyping_config
 
+        # Configure django-browser-reload in dev-only
+        configuration.INSTALLED_APPS.append('django_browser_reload')
+        configuration.MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
+
+        # Configure django-vite to use the vite dev server in dev environments
         configuration.DJANGO_VITE['default']['dev_mode'] = True
         configuration.DJANGO_VITE['default']['dev_server_port'] = 8080
 

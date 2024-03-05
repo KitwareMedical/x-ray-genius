@@ -63,6 +63,7 @@ setup(
         ],
         'dev': [
             'django-autotyping',
+            'django-browser-reload',
             'django-composed-configuration[dev]>=0.18',
             'django-debug-toolbar',
             'django-s3-file-field[minio]>=1.0.0',
