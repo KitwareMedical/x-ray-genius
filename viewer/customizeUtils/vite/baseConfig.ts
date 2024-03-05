@@ -23,9 +23,14 @@ export default defineConfig(async (configEnv) => {
     outDir: path.resolve(ProjectRoot, 'dist'),
     manifest: true,
     assetsDir: 'static',
+    rollupOptions: {
+      input: {
+        main: path.resolve(ProjectRoot, 'core', 'VolView', 'src', 'main.js'),
+      },
+    }
   };
 
-
+  viteConfig.base = '/static/'
 
   return viteConfig;
 });

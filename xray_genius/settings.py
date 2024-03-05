@@ -28,6 +28,11 @@ class XrayGeniusMixin(ConfigMixin):
     ACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusAccountAdapter'
     SOCIALACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusSocialAccountAdapter'
 
+    DJANGO_VITE = {
+        # Initially empty, to be populated in `mutate_configuration`
+        'default': {},
+    }
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         # Install local apps first, to ensure any overridden resources are found first
@@ -57,7 +62,7 @@ class XrayGeniusMixin(ConfigMixin):
             }
         }
 
-        configuration.DJANGO_VITE_MANIFEST_PATH = (
+        configuration.DJANGO_VITE['default']['manifest_path'] = (
             configuration.BASE_DIR / 'viewer' / 'dist' / 'manifest.json'
         )
 
@@ -67,8 +72,8 @@ class XrayGeniusMixin(ConfigMixin):
 class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
+        # Configure django-autotyping in dev-only
         configuration.INSTALLED_APPS.append('django_autotyping')
-
         autotyping_config: AutotypingSettingsDict = {
             'STUBS_GENERATION': {
                 'LOCAL_STUBS_DIR': Path(configuration.BASE_DIR, 'typings'),
@@ -76,14 +81,26 @@ class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
         }
         configuration.AUTOTYPING = autotyping_config
 
+        # Configure django-browser-reload in dev-only
+        configuration.INSTALLED_APPS.append('django_browser_reload')
+        configuration.MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
+
+        # Configure django-vite to use the vite dev server in dev environments
+        configuration.DJANGO_VITE['default']['dev_mode'] = True
+        configuration.DJANGO_VITE['default']['dev_server_port'] = 8080
+
 
 class TestingConfiguration(XrayGeniusMixin, TestingBaseConfiguration):
     pass
 
 
 class ProductionConfiguration(XrayGeniusMixin, ProductionBaseConfiguration):
-    pass
+    @staticmethod
+    def mutate_configuration(configuration: ComposedConfiguration) -> None:
+        configuration.DJANGO_VITE['default']['dev_mode'] = False
 
 
 class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfiguration):
-    pass
+    @staticmethod
+    def mutate_configuration(configuration: ComposedConfiguration) -> None:
+        configuration.DJANGO_VITE['default']['dev_mode'] = False
