@@ -15,6 +15,9 @@ const useCArmStore = defineStore('cArm', () => {
   // mm
   const detectorDiameter = ref(304);
 
+  const randomizeRotation = ref(false);
+  const randomizeTilt = ref(false);
+
   function setSourceToDetectorDistance(value: number) {
     sourceToDetectorDistance.value = value;
   }
@@ -48,8 +51,8 @@ const useCArmStore = defineStore('cArm', () => {
 
   function toApiParameters(): CArmParameters {
     return {
-      carmAlpha: rotation.value * 2 * Math.PI,
-      carmBeta: tilt.value * 2 * Math.PI,
+      carmAlpha: randomizeRotation.value ? undefined : rotation.value * 2 * Math.PI,
+      carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
       sourceToDetectorDistance: sourceToDetectorDistance.value,
     };
   }
@@ -57,12 +60,14 @@ const useCArmStore = defineStore('cArm', () => {
   return {
     rotation,
     setRotation,
+    randomizeRotation,
     translation,
     setXTranslation,
     setYTranslation,
     setZTranslation,
     tilt,
     setTilt,
+    randomizeTilt,
     sourceToDetectorDistance,
     setSourceToDetectorDistance,
     detectorDiameter,
