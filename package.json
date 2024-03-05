@@ -28,7 +28,7 @@
     "start": "npm-run-all --parallel start:parcel start:sync start:viewer",
     "start:parcel": "parcel watch",
     "start:sync": "browser-sync start --config ./dev/browser-sync.config.js",
-    "start:viewer": "npm --prefix viewer install && npm --prefix viewer run build -- --watch"
+    "start:viewer": "npm --prefix viewer run dev -- --clearScreen false"
   },
   "targets": {
     "styles": {
