@@ -40,6 +40,7 @@
                 <tr>
                   <td>{{ session.created }}</td>
                   <td>
+                    File name: {{ session.input_scan.filename }}<br />
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
                       C-Arm Alpha:
