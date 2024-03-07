@@ -1,4 +1,6 @@
-FROM node:current-alpine
+FROM node:18-alpine
+
+WORKDIR /opt/django-project/
 
 # "@parcel/watcher" requires "node-gyp", which requires Python to build for some architectures
 RUN apk update && apk add g++ make python3
@@ -7,6 +9,8 @@ RUN apk update && apk add g++ make python3
 # over in the container.
 COPY ./package.json /opt/django-project/package.json
 COPY ./package-lock.json /opt/django-project/package-lock.json
-RUN npm --prefix /opt/django-project --ignore-scripts install
+COPY ./viewer/package.json /opt/django-project/viewer/package.json
+COPY ./viewer/package-lock.json /opt/django-project/viewer/package-lock.json
+RUN npm install
 
 WORKDIR /opt/django-project
