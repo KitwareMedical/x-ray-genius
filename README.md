@@ -29,14 +29,15 @@ but allows developers to run Python code on their native system.
 
 ### Initial Setup
 1. Run `docker-compose -f ./docker-compose.yml up -d`
-2. Install Python 3.11
+2. Install Python 3.11 and Node.js 18
 3. Install
    [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)
 4. Create and activate a new Python virtualenv
 5. Run `pip install -e .[dev]`
 6. Run `source ./dev/export-env.sh`
 7. Run `./manage.py migrate`
-8. Run `./manage.py createsuperuser` and follow the prompts to create your own user
+8. Run `npm ci`
+9. Run `./manage.py createsuperuser` and follow the prompts to create your own user
 
 ### Run Application
 1.  Ensure `docker-compose -f ./docker-compose.yml up -d` is still active
@@ -46,7 +47,9 @@ but allows developers to run Python code on their native system.
 3. Run in a separate terminal:
    1. `source ./dev/export-env.sh`
    2. `celery --app xray_genius.celery worker --loglevel INFO --without-heartbeat --pool solo`
-4. Optionally, run `./manage.py load_test_data <girder_api_key>`
+4. Run in a separate terminal:
+   1. `npm start`
+5. Optionally, run `./manage.py load_test_data <girder_api_key>`
    to load some sample data into your system.
    1. Make sure to replace `<girder_api_key>` with your DKC API key. Alternatively, set the
       `GIRDER_API_KEY` environment variable to your DKC API key.
