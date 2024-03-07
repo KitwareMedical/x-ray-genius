@@ -20,7 +20,7 @@ services:
   celery:
     build:
       context: .
-      dockerfile: ./dev/django.Dockerfile
+      dockerfile: ./dev/celery.Dockerfile
     command: [
       "celery",
       "--app", "xray_genius.celery",
@@ -35,6 +35,13 @@ services:
     env_file: ./dev/.env.docker-compose
     volumes:
       - .:/opt/django-project
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     depends_on:
       - postgres
       - rabbitmq
