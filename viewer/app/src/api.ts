@@ -22,6 +22,7 @@ export interface CArmParameters {
   carmAlpha?: number;
   carmBeta?: number;
   sourceToDetectorDistance: number;
+  numSamples: number;
 }
 
 function snakeify(s: string) {

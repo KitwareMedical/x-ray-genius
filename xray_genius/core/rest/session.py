@@ -11,7 +11,7 @@ session_router = Router()
 class ParametersRequestSchema(ModelSchema):
     class Config:
         model = InputParameters
-        model_fields = ['carm_alpha', 'carm_beta', 'source_to_detector_distance']
+        model_fields = ['carm_alpha', 'carm_beta', 'source_to_detector_distance', 'num_samples']
 
 
 @session_router.post('/{session_pk}/parameters/')

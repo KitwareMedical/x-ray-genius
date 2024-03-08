@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from .session import Session
@@ -20,4 +21,12 @@ class InputParameters(models.Model):
     )
     carm_beta = models.FloatField(
         null=True, blank=True, help_text='The desired secondary angulation of the C-arm in degrees.'
+    )
+    num_samples = models.PositiveIntegerField(
+        default=100,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100),
+        ],
+        help_text='The number of x-rays to generate with DeepDRR.',
     )
