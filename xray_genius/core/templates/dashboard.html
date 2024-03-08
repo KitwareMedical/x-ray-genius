@@ -61,10 +61,15 @@
                       N/A
                     {% endif %}
                   </td>
-                  <td>
-                    <span class="text-{{ session.status|status_class }}">
-                      {{ session.get_status_display }}
-                    </span>
+                  <td class="status-column">
+                    <div class="flex items-center">
+                      <span class="text-{{ session.status|status_class }}">
+                        {{ session.get_status_display }}
+                      </span>
+                      {% if session.status == SessionStatus.RUNNING %}
+                        <span class="ml-2 animate-spin text-primary">&#9696;</span>
+                      {% endif %}
+                    </div>
                   </td>
                   <td>
                     {% if session.status == SessionStatus.PROCESSED %}
