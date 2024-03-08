@@ -1,3 +1,5 @@
+from collections.abc import Collection
+
 import numpy as np
 from scipy.stats import vonmises
 
@@ -43,11 +45,11 @@ def sample_von_mises_angles_degrees(mean_angle_deg: float, kappa: float, num_sam
 
 class ParameterSampler:
     samples: int
-    carm_push_pull: float
-    carm_head_foot_translation: float
-    carm_raise_lower: float
-    carm_alpha: float
-    carm_beta: float
+    carm_push_pull: Collection[float]
+    carm_head_foot_translation: Collection[float]
+    carm_raise_lower: Collection[float]
+    carm_alpha: Collection[float]
+    carm_beta: Collection[float]
 
     def __init__(self, input_parameters: InputParameters, samples: int = 100) -> None:
         self.samples = samples
