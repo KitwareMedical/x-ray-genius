@@ -30,7 +30,7 @@ def permission_check(view: Callable[P, T]) -> Callable[P, T]:
 
 @permission_check
 def dashboard(request: HttpRequest):
-    sessions = Session.objects.filter(owner=request.user)
+    sessions = Session.objects.filter(owner=request.user).order_by('-created')
     return render(
         request,
         'dashboard.html',
