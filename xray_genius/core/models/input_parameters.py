@@ -19,8 +19,16 @@ class InputParameters(models.Model):
     carm_alpha = models.FloatField(
         null=True, blank=True, help_text='The desired alpha angulation of the C-arm in degrees.'
     )
+    carm_alpha_kappa = models.FloatField(
+        default=100,
+        help_text='The desired kappa value to use in the von Mises distriubtion for C-arm alpha.',
+    )
     carm_beta = models.FloatField(
         null=True, blank=True, help_text='The desired secondary angulation of the C-arm in degrees.'
+    )
+    carm_beta_kappa = models.FloatField(
+        default=100,
+        help_text='The desired kappa value to use in the von Mises distriubtion for C-arm beta.',
     )
     num_samples = models.PositiveIntegerField(
         default=100,

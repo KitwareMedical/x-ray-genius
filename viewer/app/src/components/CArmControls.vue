@@ -45,6 +45,12 @@ const tilt = computed({
     store.setTilt(v);
   },
 });
+const tiltKappa = computed({
+  get: () => store.tiltKappa,
+  set: (v) => {
+    store.setTiltKappa(v);
+  },
+});
 const xTranslation = computed({
   get: () => store.translation[0],
   set: (v) => {
@@ -67,6 +73,12 @@ const dialPosition = computed({
   get: () => store.rotation,
   set: (v) => {
     store.setRotation(v);
+  },
+});
+const rotationKappa = computed({
+  get: () => store.rotationKappa,
+  set: (v) => {
+    store.setRotationKappa(v);
   },
 });
 const numberOfSamples = computed({
@@ -115,21 +127,33 @@ async function submit() {
       :disabled="store.randomizeRotation"
     ></c-arm-dial>
     <div>{{ (dialPosition * 100).toFixed(0) }}%</div>
-    <v-checkbox v-model="store.randomizeRotation">
-      <template v-slot:label>
-        <span class="mr-2">Randomize rotation (alpha)</span>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+    <v-row>
+      <v-col cols="3">
+        <v-label class="mr-5">
+          Rotation <br />Concentration
+        </v-label>
+      </v-col>
+      <v-col cols="3">
+        <v-text-field v-model="rotationKappa" outlined type="number"></v-text-field>
+      </v-col>
+      <v-col cols="6">
+        <v-checkbox v-model="store.randomizeRotation">
+          <template v-slot:label>
+            <span class="mr-2">Randomize rotation (alpha)</span>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+              </template>
+              <p>
+                Checking this box will randomize the rotation of the C-Arm on each batch
+                <br />
+                generation instead of fixing it to a constant value.
+              </p>
+            </v-tooltip>
           </template>
-          <p>
-            Checking this box will randomize the rotation of the C-Arm on each batch
-            <br />
-            generation instead of fixing it to a constant value.
-          </p>
-        </v-tooltip>
-      </template>
-    </v-checkbox>
+        </v-checkbox>
+      </v-col>
+    </v-row>
     <v-slider
       v-model="xTranslation"
       min="0"
@@ -168,24 +192,33 @@ async function submit() {
       label="Tilt"
       @pointerdown="startDrag"
     ></v-slider>
-    <v-checkbox
-      v-model="store.randomizeTilt"
-      label="Randomize tilt (beta)"
-    >
-      <template v-slot:label>
-        <span class="mr-2">Randomize tilt (beta)</span>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+    <v-row>
+      <v-col cols="3">
+        <v-label class="mr-5">
+          Tilt <br />Concentration
+        </v-label>
+      </v-col>
+      <v-col cols="3">
+        <v-text-field v-model="tiltKappa" outlined type="number"></v-text-field>
+      </v-col>
+      <v-col cols="6">
+        <v-checkbox v-model="store.randomizeTilt" label="Randomize tilt (beta)">
+          <template v-slot:label>
+            <span class="mr-2">Randomize tilt (beta)</span>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+              </template>
+              <p>
+                Checking this box will randomize the tilt of the C-Arm on each batch
+                <br />
+                generation instead of fixing it to a constant value.
+              </p>
+            </v-tooltip>
           </template>
-          <p>
-            Checking this box will randomize the tilt of the C-Arm on each batch
-            <br />
-            generation instead of fixing it to a constant value.
-          </p>
-        </v-tooltip>
-      </template>
-    </v-checkbox>
+        </v-checkbox>
+      </v-col>
+    </v-row>
     <v-alert v-if="submissionError" color="error" class="mb-3">
       <div class="d-flex flex-row align-center">
         <v-icon class="mr-2">mdi-alert</v-icon>
