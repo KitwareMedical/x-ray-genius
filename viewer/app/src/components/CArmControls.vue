@@ -69,6 +69,12 @@ const dialPosition = computed({
     store.setRotation(v);
   },
 });
+const numberOfSamples = computed({
+  get: () => store.numberOfSamples,
+  set: (v) => {
+    store.setNumberOfSamples(v);
+  },
+});
 
 const viewAnimationStore = useViewAnimationStore();
 const animationKey = Symbol('CArmControls');
@@ -186,6 +192,21 @@ async function submit() {
         <span>Failed to submit session to the server</span>
       </div>
     </v-alert>
+    <v-row>
+      <v-col cols="6">
+        <v-label>
+          Number of
+          <br/>
+          Samples
+        </v-label>
+      </v-col>
+      <v-col cols="6">
+        <v-text-field
+          v-model="numberOfSamples"
+          outlined
+        ></v-text-field>
+      </v-col>
+    </v-row>
     <v-btn :loading="submissionLoading" @click="submit">Submit</v-btn>
   </div>
 </template>

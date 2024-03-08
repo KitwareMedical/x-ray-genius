@@ -51,8 +51,8 @@ class ParameterSampler:
     carm_alpha: Collection[float]
     carm_beta: Collection[float]
 
-    def __init__(self, input_parameters: InputParameters, samples: int = 100) -> None:
-        self.samples = samples
+    def __init__(self, input_parameters: InputParameters) -> None:
+        self.samples = input_parameters.num_samples
         self.carm_push_pull = input_parameters.carm_push_pull or sample_gaussian_distribution(
             mean=0, std_dev=10, num_samples=self.samples
         )
