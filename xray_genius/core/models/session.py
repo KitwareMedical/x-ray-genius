@@ -12,6 +12,7 @@ class Session(models.Model):
         NOT_STARTED = 'not-started', 'Not Started'
         RUNNING = 'running', 'Running'
         PROCESSED = 'processed', 'Processed'
+        CANCELLED = 'cancelled', 'Cancelled'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = CreationDateTimeField()
