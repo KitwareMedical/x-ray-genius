@@ -150,6 +150,16 @@
                           </button>
                         </a>
                       {% endif %}
+                    {% elif session.status == SessionStatus.RUNNING %}
+                      <form
+                        action="{% url 'cancel-batch-run' session.pk %}"
+                        method="post"
+                      >
+                        {% csrf_token %}
+                        <button class="btn btn-xs btn-error">
+                          Cancel <i class="ri-close-line"></i>
+                        </button>
+                      </form>
                     {% endif %}
                   </td>
                 </tr>

@@ -97,3 +97,13 @@ def initiate_batch_run(request: HttpRequest, session_pk: str):
         session.save()
     run_deepdrr_task.delay(session_pk)
     return redirect('dashboard')
+
+
+@permission_check
+@require_POST
+def cancel_batch_run(request: HttpRequest, session_pk: str):
+    with transaction.atomic():
+        session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
+        session.status = Session.Status.CANCELLED
+        session.save()
+    return redirect('dashboard')

@@ -61,6 +61,12 @@ def run_deepdrr_task(session_pk: str) -> None:
             param_sampler.carm_beta,
             strict=True,
         ):
+            session.refresh_from_db(fields=['status'])
+            if session.status == Session.Status.CANCELLED:
+                logger.info(f'Session {session_pk} was cancelled')
+                OutputImage.objects.filter(session=session).delete()
+                return
+
             carm.move_to(alpha=alpha, beta=beta, degrees=True)
 
             image = projector()

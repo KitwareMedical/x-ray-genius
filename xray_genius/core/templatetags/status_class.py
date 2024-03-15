@@ -13,4 +13,5 @@ def status_class(status: str) -> str:
         Session.Status.NOT_STARTED: 'info',
         Session.Status.RUNNING: 'warning',
         Session.Status.PROCESSED: 'success',
+        Session.Status.CANCELLED: 'error',
     }[status]
