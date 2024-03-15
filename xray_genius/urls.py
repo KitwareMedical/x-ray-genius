@@ -33,6 +33,11 @@ urlpatterns = [
         views.initiate_batch_run,
         name='initiate-batch-run',
     ),
+    path(
+        'session/<uuid:session_pk>/cancel-batch-run/',
+        views.cancel_batch_run,
+        name='cancel-batch-run',
+    ),
     # TODO: these are hardcoded because the frontend refers to them directly as absolute URLs
     path(
         'itk/<path:path>',
