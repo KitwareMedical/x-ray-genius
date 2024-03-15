@@ -165,4 +165,9 @@
     {% endif %}
   </div>
 
+  {% if should_refresh %}
+    <script>
+      setTimeout(() => location.reload(), 5000);
+    </script>
+  {% endif %}
 {% endblock body %}

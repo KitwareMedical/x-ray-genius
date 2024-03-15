@@ -31,12 +31,17 @@ def permission_check(view: Callable[P, T]) -> Callable[P, T]:
 @permission_check
 def dashboard(request: HttpRequest):
     sessions = Session.objects.filter(owner=request.user).order_by('-created')
+
+    # Whether or not the page should refresh every 5 seconds automatically.
+    should_refresh = sessions.filter(status=Session.Status.RUNNING).exists()
+
     return render(
         request,
         'dashboard.html',
         {
             'sessions': sessions,
             'SessionStatus': Session.Status,
+            'should_refresh': should_refresh,
         },
     )
 
