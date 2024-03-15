@@ -1,34 +1,7 @@
 <template>
   <div class="fill-height d-flex flex-column">
-    <div id="module-switcher">
-      <v-tabs
-        id="module-switcher-tabs"
-        v-model="selectedModuleIndex"
-        icons-and-text
-        show-arrows
-      >
-        <v-tab v-for="item in Modules" :key="item.name">
-          <div class="tab-content">
-            <span class="mb-0 mt-1 module-text">{{ item.name }}</span>
-            <v-icon>mdi-{{ item.icon }}</v-icon>
-          </div>
-        </v-tab>
-      </v-tabs>
-    </div>
     <div id="module-container">
-      <v-window v-model="selectedModuleIndex" touchless class="fill-height">
-        <v-window-item
-          v-for="mod in Modules"
-          :key="mod.name"
-          class="fill-height"
-        >
-          <component
-            :key="mod.name"
-            v-show="Modules[selectedModuleIndex] === mod"
-            :is="mod.component"
-          />
-        </v-window-item>
-      </v-window>
+      <c-arm-controls></c-arm-controls>
     </div>
   </div>
 </template>
@@ -53,6 +26,9 @@ const Modules: Module[] = [
 
 export default defineComponent({
   name: 'ModulePanel',
+  components: {
+    CArmControls,
+  },
   setup() {
     const selectedModuleIndex = ref(0);
 
