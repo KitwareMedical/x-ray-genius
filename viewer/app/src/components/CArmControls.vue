@@ -176,7 +176,11 @@ async function submit() {
         @pointerdown="startDrag"
       >
         <template #append>
-          <v-checkbox hide-details label="Randomize"></v-checkbox>
+          <v-checkbox
+            v-model="store.randomizeX"
+            hide-details
+            label="Randomize"
+          ></v-checkbox>
         </template>
       </v-slider>
       <v-slider
@@ -189,7 +193,11 @@ async function submit() {
         @pointerdown="startDrag"
       >
         <template #append>
-          <v-checkbox hide-details label="Randomize"></v-checkbox>
+          <v-checkbox
+            v-model="store.randomizeY"
+            hide-details
+            label="Randomize"
+          ></v-checkbox>
         </template>
       </v-slider>
       <v-slider
@@ -199,10 +207,15 @@ async function submit() {
         step="0.01"
         label="Head/Foot"
         hide-details
+        :disabled="store.randomizeZ"
         @pointerdown="startDrag"
       >
         <template #append>
-          <v-checkbox hide-details label="Randomize"></v-checkbox>
+          <v-checkbox
+            v-model="store.randomizeZ"
+            hide-details
+            label="Randomize"
+          ></v-checkbox>
         </template>
       </v-slider>
     </div>
