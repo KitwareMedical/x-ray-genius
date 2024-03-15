@@ -1,42 +1,11 @@
 <script setup lang="ts">
 import CArmDial from './CArmDial.vue';
 import useCArmStore from '../store/c-arm';
-import { computed, ref } from 'vue';
-import { onImageAdded } from '../composables/onImageAdded';
-import { useImageStore } from '@/src/store/datasets-images';
-import { mat3 } from 'gl-matrix';
-import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
-import type { Vector3 } from '@kitware/vtk.js/types';
+import { computed } from 'vue';
 import useViewAnimationStore from '@/src/store/view-animation';
 import { useEventListener } from '@vueuse/core';
 import { postCArmParameters } from '../api';
 import { useLoadingState } from '../utils/useLoadingState';
-
-const imageStore = useImageStore();
-
-onImageAdded((id) => {
-  const image = imageStore.dataIndex[id];
-  const { lpsOrientation } = imageStore.metadata[id];
-  const { Sagittal, Coronal, Axial } = lpsOrientation;
-  const newDirection = mat3.create();
-  [Sagittal, Coronal, Axial].forEach((column, xyzIndex) => {
-    // column major
-    newDirection[column * 3 + 0] = xyzIndex === 0 ? 1 : 0;
-    newDirection[column * 3 + 1] = xyzIndex === 1 ? 1 : 0;
-    newDirection[column * 3 + 2] = xyzIndex === 2 ? 1 : 0;
-  });
-
-  const spacing = image.getSpacing();
-  const center = vtkBoundingBox
-    .getCenter(image.getExtent())
-    .map((v, i) => v * spacing[i]) as Vector3;
-
-  image.setDirection(newDirection);
-  image.setOrigin(center.map((v) => -v) as Vector3);
-  image.computeTransforms();
-
-  imageStore.updateData(id, image);
-});
 
 const store = useCArmStore();
 const tilt = computed({
@@ -129,12 +98,14 @@ async function submit() {
     <div>{{ (dialPosition * 100).toFixed(0) }}%</div>
     <v-row>
       <v-col cols="3">
-        <v-label class="mr-5">
-          Rotation <br />Concentration
-        </v-label>
+        <v-label class="mr-5"> Rotation <br />Concentration </v-label>
       </v-col>
       <v-col cols="3">
-        <v-text-field v-model="rotationKappa" outlined type="number"></v-text-field>
+        <v-text-field
+          v-model="rotationKappa"
+          outlined
+          type="number"
+        ></v-text-field>
       </v-col>
       <v-col cols="6">
         <v-checkbox v-model="store.randomizeRotation">
@@ -142,10 +113,13 @@ async function submit() {
             <span class="mr-2">Randomize rotation (alpha)</span>
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+                <v-icon v-bind="props" class="help-icon">
+                  mdi-help-circle-outline
+                </v-icon>
               </template>
               <p>
-                Checking this box will randomize the rotation of the C-Arm on each batch
+                Checking this box will randomize the rotation of the C-Arm on
+                each batch
                 <br />
                 generation instead of fixing it to a constant value.
               </p>
@@ -194,9 +168,7 @@ async function submit() {
     ></v-slider>
     <v-row>
       <v-col cols="3">
-        <v-label class="mr-5">
-          Tilt <br />Concentration
-        </v-label>
+        <v-label class="mr-5"> Tilt <br />Concentration </v-label>
       </v-col>
       <v-col cols="3">
         <v-text-field v-model="tiltKappa" outlined type="number"></v-text-field>
@@ -207,10 +179,13 @@ async function submit() {
             <span class="mr-2">Randomize tilt (beta)</span>
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" class="help-icon">mdi-help-circle-outline</v-icon>
+                <v-icon v-bind="props" class="help-icon">
+                  mdi-help-circle-outline
+                </v-icon>
               </template>
               <p>
-                Checking this box will randomize the tilt of the C-Arm on each batch
+                Checking this box will randomize the tilt of the C-Arm on each
+                batch
                 <br />
                 generation instead of fixing it to a constant value.
               </p>
@@ -229,15 +204,12 @@ async function submit() {
       <v-col cols="6">
         <v-label>
           Number of
-          <br/>
+          <br />
           Samples
         </v-label>
       </v-col>
       <v-col cols="6">
-        <v-text-field
-          v-model="numberOfSamples"
-          outlined
-        ></v-text-field>
+        <v-text-field v-model="numberOfSamples" outlined></v-text-field>
       </v-col>
     </v-row>
     <v-btn :loading="submissionLoading" @click="submit">Submit</v-btn>
