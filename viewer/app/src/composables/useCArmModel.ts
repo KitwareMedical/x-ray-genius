@@ -5,7 +5,7 @@ import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import { Vector3 } from '@kitware/vtk.js/types';
 import { computed } from '@vue/reactivity';
-import { vec3 } from 'gl-matrix';
+import { mat4, quat, vec3 } from 'gl-matrix';
 import { MaybeRef, watchEffect, toRef } from 'vue';
 import useCArmStore from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
@@ -118,7 +118,9 @@ export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
     anchorPos,
     centerPos,
     armTiltDeg,
+    armTilt,
     armRotationDeg,
+    armRotation,
     detectorDiameter,
     detectorDir,
     emitterDir,
@@ -131,18 +133,43 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   const geometry = loadModel();
   const { actor } = useActor(view, geometry);
 
-  const { centerPos, armTiltDeg, armRotationDeg } = useCArmPosition(
-    view,
-    imageID
-  );
+  const { centerPos, armTilt, armRotation } = useCArmPosition(view, imageID);
 
   const { detectorDiameter } = storeToRefs(useCArmStore());
+
+  const { metadata } = useImage(imageID);
+  const imageCenter = computed(() =>
+    vtkBoundingBox.getCenter(metadata.value.worldBounds)
+  );
+  const imageDirQuat = computed(() => {
+    const rot = quat.create();
+    quat.fromMat3(rot, metadata.value.orientation);
+    return rot;
+  });
+
+  const modelCenter = computed(() => {
+    const out = vec3.create();
+    vec3.add(out, centerPos.value, imageCenter.value);
+    return out as Vector3;
+  });
+
+  const modelToImage = computed(() => {
+    const t = mat4.create();
+    mat4.fromRotationTranslation(t, imageDirQuat.value, modelCenter.value);
+    return t;
+  });
 
   watchEffect(() => {
     const size = detectorDiameter.value * 1.5;
     actor.setScale(size, size, size);
-    actor.setOrientation(armTiltDeg.value, 0, armRotationDeg.value);
-    actor.setPosition(...centerPos.value);
+
+    const mm = mat4.create();
+    // rotate Z, then X
+    mat4.rotateX(mm, mm, armTilt.value);
+    mat4.rotateZ(mm, mm, armRotation.value);
+    // apply model-to-image transform last
+    mat4.mul(mm, modelToImage.value, mm);
+    actor.setUserMatrix(mm);
 
     view.renderer.resetCameraClippingRange();
     view.requestRender();
