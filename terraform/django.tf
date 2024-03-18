@@ -14,7 +14,7 @@ module "django" {
   project_slug     = "xray-genius"
   route53_zone_id  = data.aws_route53_zone.this.zone_id
   heroku_team_name = data.heroku_team.this.name
-  subdomain_name   = "www"
+  subdomain_name   = "app"
 
   # We're using EC2 workers instead.
   heroku_worker_dyno_quantity = 0
