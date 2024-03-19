@@ -92,7 +92,6 @@ export function exportApiParameters(): CArmParameters {
 }
 
 export function postCArmParameters(param: CArmParameters) {
-  console.log(param);
   if (!SESSION_UUID) throw new Error('No session UUID');
 
   const headers = new Headers({
