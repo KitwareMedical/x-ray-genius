@@ -9,8 +9,8 @@ const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
   const rotation = ref(0.5);
   const rotationKappa = ref(100);
-  // [0.0, 1.0] -> dimensions
-  const translation = ref<Vector3>([0.5, 0.5, 0.5]);
+  // [-0.5, 0.5] -> dimensions. [0, 0, 0] is the center.
+  const translation = ref<Vector3>([0, 0, 0]);
   // [0.0, 1.0] -> 2*PI. aka beta
   const tilt = ref(0.5);
   const tiltKappa = ref(100);
@@ -73,25 +73,6 @@ const useCArmStore = defineStore('cArm', () => {
     numberOfSamples.value = value;
   }
 
-  function toApiParameters(): CArmParameters {
-    return {
-      carmAlpha: randomizeRotation.value
-        ? undefined
-        : rotation.value * 2 * Math.PI,
-      carmAlphaKappa: rotationKappa.value,
-      carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
-      carmBetaKappa: tiltKappa.value,
-      carmPushPullTranslation: translation.value[0],
-      carmRaiseLowerTranslation: translation.value[1],
-      carmHeadFootTranslation: translation.value[2],
-      carmPushPullStdDev: randomizeX.value ? randStdDevX.value : undefined,
-      carmRaiseLowerStdDev: randomizeY.value ? randStdDevY.value : undefined,
-      carmHeadFootStdDev: randomizeZ.value ? randStdDevZ.value : undefined,
-      sourceToDetectorDistance: sourceToDetectorDistance.value,
-      numSamples: numberOfSamples.value || 100,
-    };
-  }
-
   return {
     rotation,
     setRotation,
@@ -119,7 +100,6 @@ const useCArmStore = defineStore('cArm', () => {
     setDetectorDiameter,
     numberOfSamples,
     setNumberOfSamples,
-    toApiParameters,
   };
 });
 

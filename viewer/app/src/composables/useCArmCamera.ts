@@ -11,10 +11,7 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
     useCArmStore()
   );
 
-  const { emitterPos, detectorDir, emitterUpDir } = useCArmPosition(
-    view,
-    imageID
-  );
+  const { emitterPos, detectorDir, emitterUpDir } = useCArmPosition(imageID);
 
   watchEffect(() => {
     const viewAngle =

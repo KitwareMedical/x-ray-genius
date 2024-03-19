@@ -40,7 +40,7 @@ function loadModel() {
   return reader.getOutputData(0);
 }
 
-export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
+export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
   const { metadata } = useImage(imageID);
   const imageCenter = computed(() => {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
@@ -67,7 +67,7 @@ export function useCArmPosition(view: View, imageID: MaybeRef<Maybe<string>>) {
   const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
   const armTranslation = computed(() => {
     return cArmStore.translation.map(
-      (v, i) => (v - 0.5) * dimensions.value[i]
+      (v, i) => v * dimensions.value[i]
     ) as Vector3;
   });
 
@@ -133,7 +133,7 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   const geometry = loadModel();
   const { actor } = useActor(view, geometry);
 
-  const { centerPos, armTilt, armRotation } = useCArmPosition(view, imageID);
+  const { centerPos, armTilt, armRotation } = useCArmPosition(imageID);
 
   const { detectorDiameter } = storeToRefs(useCArmStore());
 

@@ -4,7 +4,7 @@ import useCArmStore from '../store/c-arm';
 import { computed } from 'vue';
 import useViewAnimationStore from '@/src/store/view-animation';
 import { useEventListener } from '@vueuse/core';
-import { postCArmParameters } from '../api';
+import { exportApiParameters, postCArmParameters } from '../api';
 import { useLoadingState } from '../utils/useLoadingState';
 
 const store = useCArmStore();
@@ -75,7 +75,7 @@ const { loading: submissionLoading, error: submissionError } = submission;
 
 async function submit() {
   submission
-    .wrapPromise(postCArmParameters(store.toApiParameters()))
+    .wrapPromise(postCArmParameters(exportApiParameters()))
     .then(() => {
       window.location.pathname =
         import.meta.env.VITE_SUBMISSION_REDIRECT ?? '/';
@@ -167,9 +167,9 @@ async function submit() {
       <v-divider height="2px" />
       <v-slider
         v-model="xTranslation"
-        min="0"
-        max="1"
-        step="0.01"
+        min="-0.5"
+        max="0.5"
+        step="0.001"
         class="mt-5"
         label="Left/Right"
         hide-details
@@ -198,9 +198,9 @@ async function submit() {
       </v-slider>
       <v-slider
         v-model="yTranslation"
-        min="0"
-        max="1"
-        step="0.01"
+        min="-0.5"
+        max="0.5"
+        step="0.001"
         label="Front/Back"
         hide-details
         density="compact"
@@ -228,9 +228,9 @@ async function submit() {
       </v-slider>
       <v-slider
         v-model="zTranslation"
-        min="0"
-        max="1"
-        step="0.01"
+        min="-0.5"
+        max="0.5"
+        step="0.001"
         label="Head/Foot"
         hide-details
         density="compact"
