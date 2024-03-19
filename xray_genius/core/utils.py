@@ -53,8 +53,8 @@ def sample_gaussian_with_defaults(
     default_mean=DEFAULT_MEAN,
     default_std_dev=DEFAULT_STD_DEV,
 ):
-    '''
-    A wrapper around sample_gaussian_distribution with defaults.
+    """
+    Sample values from a Gaussian distribution with default values.
 
     Behavior:
     - translation is not None and std_dev is not None: sample the gaussian
@@ -68,7 +68,7 @@ def sample_gaussian_with_defaults(
 
     Returns:
     - A numpy array of sampled values.
-    '''
+    """
     if translation is not None and std_dev is not None:
         return [translation] * num_samples
 
