@@ -30,7 +30,7 @@ resource "aws_route53_record" "redirect" {
   type    = "A"
 
   alias {
-    name = aws_s3_bucket_website_configuration.redirect[count.index].website_endpoint
+    name = aws_s3_bucket_website_configuration.redirect[count.index].website_domain
     # From https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints
     zone_id                = "Z3AQBSTGFYJSTF"
     evaluate_target_health = false
