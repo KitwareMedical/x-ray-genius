@@ -76,6 +76,11 @@ const useCArmStore = defineStore('cArm', () => {
       carmAlphaKappa: rotationKappa.value,
       carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
       carmBetaKappa: tiltKappa.value,
+      carmPushPull: randomizeX.value ? undefined : translation.value[0],
+      carmHeadFootTranslation: randomizeZ.value
+        ? undefined
+        : translation.value[2],
+      carmRaiseLower: randomizeY.value ? undefined : translation.value[1],
       sourceToDetectorDistance: sourceToDetectorDistance.value,
       numSamples: numberOfSamples.value || 100,
     };

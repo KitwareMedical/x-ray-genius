@@ -16,6 +16,9 @@ class ParametersRequestSchema(ModelSchema):
             'carm_alpha_kappa',
             'carm_beta',
             'carm_beta_kappa',
+            'carm_push_pull',
+            'carm_head_foot_translation',
+            'carm_raise_lower',
             'source_to_detector_distance',
             'num_samples',
         ]
