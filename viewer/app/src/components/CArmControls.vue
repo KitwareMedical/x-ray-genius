@@ -177,7 +177,7 @@ async function submit() {
         @pointerdown="startDrag"
       >
         <template #append>
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column" @pointerdown.stop>
             <v-checkbox
               v-model="store.randomizeX"
               hide-details
@@ -207,7 +207,7 @@ async function submit() {
         @pointerdown="startDrag"
       >
         <template #append>
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column" @pointerdown.stop>
             <v-checkbox
               v-model="store.randomizeY"
               hide-details
@@ -237,7 +237,7 @@ async function submit() {
         @pointerdown="startDrag"
       >
         <template #append>
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column" @pointerdown.stop>
             <v-checkbox
               v-model="store.randomizeZ"
               hide-details
