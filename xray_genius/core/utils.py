@@ -5,6 +5,9 @@ from scipy.stats import vonmises
 
 from xray_genius.core.models import InputParameters
 
+DEFAULT_MEAN = 0
+DEFAULT_STD_DEV = 10
+
 
 def sample_gaussian_distribution(mean: float, std_dev: float, num_samples=1000):
     """
@@ -43,25 +46,61 @@ def sample_von_mises_angles_degrees(mean_angle_deg: float, kappa: float, num_sam
     return sampled_angles_deg
 
 
+def sample_gaussian_with_defaults(
+    translation: float | None,
+    std_dev: float | None,
+    num_samples=1000,
+    default_mean=DEFAULT_MEAN,
+    default_std_dev=DEFAULT_STD_DEV,
+):
+    '''
+    A wrapper around sample_gaussian_distribution with defaults.
+
+    Behavior:
+    - translation is not None and std_dev is not None: sample the gaussian
+    - translation is     None and std_dev is not None: sample the gaussian
+    - translation is not None and std_dev is     None: return translation
+    - translation is     None and std_dev is     None: sample the gaussian
+
+    Parameters:
+    - translation: the mean of the gaussian.
+    - std_dev: the standard deviation of the gaussian.
+
+    Returns:
+    - A numpy array of sampled values.
+    '''
+    if translation is not None and std_dev is not None:
+        return [translation] * num_samples
+
+    return sample_gaussian_distribution(
+        translation or default_mean, std_dev or default_std_dev, num_samples
+    )
+
+
 class ParameterSampler:
     samples: int
-    carm_push_pull: Collection[float]
+    carm_push_pull_translation: Collection[float]
     carm_head_foot_translation: Collection[float]
-    carm_raise_lower: Collection[float]
+    carm_raise_lower_translation: Collection[float]
     carm_alpha: Collection[float]
     carm_beta: Collection[float]
 
     def __init__(self, input_parameters: InputParameters) -> None:
         self.samples = input_parameters.num_samples
-        self.carm_push_pull = input_parameters.carm_push_pull or sample_gaussian_distribution(
-            mean=0, std_dev=10, num_samples=self.samples
+        self.carm_push_pull_translation = sample_gaussian_with_defaults(
+            input_parameters.carm_push_pull_translation,
+            input_parameters.carm_push_pull_std_dev,
+            num_samples=self.samples,
         )
-        self.carm_head_foot_translation = (
-            input_parameters.carm_head_foot_translation
-            or sample_gaussian_distribution(mean=0, std_dev=10, num_samples=self.samples)
+        self.carm_head_foot_translation = sample_gaussian_with_defaults(
+            input_parameters.carm_head_foot_translation,
+            input_parameters.carm_head_foot_std_dev,
+            num_samples=self.samples,
         )
-        self.carm_raise_lower = input_parameters.carm_raise_lower or sample_gaussian_distribution(
-            mean=0, std_dev=10, num_samples=self.samples
+        self.carm_raise_lower_translation = sample_gaussian_with_defaults(
+            input_parameters.carm_raise_lower_translation,
+            input_parameters.carm_raise_lower_std_dev,
+            num_samples=self.samples,
         )
         self.carm_alpha = (
             [input_parameters.carm_alpha] * self.samples

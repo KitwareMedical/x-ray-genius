@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { CArmParameters } from '../api';
 
+const DEFAULT_STANDARD_DEVIATION = 200; // mm
+
 const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
   const rotation = ref(0.5);
@@ -24,6 +26,9 @@ const useCArmStore = defineStore('cArm', () => {
   const randomizeX = ref(false);
   const randomizeY = ref(false);
   const randomizeZ = ref(false);
+  const randStdDevX = ref(DEFAULT_STANDARD_DEVIATION);
+  const randStdDevY = ref(DEFAULT_STANDARD_DEVIATION);
+  const randStdDevZ = ref(DEFAULT_STANDARD_DEVIATION);
 
   function setSourceToDetectorDistance(value: number) {
     sourceToDetectorDistance.value = value;
@@ -76,11 +81,12 @@ const useCArmStore = defineStore('cArm', () => {
       carmAlphaKappa: rotationKappa.value,
       carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
       carmBetaKappa: tiltKappa.value,
-      carmPushPull: randomizeX.value ? undefined : translation.value[0],
-      carmHeadFootTranslation: randomizeZ.value
-        ? undefined
-        : translation.value[2],
-      carmRaiseLower: randomizeY.value ? undefined : translation.value[1],
+      carmPushPullTranslation: translation.value[0],
+      carmRaiseLowerTranslation: translation.value[1],
+      carmHeadFootTranslation: translation.value[2],
+      carmPushPullStdDev: randomizeX.value ? randStdDevX.value : undefined,
+      carmRaiseLowerStdDev: randomizeY.value ? randStdDevY.value : undefined,
+      carmHeadFootStdDev: randomizeZ.value ? randStdDevZ.value : undefined,
       sourceToDetectorDistance: sourceToDetectorDistance.value,
       numSamples: numberOfSamples.value || 100,
     };
@@ -99,6 +105,9 @@ const useCArmStore = defineStore('cArm', () => {
     randomizeX,
     randomizeY,
     randomizeZ,
+    randStdDevX,
+    randStdDevY,
+    randStdDevZ,
     tilt,
     setTilt,
     tiltKappa,

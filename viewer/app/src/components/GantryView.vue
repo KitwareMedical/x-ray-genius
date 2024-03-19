@@ -77,7 +77,6 @@ watchImmediate([viewId, currentImageID], resetCamera);
         >
           <vtk-base-volume-representation
             :view-id="id"
-            :view-type="type"
             :image-id="currentImageID"
           ></vtk-base-volume-representation>
           <c-arm-model :image-id="currentImageID"></c-arm-model>

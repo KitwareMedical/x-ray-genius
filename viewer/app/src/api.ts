@@ -23,9 +23,12 @@ export interface CArmParameters {
   carmAlphaKappa?: number;
   carmBeta?: number;
   carmBetaKappa?: number;
-  carmPushPull?: number;
+  carmPushPullTranslation?: number;
   carmHeadFootTranslation?: number;
-  carmRaiseLower?: number;
+  carmRaiseLowerTranslation?: number;
+  carmPushPullStdDev?: number;
+  carmHeadFootStdDev?: number;
+  carmRaiseLowerStdDev?: number;
   sourceToDetectorDistance: number;
   numSamples: number;
 }

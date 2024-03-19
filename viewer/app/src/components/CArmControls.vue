@@ -173,14 +173,27 @@ async function submit() {
         class="mt-5"
         label="Left/Right"
         hide-details
+        density="compact"
         @pointerdown="startDrag"
       >
         <template #append>
-          <v-checkbox
-            v-model="store.randomizeX"
-            hide-details
-            label="Randomize"
-          ></v-checkbox>
+          <div class="d-flex flex-column">
+            <v-checkbox
+              v-model="store.randomizeX"
+              hide-details
+              label="Randomize"
+            ></v-checkbox>
+            <v-text-field
+              v-if="store.randomizeX"
+              v-model="store.randStdDevX"
+              label="Std Dev (mm)"
+              type="number"
+              density="compact"
+              hide-details
+              variant="outlined"
+              class="std-dev-editor"
+            ></v-text-field>
+          </div>
         </template>
       </v-slider>
       <v-slider
@@ -190,14 +203,27 @@ async function submit() {
         step="0.01"
         label="Front/Back"
         hide-details
+        density="compact"
         @pointerdown="startDrag"
       >
         <template #append>
-          <v-checkbox
-            v-model="store.randomizeY"
-            hide-details
-            label="Randomize"
-          ></v-checkbox>
+          <div class="d-flex flex-column">
+            <v-checkbox
+              v-model="store.randomizeY"
+              hide-details
+              label="Randomize"
+            ></v-checkbox>
+            <v-text-field
+              v-if="store.randomizeY"
+              v-model="store.randStdDevY"
+              label="Std Dev (mm)"
+              type="number"
+              density="compact"
+              hide-details
+              variant="outlined"
+              class="std-dev-editor"
+            ></v-text-field>
+          </div>
         </template>
       </v-slider>
       <v-slider
@@ -207,15 +233,27 @@ async function submit() {
         step="0.01"
         label="Head/Foot"
         hide-details
-        :disabled="store.randomizeZ"
+        density="compact"
         @pointerdown="startDrag"
       >
         <template #append>
-          <v-checkbox
-            v-model="store.randomizeZ"
-            hide-details
-            label="Randomize"
-          ></v-checkbox>
+          <div class="d-flex flex-column">
+            <v-checkbox
+              v-model="store.randomizeZ"
+              hide-details
+              label="Randomize"
+            ></v-checkbox>
+            <v-text-field
+              v-if="store.randomizeZ"
+              v-model="store.randStdDevZ"
+              label="Std Dev"
+              type="number"
+              density="compact"
+              hide-details
+              variant="outlined"
+              class="std-dev-editor"
+            ></v-text-field>
+          </div>
         </template>
       </v-slider>
     </div>
@@ -252,5 +290,10 @@ async function submit() {
 
 .label {
   opacity: var(--v-medium-emphasis-opacity);
+}
+
+.std-dev-editor {
+  width: min-content;
+  min-width: 100%;
 }
 </style>
