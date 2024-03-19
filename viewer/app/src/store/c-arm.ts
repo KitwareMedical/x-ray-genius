@@ -3,12 +3,14 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { CArmParameters } from '../api';
 
+const DEFAULT_STANDARD_DEVIATION = 200; // mm
+
 const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
   const rotation = ref(0.5);
   const rotationKappa = ref(100);
-  // [0.0, 1.0] -> dimensions
-  const translation = ref<Vector3>([0.5, 0.5, 0.5]);
+  // [-0.5, 0.5] -> dimensions. [0, 0, 0] is the center.
+  const translation = ref<Vector3>([0, 0, 0]);
   // [0.0, 1.0] -> 2*PI. aka beta
   const tilt = ref(0.5);
   const tiltKappa = ref(100);
@@ -21,6 +23,12 @@ const useCArmStore = defineStore('cArm', () => {
 
   const randomizeRotation = ref(false);
   const randomizeTilt = ref(false);
+  const randomizeX = ref(false);
+  const randomizeY = ref(false);
+  const randomizeZ = ref(false);
+  const randStdDevX = ref(DEFAULT_STANDARD_DEVIATION);
+  const randStdDevY = ref(DEFAULT_STANDARD_DEVIATION);
+  const randStdDevZ = ref(DEFAULT_STANDARD_DEVIATION);
 
   function setSourceToDetectorDistance(value: number) {
     sourceToDetectorDistance.value = value;
@@ -65,17 +73,6 @@ const useCArmStore = defineStore('cArm', () => {
     numberOfSamples.value = value;
   }
 
-  function toApiParameters(): CArmParameters {
-    return {
-      carmAlpha: randomizeRotation.value ? undefined : rotation.value * 2 * Math.PI,
-      carmAlphaKappa: rotationKappa.value,
-      carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
-      carmBetaKappa: tiltKappa.value,
-      sourceToDetectorDistance: sourceToDetectorDistance.value,
-      numSamples: numberOfSamples.value || 100,
-    };
-  }
-
   return {
     rotation,
     setRotation,
@@ -86,6 +83,12 @@ const useCArmStore = defineStore('cArm', () => {
     setXTranslation,
     setYTranslation,
     setZTranslation,
+    randomizeX,
+    randomizeY,
+    randomizeZ,
+    randStdDevX,
+    randStdDevY,
+    randStdDevZ,
     tilt,
     setTilt,
     tiltKappa,
@@ -97,7 +100,6 @@ const useCArmStore = defineStore('cArm', () => {
     setDetectorDiameter,
     numberOfSamples,
     setNumberOfSamples,
-    toApiParameters,
   };
 });
 

@@ -48,15 +48,15 @@ def run_deepdrr_task(session_pk: str) -> None:
     # Initialize the Projector object (allocates GPU memory)
     with Projector(ct, carm=carm) as projector:
         for (
-            push_pull,
+            push_pull_translation,
             head_foot_translation,
-            raise_lower,
+            raise_lower_translation,
             alpha,
             beta,
         ) in zip(
-            param_sampler.carm_push_pull,
+            param_sampler.carm_push_pull_translation,
             param_sampler.carm_head_foot_translation,
-            param_sampler.carm_raise_lower,
+            param_sampler.carm_raise_lower_translation,
             param_sampler.carm_alpha,
             param_sampler.carm_beta,
             strict=True,
@@ -88,9 +88,9 @@ def run_deepdrr_task(session_pk: str) -> None:
                     image=img,
                     thumbnail=thumbnail,
                     session=session,
-                    carm_push_pull=push_pull,
+                    carm_push_pull=push_pull_translation,
                     carm_head_foot_translation=head_foot_translation,
-                    carm_raise_lower=raise_lower,
+                    carm_raise_lower=raise_lower_translation,
                     carm_alpha=alpha,
                     carm_beta=beta,
                 )

@@ -13,9 +13,12 @@ class InputParameters(models.Model):
     )
 
     # Optional parameters; these are randomized if not provided
-    carm_push_pull = models.FloatField(null=True, blank=True)
+    carm_push_pull_translation = models.FloatField(null=True, blank=True)
     carm_head_foot_translation = models.FloatField(null=True, blank=True)
-    carm_raise_lower = models.FloatField(null=True, blank=True)
+    carm_raise_lower_translation = models.FloatField(null=True, blank=True)
+    carm_push_pull_std_dev = models.FloatField(null=True, blank=True)
+    carm_head_foot_std_dev = models.FloatField(null=True, blank=True)
+    carm_raise_lower_std_dev = models.FloatField(null=True, blank=True)
     carm_alpha = models.FloatField(
         null=True, blank=True, help_text='The desired alpha angulation of the C-arm in degrees.'
     )
