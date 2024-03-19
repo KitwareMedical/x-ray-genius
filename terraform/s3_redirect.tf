@@ -18,7 +18,6 @@ resource "aws_s3_bucket_website_configuration" "redirect" {
 
   redirect_all_requests_to {
     host_name = module.django.fqdn
-    protocol  = "http"
   }
 }
 
