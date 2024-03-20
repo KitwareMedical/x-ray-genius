@@ -47,7 +47,9 @@ function resetCamera() {
 }
 
 // hack to call our reset camera after VtkVolumeView's resetCamera
-watchImmediate([viewId, currentImageID], resetCamera);
+watchImmediate([viewId, currentImageID], () => {
+  nextTick(resetCamera);
+});
 </script>
 
 <template>
