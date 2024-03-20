@@ -1,10 +1,11 @@
-import vtkViewProxy from '@kitware/vtk.js/Proxy/Core/ViewProxy';
-import { MaybeRef, computed, unref, watchEffect } from 'vue';
+import { MaybeRef, watchEffect } from 'vue';
 import useCArmStore from '../store/c-arm';
 import { useCArmPosition } from './useCArmModel';
 import { Maybe } from '@/src/types';
 import { storeToRefs } from 'pinia';
 import { View } from '@/src/core/vtk/useVtkView';
+
+const RAD_TO_DEG = 180 / Math.PI;
 
 export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
   const { detectorDiameter, sourceToDetectorDistance } = storeToRefs(
@@ -15,7 +16,7 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
 
   watchEffect(() => {
     const viewAngle =
-      (180 / Math.PI) *
+      RAD_TO_DEG *
       2 *
       Math.atan2(detectorDiameter.value / 2, sourceToDetectorDistance.value);
 
@@ -23,7 +24,7 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
     cam.setPosition(...emitterPos.value);
     cam.setDirectionOfProjection(...detectorDir.value);
     cam.setViewUp(...emitterUpDir.value);
-    cam.setViewAngle(viewAngle * 4);
+    cam.setViewAngle(viewAngle);
 
     view.renderer.resetCameraClippingRange();
     view.requestRender();

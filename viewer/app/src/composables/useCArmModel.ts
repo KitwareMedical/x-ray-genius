@@ -7,13 +7,16 @@ import { Vector3 } from '@kitware/vtk.js/types';
 import { computed } from '@vue/reactivity';
 import { mat4, quat, vec3 } from 'gl-matrix';
 import { MaybeRef, watchEffect, toRef } from 'vue';
-import useCArmStore from '../store/c-arm';
+import useCArmStore, { useCArmPhysicalParameters } from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import { storeToRefs } from 'pinia';
 import { View } from '@/src/core/vtk/useVtkView';
 import vtkOBJReader from '@kitware/vtk.js/IO/Misc/OBJReader';
 
 import CArmObj from '../../assets/c-arm-edited-2.obj?raw';
+
+// approximate distance for an unscaled model (mm)
+const MODEL_SOURCE_TO_DETECTOR_DISTANCE = 1.22;
 
 function useActor(view: View, source: vtkObject) {
   const actor = vtkActor.newInstance();
@@ -45,7 +48,6 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
   const imageCenter = computed(() => {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
   });
-  const dimensions = computed(() => metadata.value.dimensions);
 
   const defaultEmitterDir = [0, -1, 0] as Vector3; // Anterior
   const defaultEmitterUpDir = [0, 0, 1] as Vector3; // Superior
@@ -53,23 +55,8 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
 
   const cArmStore = useCArmStore();
   const { sourceToDetectorDistance, detectorDiameter } = storeToRefs(cArmStore);
-  // rotation angle around Z
-  const armRotation = computed(() => {
-    // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.rotation - 0.5) * (0.9 * 2 * Math.PI);
-  });
-  const armRotationDeg = computed(() => (armRotation.value * 180) / Math.PI);
-  // tilt angle around X
-  const armTilt = computed(() => {
-    // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.tilt - 0.5) * Math.PI;
-  });
-  const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
-  const armTranslation = computed(() => {
-    return cArmStore.translation.map(
-      (v, i) => v * dimensions.value[i]
-    ) as Vector3;
-  });
+  const { armTranslation, armRotation, armRotationDeg, armTilt, armTiltDeg } =
+    useCArmPhysicalParameters(imageID);
 
   // origin -> emitter
   const emitterDir = computed(() => {
@@ -135,7 +122,7 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
 
   const { centerPos, armTilt, armRotation } = useCArmPosition(imageID);
 
-  const { detectorDiameter } = storeToRefs(useCArmStore());
+  const { sourceToDetectorDistance } = storeToRefs(useCArmStore());
 
   const { metadata } = useImage(imageID);
   const imageCenter = computed(() =>
@@ -160,8 +147,10 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   });
 
   watchEffect(() => {
-    const size = detectorDiameter.value * 1.5;
-    actor.setScale(size, size, size);
+    const size =
+      sourceToDetectorDistance.value / MODEL_SOURCE_TO_DETECTOR_DISTANCE;
+    // flip Y axis
+    actor.setScale(size, -size, size);
 
     const mm = mat4.create();
     // rotate Z, then X

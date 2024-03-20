@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import CArmDial from './CArmDial.vue';
-import useCArmStore from '../store/c-arm';
+import useCArmStore, { useCArmPhysicalParameters } from '../store/c-arm';
 import { computed } from 'vue';
 import useViewAnimationStore from '@/src/store/view-animation';
 import { useEventListener } from '@vueuse/core';
 import { exportApiParameters, postCArmParameters } from '../api';
 import { useLoadingState } from '../utils/useLoadingState';
+import { useCurrentImage } from '@/src/composables/useCurrentImage';
 
 const store = useCArmStore();
 const tilt = computed({
@@ -38,7 +39,7 @@ const zTranslation = computed({
     store.setZTranslation(v);
   },
 });
-const dialPosition = computed({
+const rotation = computed({
   get: () => store.rotation,
   set: (v) => {
     store.setRotation(v);
@@ -56,6 +57,13 @@ const numberOfSamples = computed({
     store.setNumberOfSamples(v);
   },
 });
+
+const { currentImageID } = useCurrentImage();
+const {
+  armTranslation: physicalTranslation,
+  armRotationDeg,
+  armTiltDeg,
+} = useCArmPhysicalParameters(currentImageID);
 
 const viewAnimationStore = useViewAnimationStore();
 const animationKey = Symbol('CArmControls');
@@ -94,13 +102,16 @@ async function submit() {
       <v-row>
         <v-col cols="6">
           <c-arm-dial
-            v-model="dialPosition"
+            v-model="rotation"
             :size="200"
             @start-drag="startDrag"
             @end-drag="endDrag"
             :disabled="store.randomizeRotation"
           ></c-arm-dial>
-          <div class="text-center label mt-n8">Rotation (Rainbow)</div>
+          <div class="text-center label mt-n8 d-flex flex-column align-center">
+            <div>{{ armRotationDeg.toFixed(2) }}˚</div>
+            <div>Rotation (Rainbow)</div>
+          </div>
           <v-checkbox v-model="store.randomizeRotation" class="mt-3">
             <template v-slot:label>
               <span class="mr-2">Randomize Rotation (alpha)</span>
@@ -134,7 +145,10 @@ async function submit() {
             @end-drag="endDrag"
             :disabled="store.randomizeTilt"
           ></c-arm-dial>
-          <div class="text-center label mt-n8">Tilt (Head/Foot)</div>
+          <div class="text-center label mt-n8 d-flex flex-column align-center">
+            <div>{{ armTiltDeg.toFixed(2) }}˚</div>
+            <div>Tilt (Head/Foot)</div>
+          </div>
           <v-checkbox v-model="store.randomizeTilt" class="mt-3">
             <template v-slot:label>
               <span class="mr-2">Randomize Tilt</span>
@@ -171,11 +185,17 @@ async function submit() {
         max="0.5"
         step="0.001"
         class="mt-5"
-        label="Left/Right"
         hide-details
         density="compact"
+        :disabled="!currentImageID"
         @pointerdown="startDrag"
       >
+        <template #label>
+          <v-label class="d-flex flex-column align-center">
+            <div>Left/Right</div>
+            <div>{{ physicalTranslation[0].toFixed(1) }}mm</div>
+          </v-label>
+        </template>
         <template #append>
           <div class="d-flex flex-column" @pointerdown.stop>
             <v-checkbox
@@ -201,11 +221,17 @@ async function submit() {
         min="-0.5"
         max="0.5"
         step="0.001"
-        label="Front/Back"
         hide-details
         density="compact"
+        :disabled="!currentImageID"
         @pointerdown="startDrag"
       >
+        <template #label>
+          <v-label class="d-flex flex-column align-center">
+            <div>Up/Down</div>
+            <div>{{ physicalTranslation[1].toFixed(1) }}mm</div>
+          </v-label>
+        </template>
         <template #append>
           <div class="d-flex flex-column" @pointerdown.stop>
             <v-checkbox
@@ -231,11 +257,17 @@ async function submit() {
         min="-0.5"
         max="0.5"
         step="0.001"
-        label="Head/Foot"
         hide-details
         density="compact"
+        :disabled="!currentImageID"
         @pointerdown="startDrag"
       >
+        <template #label>
+          <v-label class="d-flex flex-column align-center">
+            <div>Foot/Head</div>
+            <div>{{ physicalTranslation[2].toFixed(1) }}mm</div>
+          </v-label>
+        </template>
         <template #append>
           <div class="d-flex flex-column" @pointerdown.stop>
             <v-checkbox

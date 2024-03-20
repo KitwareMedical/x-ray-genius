@@ -1,9 +1,14 @@
 import { Vector3 } from '@kitware/vtk.js/types';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { CArmParameters } from '../api';
+import { ref, MaybeRef, computed } from 'vue';
+import { Maybe } from '@/src/types';
+import { useImage } from '@/src/composables/useCurrentImage';
 
-const DEFAULT_STANDARD_DEVIATION = 200; // mm
+const DEFAULT_STANDARD_DEVIATION = 20; // mm
+// 9" I.I. Standard C-arm from the OEC Elite doc
+const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 787; // mm
+const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * 25.4; // mm
+const DEFAULT_NUMBER_OF_SAMPLES = 100;
 
 const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
@@ -15,11 +20,11 @@ const useCArmStore = defineStore('cArm', () => {
   const tilt = ref(0.5);
   const tiltKappa = ref(100);
   // mm
-  const sourceToDetectorDistance = ref(1000);
+  const sourceToDetectorDistance = ref(DEFAULT_SOURCE_TO_DETECTOR_DISTANCE);
   // mm
-  const detectorDiameter = ref(304);
+  const detectorDiameter = ref(DEFAULT_DETECTOR_DIAMETER);
 
-  const numberOfSamples = ref(100);
+  const numberOfSamples = ref(DEFAULT_NUMBER_OF_SAMPLES);
 
   const randomizeRotation = ref(false);
   const randomizeTilt = ref(false);
@@ -102,5 +107,38 @@ const useCArmStore = defineStore('cArm', () => {
     setNumberOfSamples,
   };
 });
+
+export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
+  const cArmStore = useCArmStore();
+  const { metadata } = useImage(imageId);
+  const dimensions = computed(() => metadata.value.dimensions);
+  const spacing = computed(() => metadata.value.spacing);
+  const armTranslation = computed(() => {
+    return cArmStore.translation.map(
+      (v, i) => v * dimensions.value[i] * spacing.value[i]
+    ) as Vector3;
+  });
+
+  // rotation angle around Z
+  const armRotation = computed(() => {
+    // map [0,1] to [-0.5,0.5] * range
+    return (cArmStore.rotation - 0.5) * (0.9 * 2 * Math.PI);
+  });
+  const armRotationDeg = computed(() => (armRotation.value * 180) / Math.PI);
+  // tilt angle around X
+  const armTilt = computed(() => {
+    // map [0,1] to [-0.5,0.5] * range
+    return (cArmStore.tilt - 0.5) * Math.PI;
+  });
+  const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
+
+  return {
+    armTranslation,
+    armRotation,
+    armRotationDeg,
+    armTilt,
+    armTiltDeg,
+  };
+}
 
 export default useCArmStore;
