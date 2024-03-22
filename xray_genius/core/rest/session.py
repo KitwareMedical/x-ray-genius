@@ -1,4 +1,5 @@
-from django.http import Http404, HttpRequest
+from django.db import transaction
+from django.http import Http404, HttpRequest, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from ninja import ModelSchema, Router
 from pydantic.types import UUID4
@@ -31,12 +32,18 @@ class ParametersRequestSchema(ModelSchema):
 def set_parameters(
     request: HttpRequest, session_pk: UUID4, parameter_data: ParametersRequestSchema
 ):
-    session = get_object_or_404(Session, pk=session_pk)
+    with transaction.atomic():
+        session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
 
-    if session.owner != request.user:
-        raise Http404()
+        if session.owner != request.user:
+            raise Http404()
 
-    InputParameters.objects.create(session=session, **parameter_data.dict())
+        if session.status not in (Session.Status.NOT_STARTED, Session.Status.CANCELLED):
+            return HttpResponseBadRequest('Session is not in a valid state to update parameters')
+
+        InputParameters.objects.update_or_create(session=session, defaults=parameter_data.dict())
+        session.status = Session.Status.NOT_STARTED
+        session.save()
 
     # TODO: what do we return to VolView here?
     return 200
