@@ -193,7 +193,7 @@ async function submit() {
         <template #label>
           <v-label class="d-flex flex-column align-center">
             <div>Left/Right</div>
-            <div>{{ physicalTranslation[0].toFixed(1) }}mm</div>
+            <div>{{ (physicalTranslation[0] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
         <template #append>
@@ -229,7 +229,7 @@ async function submit() {
         <template #label>
           <v-label class="d-flex flex-column align-center">
             <div>Up/Down</div>
-            <div>{{ physicalTranslation[1].toFixed(1) }}mm</div>
+            <div>{{ (physicalTranslation[1] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
         <template #append>
@@ -265,7 +265,7 @@ async function submit() {
         <template #label>
           <v-label class="d-flex flex-column align-center">
             <div>Foot/Head</div>
-            <div>{{ physicalTranslation[2].toFixed(1) }}mm</div>
+            <div>{{ (physicalTranslation[2] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
         <template #append>
@@ -278,7 +278,7 @@ async function submit() {
             <v-text-field
               v-if="store.randomizeZ"
               v-model="store.randStdDevZ"
-              label="Std Dev"
+              label="Std Dev (mm)"
               type="number"
               density="compact"
               hide-details
