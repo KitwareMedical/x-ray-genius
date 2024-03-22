@@ -7,6 +7,7 @@ import { useEventListener } from '@vueuse/core';
 import { exportApiParameters, postCArmParameters } from '../api';
 import { useLoadingState } from '../utils/useLoadingState';
 import { useCurrentImage } from '@/src/composables/useCurrentImage';
+import ScaledNumberField from './ScaledNumberField.vue';
 
 const store = useCArmStore();
 const tilt = computed({
@@ -207,16 +208,18 @@ async function submit() {
               hide-details
               label="Randomize"
             ></v-checkbox>
-            <v-text-field
+            <scaled-number-field
               v-if="store.randomizeX"
               v-model="store.randStdDevX"
-              label="Std Dev (mm)"
+              :scale-factor="10"
+              label="Std Dev (cm)"
               type="number"
               density="compact"
               hide-details
+              step="0.1"
               variant="outlined"
               class="std-dev-editor"
-            ></v-text-field>
+            ></scaled-number-field>
           </div>
         </template>
       </v-slider>
@@ -243,16 +246,18 @@ async function submit() {
               hide-details
               label="Randomize"
             ></v-checkbox>
-            <v-text-field
+            <scaled-number-field
               v-if="store.randomizeY"
               v-model="store.randStdDevY"
-              label="Std Dev (mm)"
+              :scale-factor="10"
+              label="Std Dev (cm)"
               type="number"
               density="compact"
               hide-details
+              step="0.1"
               variant="outlined"
               class="std-dev-editor"
-            ></v-text-field>
+            ></scaled-number-field>
           </div>
         </template>
       </v-slider>
@@ -279,16 +284,17 @@ async function submit() {
               hide-details
               label="Randomize"
             ></v-checkbox>
-            <v-text-field
+            <scaled-number-field
               v-if="store.randomizeZ"
               v-model="store.randStdDevZ"
-              label="Std Dev (mm)"
-              type="number"
+              :scale-factor="10"
+              label="Std Dev (cm)"
               density="compact"
               hide-details
+              step="0.1"
               variant="outlined"
               class="std-dev-editor"
-            ></v-text-field>
+            ></scaled-number-field>
           </div>
         </template>
       </v-slider>
