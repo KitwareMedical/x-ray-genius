@@ -7,6 +7,7 @@ import { useEventListener } from '@vueuse/core';
 import { exportApiParameters, postCArmParameters } from '../api';
 import { useLoadingState } from '../utils/useLoadingState';
 import { useCurrentImage } from '@/src/composables/useCurrentImage';
+import ScaledNumberField from './ScaledNumberField.vue';
 
 const store = useCArmStore();
 const tilt = computed({
@@ -15,10 +16,10 @@ const tilt = computed({
     store.setTilt(v);
   },
 });
-const tiltKappa = computed({
-  get: () => store.tiltKappa,
+const tiltKappaStdDev = computed({
+  get: () => store.tiltKappaStdDev,
   set: (v) => {
-    store.setTiltKappa(v);
+    store.setTiltKappaStdDev(v);
   },
 });
 const xTranslation = computed({
@@ -45,10 +46,10 @@ const rotation = computed({
     store.setRotation(v);
   },
 });
-const rotationKappa = computed({
-  get: () => store.rotationKappa,
+const rotationKappaStdDev = computed({
+  get: () => store.rotationKappaStdDev,
   set: (v) => {
-    store.setRotationKappa(v);
+    store.setRotationKappaStdDev(v);
   },
 });
 const numberOfSamples = computed({
@@ -131,10 +132,12 @@ async function submit() {
             </template>
           </v-checkbox>
           <v-text-field
-            v-model="rotationKappa"
+            v-model="rotationKappaStdDev"
             outlined
             type="number"
-            label="Rotation Concentration"
+            step="0.1"
+            label="Rotation Std Dev"
+            suffix="deg"
           ></v-text-field>
         </v-col>
         <v-col cols="6">
@@ -168,10 +171,12 @@ async function submit() {
             </template>
           </v-checkbox>
           <v-text-field
-            v-model="tiltKappa"
+            v-model="tiltKappaStdDev"
             outlined
             type="number"
-            label="Tilt Concentration"
+            step="0.1"
+            label="Tilt Std Dev"
+            suffix="deg"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -193,7 +198,7 @@ async function submit() {
         <template #label>
           <v-label class="d-flex flex-column align-center">
             <div>Left/Right</div>
-            <div>{{ physicalTranslation[0].toFixed(1) }}mm</div>
+            <div>{{ (physicalTranslation[0] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
         <template #append>
@@ -203,16 +208,18 @@ async function submit() {
               hide-details
               label="Randomize"
             ></v-checkbox>
-            <v-text-field
+            <scaled-number-field
               v-if="store.randomizeX"
               v-model="store.randStdDevX"
-              label="Std Dev (mm)"
+              :scale-factor="10"
+              label="Std Dev (cm)"
               type="number"
               density="compact"
               hide-details
+              step="0.1"
               variant="outlined"
               class="std-dev-editor"
-            ></v-text-field>
+            ></scaled-number-field>
           </div>
         </template>
       </v-slider>
@@ -229,7 +236,7 @@ async function submit() {
         <template #label>
           <v-label class="d-flex flex-column align-center">
             <div>Up/Down</div>
-            <div>{{ physicalTranslation[1].toFixed(1) }}mm</div>
+            <div>{{ (physicalTranslation[1] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
         <template #append>
@@ -239,16 +246,18 @@ async function submit() {
               hide-details
               label="Randomize"
             ></v-checkbox>
-            <v-text-field
+            <scaled-number-field
               v-if="store.randomizeY"
               v-model="store.randStdDevY"
-              label="Std Dev (mm)"
+              :scale-factor="10"
+              label="Std Dev (cm)"
               type="number"
               density="compact"
               hide-details
+              step="0.1"
               variant="outlined"
               class="std-dev-editor"
-            ></v-text-field>
+            ></scaled-number-field>
           </div>
         </template>
       </v-slider>
@@ -265,7 +274,7 @@ async function submit() {
         <template #label>
           <v-label class="d-flex flex-column align-center">
             <div>Foot/Head</div>
-            <div>{{ physicalTranslation[2].toFixed(1) }}mm</div>
+            <div>{{ (physicalTranslation[2] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
         <template #append>
@@ -275,16 +284,17 @@ async function submit() {
               hide-details
               label="Randomize"
             ></v-checkbox>
-            <v-text-field
+            <scaled-number-field
               v-if="store.randomizeZ"
               v-model="store.randStdDevZ"
-              label="Std Dev"
-              type="number"
+              :scale-factor="10"
+              label="Std Dev (cm)"
               density="compact"
               hide-details
+              step="0.1"
               variant="outlined"
               class="std-dev-editor"
-            ></v-text-field>
+            ></scaled-number-field>
           </div>
         </template>
       </v-slider>
