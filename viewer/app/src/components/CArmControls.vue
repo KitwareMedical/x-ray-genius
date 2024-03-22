@@ -15,10 +15,10 @@ const tilt = computed({
     store.setTilt(v);
   },
 });
-const tiltKappa = computed({
-  get: () => store.tiltKappa,
+const tiltKappaStdDev = computed({
+  get: () => store.tiltKappaStdDev,
   set: (v) => {
-    store.setTiltKappa(v);
+    store.setTiltKappaStdDev(v);
   },
 });
 const xTranslation = computed({
@@ -45,10 +45,10 @@ const rotation = computed({
     store.setRotation(v);
   },
 });
-const rotationKappa = computed({
-  get: () => store.rotationKappa,
+const rotationKappaStdDev = computed({
+  get: () => store.rotationKappaStdDev,
   set: (v) => {
-    store.setRotationKappa(v);
+    store.setRotationKappaStdDev(v);
   },
 });
 const numberOfSamples = computed({
@@ -131,10 +131,12 @@ async function submit() {
             </template>
           </v-checkbox>
           <v-text-field
-            v-model="rotationKappa"
+            v-model="rotationKappaStdDev"
             outlined
             type="number"
-            label="Rotation Concentration"
+            step="0.1"
+            label="Rotation Conc. Std Dev"
+            suffix="deg"
           ></v-text-field>
         </v-col>
         <v-col cols="6">
@@ -168,10 +170,12 @@ async function submit() {
             </template>
           </v-checkbox>
           <v-text-field
-            v-model="tiltKappa"
+            v-model="tiltKappaStdDev"
             outlined
             type="number"
-            label="Tilt Concentration"
+            step="0.1"
+            label="Tilt Concentration Std Dev"
+            suffix="deg"
           ></v-text-field>
         </v-col>
       </v-row>

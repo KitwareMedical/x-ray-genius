@@ -9,16 +9,17 @@ const DEFAULT_STANDARD_DEVIATION = 20; // mm
 const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 787; // mm
 const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * 25.4; // mm
 const DEFAULT_NUMBER_OF_SAMPLES = 100;
+const DEFAULT_KAPPA_STD_DEV = 5; // deg
 
 const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
   const rotation = ref(0.5);
-  const rotationKappa = ref(100);
+  const rotationKappaStdDev = ref(DEFAULT_KAPPA_STD_DEV);
   // [-0.5, 0.5] -> dimensions. [0, 0, 0] is the center.
   const translation = ref<Vector3>([0, 0, 0]);
   // [0.0, 1.0] -> 2*PI. aka beta
   const tilt = ref(0.5);
-  const tiltKappa = ref(100);
+  const tiltKappaStdDev = ref(DEFAULT_KAPPA_STD_DEV);
   // mm
   const sourceToDetectorDistance = ref(DEFAULT_SOURCE_TO_DETECTOR_DISTANCE);
   // mm
@@ -47,8 +48,8 @@ const useCArmStore = defineStore('cArm', () => {
     rotation.value = value;
   }
 
-  function setRotationKappa(value: number) {
-    rotationKappa.value = value;
+  function setRotationKappaStdDev(value: number) {
+    rotationKappaStdDev.value = value;
   }
 
   function setXTranslation(x: number) {
@@ -70,8 +71,8 @@ const useCArmStore = defineStore('cArm', () => {
     tilt.value = value;
   }
 
-  function setTiltKappa(value: number) {
-    tiltKappa.value = value;
+  function setTiltKappaStdDev(value: number) {
+    tiltKappaStdDev.value = value;
   }
 
   function setNumberOfSamples(value: number) {
@@ -81,8 +82,8 @@ const useCArmStore = defineStore('cArm', () => {
   return {
     rotation,
     setRotation,
-    rotationKappa,
-    setRotationKappa,
+    rotationKappaStdDev,
+    setRotationKappaStdDev,
     randomizeRotation,
     translation,
     setXTranslation,
@@ -96,8 +97,8 @@ const useCArmStore = defineStore('cArm', () => {
     randStdDevZ,
     tilt,
     setTilt,
-    tiltKappa,
-    setTiltKappa,
+    tiltKappaStdDev,
+    setTiltKappaStdDev,
     randomizeTilt,
     sourceToDetectorDistance,
     setSourceToDetectorDistance,

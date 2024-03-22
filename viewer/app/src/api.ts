@@ -48,14 +48,18 @@ function snakeifyObject(obj: Record<string, any>) {
   );
 }
 
+function kappaStdDevToConcentration(sdev: number) {
+  return 1 / ((Math.PI / 180) * sdev) ** 2;
+}
+
 export function exportApiParameters(): CArmParameters {
   const {
     randomizeRotation,
     rotation,
-    rotationKappa,
+    rotationKappaStdDev,
     randomizeTilt,
     tilt,
-    tiltKappa,
+    tiltKappaStdDev,
     translation: relativeTranslation,
     randomizeX,
     randomizeY,
@@ -77,9 +81,9 @@ export function exportApiParameters(): CArmParameters {
     carmAlpha: randomizeRotation.value
       ? undefined
       : rotation.value * 2 * Math.PI,
-    carmAlphaKappa: rotationKappa.value,
+    carmAlphaKappa: kappaStdDevToConcentration(rotationKappaStdDev.value),
     carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
-    carmBetaKappa: tiltKappa.value,
+    carmBetaKappa: kappaStdDevToConcentration(tiltKappaStdDev.value),
     carmPushPullTranslation: translation.value[0],
     carmRaiseLowerTranslation: translation.value[1],
     carmHeadFootTranslation: translation.value[2],
