@@ -136,7 +136,7 @@ async function submit() {
             outlined
             type="number"
             step="0.1"
-            label="Rotation Conc. Std Dev"
+            label="Rotation Std Dev"
             suffix="deg"
           ></v-text-field>
         </v-col>
@@ -175,7 +175,7 @@ async function submit() {
             outlined
             type="number"
             step="0.1"
-            label="Tilt Concentration Std Dev"
+            label="Tilt Std Dev"
             suffix="deg"
           ></v-text-field>
         </v-col>
