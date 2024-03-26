@@ -47,25 +47,31 @@ def run_deepdrr_task(session_pk: str) -> None:
 
     # Initialize the Projector object (allocates GPU memory)
     with Projector(ct, carm=carm) as projector:
-        for (
+        for i, (
             push_pull_translation,
             head_foot_translation,
             raise_lower_translation,
             alpha,
             beta,
-        ) in zip(
-            param_sampler.carm_push_pull_translation,
-            param_sampler.carm_head_foot_translation,
-            param_sampler.carm_raise_lower_translation,
-            param_sampler.carm_alpha,
-            param_sampler.carm_beta,
-            strict=True,
+        ) in enumerate(
+            zip(
+                param_sampler.carm_push_pull_translation,
+                param_sampler.carm_head_foot_translation,
+                param_sampler.carm_raise_lower_translation,
+                param_sampler.carm_alpha,
+                param_sampler.carm_beta,
+                strict=True,
+            )
         ):
             session.refresh_from_db(fields=['status'])
             if session.status == Session.Status.CANCELLED:
                 logger.info(f'Session {session_pk} was cancelled')
                 OutputImage.objects.filter(session=session).delete()
                 return
+
+            logger.info(
+                f'Running DeepDRR for session {session_pk} (Image {i + 1}/{param_sampler.samples})'
+            )
 
             carm.move_to(alpha=alpha, beta=beta, degrees=True)
 
