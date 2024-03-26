@@ -1,4 +1,5 @@
 [submodule "viewer/core/VolView"]
 	path = viewer/core/VolView
 	url = https://github.com/Kitware/VolView.git
+	branch = drop-proxies
 	revision = 68ac262
