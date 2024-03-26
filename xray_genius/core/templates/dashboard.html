@@ -73,7 +73,7 @@
                   </td>
                   <td>
                     {% if session.status == SessionStatus.PROCESSED %}
-                      <button class="bg-primary text-white py-1 px-2 rounded mr-2" onclick="my_modal_{{ forloop.counter }}.showModal()">View Batch Results <i class="ri-side-bar-line"></i></button>
+                      <button class="btn btn-primary btn-sm text-white" onclick="my_modal_{{ forloop.counter }}.showModal()">View Batch Results <i class="ri-side-bar-line"></i></button>
                       <dialog id="my_modal_{{ forloop.counter }}" class="modal">
                         <div class="modal-box max-w-screen-xl mx-auto">
                           <div class="grid grid-cols-5 gap-4">
@@ -124,7 +124,7 @@
                             href="{{ session.output_images_zip.url }}"
                           {% endif %}
                         >
-                          <button class="bg-primary text-white py-1 px-2 rounded mr-2 {% if not session.output_images_zip %}disabled bg-base-300{% endif %}">
+                          <button class="btn btn-primary btn-sm text-white {% if not session.output_images_zip %}disabled bg-base-300{% endif %}">
                             Export <i class="ri-download-line"></i>
                           </button>
                         </a>
@@ -156,10 +156,27 @@
                         method="post"
                       >
                         {% csrf_token %}
-                        <button class="btn btn-xs btn-error">
+                        <button class="btn btn-sm btn-error">
                           Cancel <i class="ri-close-line"></i>
                         </button>
                       </form>
+                    {% elif session.status == SessionStatus.CANCELLED %}
+                      <div class="flex">
+                        <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
+                          <button class="btn btn-sm btn-info mr-1">
+                            Update Parameters <i class="ri-dropdown-list"></i>
+                          </button>
+                        </a>
+                        <form
+                          action="{% url 'initiate-batch-run' session.pk %}"
+                          method="post"
+                        >
+                          {% csrf_token %}
+                          <button class="btn btn-sm btn-primary">
+                            Run <i class="ri-play-line"></i>
+                          </button>
+                        </form>
+                      </div>
                     {% endif %}
                   </td>
                 </tr>
