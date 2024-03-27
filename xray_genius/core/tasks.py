@@ -40,8 +40,13 @@ def run_deepdrr_task(session_pk: str) -> None:
             ct = Volume.from_nifti(dest)
 
     source_to_detector_distance: float = session.parameters.source_to_detector_distance
+    detector_diameter: float = session.parameters.detector_diameter
 
-    carm = MobileCArm(source_to_detector_distance=source_to_detector_distance)
+    carm = MobileCArm(
+        source_to_detector_distance=source_to_detector_distance,
+        sensor_height=detector_diameter,
+        sensor_width=detector_diameter,
+    )
 
     param_sampler = ParameterSampler(session.parameters)
 

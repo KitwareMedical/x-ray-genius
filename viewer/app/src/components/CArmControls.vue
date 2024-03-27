@@ -58,6 +58,19 @@ const numberOfSamples = computed({
     store.setNumberOfSamples(v);
   },
 });
+const sourceToDetectorDistance = computed({
+  get: () => store.sourceToDetectorDistance,
+  set: (v) => {
+    store.setSourceToDetectorDistance(v);
+  },
+});
+
+const detectorDiameter = computed({
+  get: () => store.detectorDiameter,
+  set: (v) => {
+    store.setDetectorDiameter(v);
+  },
+});
 
 const { currentImageID } = useCurrentImage();
 const {
@@ -311,14 +324,36 @@ async function submit() {
         label="Number of Samples"
         v-model="numberOfSamples"
         outlined
+        type="number"
       ></v-text-field>
+      <v-row>
+        <v-col cols="6">
+          <v-text-field
+            label="Source to detector distance"
+            type="number"
+            v-model="sourceToDetectorDistance"
+            outlined
+            suffix="mm"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            label="Detector Diameter"
+            type="number"
+            v-model="detectorDiameter"
+            outlined
+            suffix="mm"
+          ></v-text-field>
+        </v-col>
+      </v-row>
       <v-btn
         variant="tonal"
         color="secondary"
         :loading="submissionLoading"
         @click="submit"
-        >Submit</v-btn
       >
+        Submit
+      </v-btn>
     </div>
   </div>
 </template>

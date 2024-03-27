@@ -41,3 +41,5 @@ class InputParameters(models.Model):
         ],
         help_text='The number of x-rays to generate with DeepDRR.',
     )
+    # The default is the default sensor width/height from deepdrr.device.mobile_carm.MobileCArm
+    detector_diameter = models.FloatField(help_text='The detector diameter in mm.', default=1536)

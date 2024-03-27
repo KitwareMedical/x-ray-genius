@@ -4,10 +4,11 @@ import { ref, MaybeRef, computed } from 'vue';
 import { Maybe } from '@/src/types';
 import { useImage } from '@/src/composables/useCurrentImage';
 
+const INCHES_TO_MM = 25.4;
 const DEFAULT_STANDARD_DEVIATION = 20; // mm
 // 9" I.I. Standard C-arm from the OEC Elite doc
-const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 787; // mm
-const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * 25.4; // mm
+const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 1000; // mm
+const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * INCHES_TO_MM; // mm
 const DEFAULT_NUMBER_OF_SAMPLES = 100;
 const DEFAULT_KAPPA_STD_DEV = 5; // deg
 
@@ -116,20 +117,25 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   const spacing = computed(() => metadata.value.spacing);
   const armTranslation = computed(() => {
     return cArmStore.translation.map(
-      (v, i) => v * dimensions.value[i] * spacing.value[i]
+      (v, i) =>
+        v *
+        Math.max(
+          dimensions.value[i] * spacing.value[i],
+          cArmStore.sourceToDetectorDistance
+        )
     ) as Vector3;
   });
 
   // rotation angle around Z
   const armRotation = computed(() => {
     // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.rotation - 0.5) * (0.9 * 2 * Math.PI);
+    return (cArmStore.rotation - 0.5) * 2 * Math.PI;
   });
   const armRotationDeg = computed(() => (armRotation.value * 180) / Math.PI);
   // tilt angle around X
   const armTilt = computed(() => {
     // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.tilt - 0.5) * Math.PI;
+    return (cArmStore.tilt - 0.5) * 2 * Math.PI;
   });
   const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
 

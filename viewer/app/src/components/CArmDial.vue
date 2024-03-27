@@ -25,7 +25,7 @@ const svg = ref<SVGElement | undefined>();
 const radius = computed(() => size.value / 4);
 const cx = computed(() => size.value / 2);
 const cy = computed(() => size.value / 2);
-const gap = computed(() => size.value / 4);
+const gap = computed(() => 0.01);
 const gapAngle = computed(() => 2 * Math.asin(gap.value / 2 / radius.value)); // rad
 
 // coordinate system starts at top-left with +y going down
