@@ -34,6 +34,7 @@ export interface CArmParameters {
   carmHeadFootStdDev?: number;
   carmRaiseLowerStdDev?: number;
   sourceToDetectorDistance: number;
+  detectorDiameter: number;
   numSamples: number;
 }
 
@@ -69,6 +70,7 @@ export function exportApiParameters(): CArmParameters {
     randStdDevZ,
     sourceToDetectorDistance,
     numberOfSamples,
+    detectorDiameter,
   } = storeToRefs(useCArmStore());
 
   const { currentImageMetadata } = useCurrentImage();
@@ -91,6 +93,7 @@ export function exportApiParameters(): CArmParameters {
     carmRaiseLowerStdDev: randomizeY.value ? randStdDevY.value : undefined,
     carmHeadFootStdDev: randomizeZ.value ? randStdDevZ.value : undefined,
     sourceToDetectorDistance: sourceToDetectorDistance.value,
+    detectorDiameter: detectorDiameter.value,
     numSamples: numberOfSamples.value || 100,
   };
 }
