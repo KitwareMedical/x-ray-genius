@@ -3,7 +3,7 @@ import useCArmStore from '../store/c-arm';
 import { useCArmPosition } from './useCArmModel';
 import { Maybe } from '@/src/types';
 import { storeToRefs } from 'pinia';
-import { View } from '@/src/core/vtk/useVtkView';
+import { View } from '@/src/core/vtk/types';
 
 const RAD_TO_DEG = 180 / Math.PI;
 

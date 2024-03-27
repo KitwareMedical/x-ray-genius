@@ -10,7 +10,7 @@ import { MaybeRef, watchEffect, toRef } from 'vue';
 import useCArmStore, { useCArmPhysicalParameters } from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
 import { storeToRefs } from 'pinia';
-import { View } from '@/src/core/vtk/useVtkView';
+import { View } from '@/src/core/vtk/types';
 import vtkOBJReader from '@kitware/vtk.js/IO/Misc/OBJReader';
 
 import CArmObj from '../../assets/c-arm-edited-2.obj?raw';
