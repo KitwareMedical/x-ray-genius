@@ -129,13 +129,13 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   // rotation angle around Z
   const armRotation = computed(() => {
     // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.rotation - 0.5) * (0.9 * 2 * Math.PI);
+    return (cArmStore.rotation - 0.5) * 2 * Math.PI;
   });
   const armRotationDeg = computed(() => (armRotation.value * 180) / Math.PI);
   // tilt angle around X
   const armTilt = computed(() => {
     // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.tilt - 0.5) * Math.PI;
+    return (cArmStore.tilt - 0.5) * 2 * Math.PI;
   });
   const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
 
