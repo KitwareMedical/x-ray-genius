@@ -49,7 +49,9 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
   });
 
-  const defaultEmitterDir = [0, -1, 0] as Vector3; // Anterior
+  const defaultEmitterDir = [0, 1, 0] as Vector3; // Posterior
+  const defaultDetectorDir = defaultEmitterDir.map((v) => -v) as Vector3;
+  const defaultDetectorUpDir = [0, 0, 1] as Vector3; // Superior
   const defaultEmitterUpDir = [0, 0, 1] as Vector3; // Superior
   const defaultAnchorDir = [-1, 0, 0] as Vector3; // Right
 
@@ -67,9 +69,9 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     return vec as Vector3;
   });
 
-  const emitterUpDir = computed(() => {
+  const detectorUpDir = computed(() => {
     const vec = vec3.create();
-    vec3.copy(vec, defaultEmitterUpDir);
+    vec3.copy(vec, defaultDetectorUpDir);
     vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
     return vec as Vector3;
   });
@@ -111,7 +113,7 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     detectorDiameter,
     detectorDir,
     emitterDir,
-    emitterUpDir,
+    detectorUpDir,
     anchorDir: toRef(defaultAnchorDir),
   };
 }

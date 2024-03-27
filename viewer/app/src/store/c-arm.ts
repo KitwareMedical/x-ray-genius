@@ -116,7 +116,12 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   const spacing = computed(() => metadata.value.spacing);
   const armTranslation = computed(() => {
     return cArmStore.translation.map(
-      (v, i) => v * dimensions.value[i] * spacing.value[i]
+      (v, i) =>
+        v *
+        Math.max(
+          dimensions.value[i] * spacing.value[i],
+          cArmStore.sourceToDetectorDistance
+        )
     ) as Vector3;
   });
 
