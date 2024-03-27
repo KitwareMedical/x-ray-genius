@@ -1,6 +1,6 @@
 import { hyphenate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import useCArmStore from './store/c-arm';
+import useCArmStore, { useCArmPhysicalParameters } from './store/c-arm';
 import { useCurrentImage, useImage } from '@/src/composables/useCurrentImage';
 import { computed } from 'vue';
 
@@ -73,22 +73,23 @@ export function exportApiParameters(): CArmParameters {
     detectorDiameter,
   } = storeToRefs(useCArmStore());
 
-  const { currentImageMetadata } = useCurrentImage();
+  const { currentImageID, currentImageMetadata } = useCurrentImage();
   const dimensions = computed(() => currentImageMetadata.value.dimensions);
   const translation = computed(() => {
     return relativeTranslation.value.map((v, i) => v * dimensions.value[i]);
   });
 
+  const { armTranslation, armRotation, armTilt } =
+    useCArmPhysicalParameters(currentImageID);
+
   return {
-    carmAlpha: randomizeRotation.value
-      ? undefined
-      : rotation.value * 2 * Math.PI,
+    carmAlpha: randomizeRotation.value ? undefined : armRotation.value,
     carmAlphaKappa: kappaStdDevToConcentration(rotationKappaStdDev.value),
-    carmBeta: randomizeTilt.value ? undefined : tilt.value * 2 * Math.PI,
+    carmBeta: randomizeTilt.value ? undefined : armTilt.value,
     carmBetaKappa: kappaStdDevToConcentration(tiltKappaStdDev.value),
-    carmPushPullTranslation: translation.value[0],
-    carmRaiseLowerTranslation: translation.value[1],
-    carmHeadFootTranslation: translation.value[2],
+    carmPushPullTranslation: armTranslation.value[0],
+    carmRaiseLowerTranslation: armTranslation.value[1],
+    carmHeadFootTranslation: armTranslation.value[2],
     carmPushPullStdDev: randomizeX.value ? randStdDevX.value : undefined,
     carmRaiseLowerStdDev: randomizeY.value ? randStdDevY.value : undefined,
     carmHeadFootStdDev: randomizeZ.value ? randStdDevZ.value : undefined,
