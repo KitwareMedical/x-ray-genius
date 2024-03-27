@@ -4,10 +4,11 @@ import { ref, MaybeRef, computed } from 'vue';
 import { Maybe } from '@/src/types';
 import { useImage } from '@/src/composables/useCurrentImage';
 
+const INCHES_TO_MM = 25.4;
 const DEFAULT_STANDARD_DEVIATION = 20; // mm
 // 9" I.I. Standard C-arm from the OEC Elite doc
-const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 787; // mm
-const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * 25.4; // mm
+const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 1000; // mm
+const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * INCHES_TO_MM; // mm
 const DEFAULT_NUMBER_OF_SAMPLES = 100;
 const DEFAULT_KAPPA_STD_DEV = 5; // deg
 
