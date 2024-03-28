@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from xray_genius.core.models import CTInputFile, OutputImage, Session
+from xray_genius.core.models import CTInputFile, InputParameters, OutputImage, Session
 
 admin.site.site_header = 'X-Ray Genius Admin'
 admin.site.site_title = 'X-Ray Genius Admin'
@@ -16,6 +16,18 @@ class OutputImageAdmin(admin.ModelAdmin):
     pass
 
 
+class SessionInputParametersInline(admin.StackedInline):
+    model = InputParameters
+
+
+class SessionOutputImageInline(admin.TabularInline):
+    model = OutputImage
+
+
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     list_display = ('created', 'owner', 'status')
+    inlines = (
+        SessionInputParametersInline,
+        SessionOutputImageInline,
+    )
