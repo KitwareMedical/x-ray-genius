@@ -11,7 +11,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 
 from .forms import CTInputFileUploadForm
 from .models import Session
-from .tasks import run_deepdrr_task
+from .tasks import delete_session_task, run_deepdrr_task
 
 T = TypeVar('T')
 P = ParamSpec('P')
@@ -82,7 +82,9 @@ def upload_ct_input_file(request: HttpRequest):
 def delete_session(request: HttpRequest, session_pk: str):
     with transaction.atomic():
         session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
-        session.delete()
+        session.status = Session.Status.DELETING
+        session.save()
+    delete_session_task.delay(session_pk)
     return redirect('dashboard')
 
 
