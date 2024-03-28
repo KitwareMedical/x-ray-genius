@@ -76,6 +76,14 @@ def upload_ct_input_file(request: HttpRequest):
 
 
 @permission_check
+def delete_session(request: HttpRequest, session_pk: str):
+    with transaction.atomic():
+        session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
+        session.delete()
+    return redirect('dashboard')
+
+
+@permission_check
 def download_ct_file(request: HttpRequest, session_pk: str):
     session = get_object_or_404(Session, pk=session_pk)
     return redirect(session.input_scan.file.url)
