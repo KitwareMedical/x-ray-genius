@@ -72,98 +72,98 @@
                     </div>
                   </td>
                   <td>
-                    {% if session.status == SessionStatus.PROCESSED %}
-                      <button class="btn btn-primary btn-sm text-white" onclick="my_modal_{{ forloop.counter }}.showModal()">View Batch Results <i class="ri-side-bar-line"></i></button>
-                      <dialog id="my_modal_{{ forloop.counter }}" class="modal">
-                        <div class="modal-box max-w-screen-xl mx-auto">
-                          <div class="grid grid-cols-5 gap-4">
-                            {% for img in session.output_images.all %}
-                              <div class="card bg-base-100 shadow-xl text-sm ma-5">
-                                <figure>
-                                  <img src="{{ img.thumbnail.url }}" />
-                                </figure>
-                                <div class="card-body">
-                                  <p class="text-xs">Source-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}</p>
-                                  <p class="text-xs">
-                                    C-Arm Alpha: {{ img.carm_alpha|floatformat:3 }}&deg;
-                                    {% if session.parameters.carm_alpha == None %}
-                                      (κ = {{ session.parameters.carm_alpha_kappa|floatformat:3 }})
-                                    {% endif %}
-                                  </p>
-                                  <p class="text-xs">
-                                    C-Arm Beta: {{ img.carm_beta|floatformat:3 }}&deg;
-                                    {% if session.parameters.carm_beta == None %}
-                                      (κ = {{ session.parameters.carm_beta_kappa|floatformat:3 }})
-                                    {% endif %}
-                                  </p>
-                                  <a href="{{ img.image.url }}" target="_blank">
-                                    <button class="bg-primary text-white py-1 px-2 rounded mr-2">
-                                      Visualize <i class="ri-eye-line"></i>
-                                    </button>
-                                  </a>
+                    <div class="flex" id="buttons-column">
+                      {% if session.status == SessionStatus.PROCESSED %}
+                        <button class="btn btn-primary btn-sm text-white" onclick="my_modal_{{ forloop.counter }}.showModal()">View Batch Results <i class="ri-side-bar-line"></i></button>
+                        <dialog id="my_modal_{{ forloop.counter }}" class="modal">
+                          <div class="modal-box max-w-screen-xl mx-auto">
+                            <div class="grid grid-cols-5 gap-4">
+                              {% for img in session.output_images.all %}
+                                <div class="card bg-base-100 shadow-xl text-sm ma-5">
+                                  <figure>
+                                    <img src="{{ img.thumbnail.url }}" />
+                                  </figure>
+                                  <div class="card-body">
+                                    <p class="text-xs">Source-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}</p>
+                                    <p class="text-xs">
+                                      C-Arm Alpha: {{ img.carm_alpha|floatformat:3 }}&deg;
+                                      {% if session.parameters.carm_alpha == None %}
+                                        (κ = {{ session.parameters.carm_alpha_kappa|floatformat:3 }})
+                                      {% endif %}
+                                    </p>
+                                    <p class="text-xs">
+                                      C-Arm Beta: {{ img.carm_beta|floatformat:3 }}&deg;
+                                      {% if session.parameters.carm_beta == None %}
+                                        (κ = {{ session.parameters.carm_beta_kappa|floatformat:3 }})
+                                      {% endif %}
+                                    </p>
+                                    <a href="{{ img.image.url }}" target="_blank">
+                                      <button class="btn btn-sm btn-primary text-white">
+                                        Visualize <i class="ri-eye-line"></i>
+                                      </button>
+                                    </a>
+                                  </div>
                                 </div>
-                              </div>
-                            {% endfor %}
+                              {% endfor %}
+                            </div>
+                            <div class="modal-action">
+                              <form method="dialog">
+                                <button class="btn">Close</button>
+                              </form>
+                            </div>
                           </div>
-                          <div class="modal-action">
-                            <form method="dialog">
-                              <button class="btn">Close</button>
-                            </form>
-                          </div>
-                        </div>
-                      </dialog>
+                        </dialog>
 
-                      <div
-                        class="tooltip"
-                        {% if not session.output_images_zip %}
-                          data-tip="Zip file being generated. Please wait and refresh the page."
-                        {% endif %}
-                      >
-                        <a
-                          {% if session.output_images_zip %}
-                            href="{{ session.output_images_zip.url }}"
+                        <div
+                          class="tooltip"
+                          {% if not session.output_images_zip %}
+                            data-tip="Zip file being generated. Please wait and refresh the page."
                           {% endif %}
                         >
-                          <button class="btn btn-primary btn-sm text-white {% if not session.output_images_zip %}disabled bg-base-300{% endif %}">
-                            Export <i class="ri-download-line"></i>
-                          </button>
-                        </a>
-                      </div>
+                          <a
+                            {% if session.output_images_zip %}
+                              href="{{ session.output_images_zip.url }}"
+                            {% endif %}
+                          >
+                            <button class="btn btn-primary btn-sm text-white {% if not session.output_images_zip %}disabled bg-base-300{% endif %}">
+                              Export <i class="ri-download-line"></i>
+                            </button>
+                          </a>
+                        </div>
                       {% comment %} <button class="bg-info text-white py-1 px-2 rounded">
                         Clone <i class="ri-add-line"></i>
                       </button> {% endcomment %}
-                    {% elif session.status == SessionStatus.NOT_STARTED %}
-                      {% if session.parameters %}
+                      {% elif session.status == SessionStatus.NOT_STARTED %}
+                        {% if session.parameters %}
+                          <form
+                            action="{% url 'initiate-batch-run' session.pk %}"
+                            method="post"
+                          >
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-primary">
+                              Run <i class="ri-play-line"></i>
+                            </button>
+                          </form>
+                        {% else %}
+                          <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
+                            <button class="btn btn-xs btn-error">
+                              Set Batch Parameters <i class="ri-dropdown-list"></i>
+                            </button>
+                          </a>
+                        {% endif %}
+                      {% elif session.status == SessionStatus.RUNNING %}
                         <form
-                          action="{% url 'initiate-batch-run' session.pk %}"
+                          action="{% url 'cancel-batch-run' session.pk %}"
                           method="post"
                         >
                           {% csrf_token %}
-                          <button class="btn btn-xs btn-primary">
-                            Run <i class="ri-play-line"></i>
+                          <button class="btn btn-sm btn-error">
+                            Cancel <i class="ri-close-line"></i>
                           </button>
                         </form>
-                      {% else %}
+                      {% elif session.status == SessionStatus.CANCELLED %}
                         <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
-                          <button class="btn btn-xs btn-error">
-                            Set Batch Parameters <i class="ri-dropdown-list"></i>
-                          </button>
-                        </a>
-                      {% endif %}
-                    {% elif session.status == SessionStatus.RUNNING %}
-                      <form
-                        action="{% url 'cancel-batch-run' session.pk %}"
-                        method="post"
-                      >
-                        {% csrf_token %}
-                        <button class="btn btn-sm btn-error">
-                          Cancel <i class="ri-close-line"></i>
-                        </button>
-                      </form>
-                    {% elif session.status == SessionStatus.CANCELLED %}
-                      <div class="flex">
-                        <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
-                          <button class="btn btn-sm btn-info mr-1">
+                          <button class="btn btn-sm btn-info">
                             Update Parameters <i class="ri-dropdown-list"></i>
                           </button>
                         </a>
@@ -176,8 +176,8 @@
                             Run <i class="ri-play-line"></i>
                           </button>
                         </form>
-                      </div>
-                    {% endif %}
+                      {% endif %}
+                    </div>
                   </td>
                 </tr>
               {% endfor %}
@@ -191,6 +191,12 @@
       </div>
     {% endif %}
   </div>
+
+  <style>
+    #buttons-column button {
+      margin-right: 0.5rem;
+    }
+  </style>
 
   {% if should_refresh %}
     <script>
