@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 
 from .session import Session
 
@@ -18,3 +20,9 @@ class OutputImage(models.Model):
     carm_beta = models.FloatField(
         null=True, blank=True, help_text='The desired secondary angulation of the C-arm in degrees.'
     )
+
+
+@receiver(signals.pre_delete, sender=OutputImage)
+def delete_file(sender: type[OutputImage], instance: OutputImage, **kwargs):
+    instance.image.delete(save=False)
+    instance.thumbnail.delete(save=False)
