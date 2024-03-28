@@ -7,7 +7,7 @@ from django.http import HttpRequest, HttpResponseBadRequest
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .forms import CTInputFileUploadForm
 from .models import Session
@@ -29,6 +29,7 @@ def permission_check(view: Callable[P, T]) -> Callable[P, T]:
 
 
 @permission_check
+@require_GET
 def dashboard(request: HttpRequest):
     sessions = (
         Session.objects.select_related('input_scan', 'parameters')
@@ -51,6 +52,7 @@ def dashboard(request: HttpRequest):
 
 
 @permission_check
+@require_http_methods(['GET', 'POST'])
 def upload_ct_input_file(request: HttpRequest):
     if request.method == 'POST':
         form = CTInputFileUploadForm(request.POST, request.FILES)
@@ -76,12 +78,23 @@ def upload_ct_input_file(request: HttpRequest):
 
 
 @permission_check
+@require_POST
+def delete_session(request: HttpRequest, session_pk: str):
+    with transaction.atomic():
+        session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
+        session.delete()
+    return redirect('dashboard')
+
+
+@permission_check
+@require_GET
 def download_ct_file(request: HttpRequest, session_pk: str):
     session = get_object_or_404(Session, pk=session_pk)
     return redirect(session.input_scan.file.url)
 
 
 @permission_check
+@require_GET
 def volview_viewer(request: HttpRequest, session_pk: str):
     session = get_object_or_404(Session, pk=session_pk)
     return render(request, 'viewer.html', context={'session': session})

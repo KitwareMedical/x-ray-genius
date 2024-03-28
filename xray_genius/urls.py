@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/v1/', api.urls),
     path('', views.dashboard, name='dashboard'),
     path('session/', views.upload_ct_input_file, name='create-session'),
+    path('session/<uuid:session_pk>/delete/', views.delete_session, name='delete-session'),
     path(
         'session/<uuid:session_pk>/input-ct-file/',
         views.download_ct_file,
