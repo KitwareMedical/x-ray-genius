@@ -135,3 +135,11 @@ def zip_images_task(session_pk: str) -> None:
             session.output_images_zip.save('images.zip', ContentFile(buffer.read()), save=True)
 
     logger.info(f'Created zip file for session {session_pk}')
+
+
+@shared_task
+def delete_session_task(session_pk: str) -> None:
+    # This delete query will also trigger a bunch of Django signals
+    # that make DELETE calls to S3, so we do this in an async task.
+    Session.objects.filter(pk=session_pk).delete()
+    logger.info(f'Deleted session {session_pk}')
