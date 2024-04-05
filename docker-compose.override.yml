@@ -57,3 +57,4 @@ services:
       - /opt/django-project/node_modules
     ports:
       - 8383:8383
+      - 8080:8080

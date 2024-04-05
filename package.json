@@ -26,7 +26,7 @@
     "heroku-cleanup": "rm -rf ./viewer/node_modules && rm -rf /app/.heroku/node",
     "start": "npm-run-all --parallel start:parcel start:viewer",
     "start:parcel": "parcel watch",
-    "start:viewer": "npm --prefix viewer run dev -- --clearScreen false"
+    "start:viewer": "npm --prefix viewer run dev -- --clearScreen false --host 0.0.0.0"
   },
   "targets": {
     "styles": {
