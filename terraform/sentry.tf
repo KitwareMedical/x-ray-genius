@@ -9,7 +9,7 @@ resource "sentry_team" "this" {
   slug = "xray-genius"
 }
 
-resource "sentry_project" "this" {
+resource "sentry_project" "django" {
   organization = data.sentry_organization.this.id
 
   teams = [sentry_team.this.id]
@@ -22,7 +22,7 @@ resource "sentry_project" "this" {
   default_rules = true
 }
 
-data "sentry_key" "this" {
+data "sentry_key" "django" {
   organization = data.sentry_organization.this.id
-  project      = sentry_project.this.id
+  project      = sentry_project.django.id
 }
