@@ -22,6 +22,11 @@ resource "sentry_project" "django" {
   default_rules = true
 }
 
+moved {
+  from = sentry_project.this
+  to   = sentry_project.django
+}
+
 data "sentry_key" "django" {
   organization = data.sentry_organization.this.id
   project      = sentry_project.django.id
