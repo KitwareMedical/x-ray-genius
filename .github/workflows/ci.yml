@@ -1,9 +1,13 @@
 name: ci
 on:
   pull_request:
+    paths-ignore:
+      - terraform/**
   push:
     branches:
       - main
+    paths-ignore:
+      - terraform/**
 jobs:
   test:
     runs-on: ubuntu-latest
