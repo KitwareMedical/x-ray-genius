@@ -40,9 +40,6 @@ resource "sentry_project" "viewer" {
   slug  = "xray-genius-viewer"
 
   platform = "javascript-vue"
-
-  default_key   = true
-  default_rules = true
 }
 
 data "sentry_key" "viewer" {
