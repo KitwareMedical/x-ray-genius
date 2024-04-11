@@ -64,37 +64,34 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     return vtkBoundingBox.getCenter(metadata.value.worldBounds) as vec3;
   });
 
-  const defaultEmitterDir = [0, 1, 0] as Vector3; // Posterior
-  const defaultDetectorDir = defaultEmitterDir.map((v) => -v) as Vector3;
-  const defaultDetectorUpDir = [0, 0, 1] as Vector3; // Superior
-  const defaultEmitterUpDir = [0, 0, 1] as Vector3; // Superior
-  const defaultAnchorDir = [-1, 0, 0] as Vector3; // Right
+  const defaultLpsEmitterPos = [0, 1, 0] as Vector3; // Posterior
+  const defaultLpsEmitterUpDir = [0, 0, 1] as Vector3; // Superior
+  const defaultLpsAnchorDir = [-1, 0, 0] as Vector3; // Right
 
   const cArmStore = useCArmStore();
   const { sourceToDetectorDistance, detectorDiameter } = storeToRefs(cArmStore);
   const { armTranslation, armRotation, armRotationDeg, armTilt, armTiltDeg } =
     useCArmPhysicalParameters(imageID);
 
-  // origin -> emitter
+  const lpsEmitterPos = computed(() => {
+    const vec = vec3.create();
+    vec3.copy(vec, defaultLpsEmitterPos);
+    vec3.rotateZ(vec, vec, [0, 0, 0], armRotation.value);
+    vec3.rotateX(vec, vec, [0, 0, 0], -armTilt.value);
+    return vec as Vector3;
+  });
+
+  // direction that the emitter emits xrays
   const emitterDir = computed(() => {
     const vec = vec3.create();
-    vec3.copy(vec, defaultEmitterDir);
-    vec3.rotateZ(vec, vec, [0, 0, 0], armRotation.value);
-    vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
+    vec3.negate(vec, lpsEmitterPos.value);
     return vec as Vector3;
   });
 
-  const detectorUpDir = computed(() => {
+  const emitterUpDir = computed(() => {
     const vec = vec3.create();
-    vec3.copy(vec, defaultDetectorUpDir);
-    vec3.rotateX(vec, vec, [0, 0, 0], armTilt.value);
-    return vec as Vector3;
-  });
-
-  // origin -> detector
-  const detectorDir = computed(() => {
-    const vec = vec3.create();
-    vec3.negate(vec, emitterDir.value);
+    vec3.copy(vec, defaultLpsEmitterUpDir);
+    vec3.rotateX(vec, vec, [0, 0, 0], -armTilt.value);
     return vec as Vector3;
   });
 
@@ -112,13 +109,11 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     return pos as Vector3;
   });
 
-  const emitterPos = computed(() => transformToWorldPos(emitterDir.value));
-  const detectorPos = computed(() => transformToWorldPos(detectorDir.value));
-  const anchorPos = computed(() => transformToWorldPos(defaultAnchorDir));
+  const emitterPos = computed(() => transformToWorldPos(lpsEmitterPos.value));
+  const anchorPos = computed(() => transformToWorldPos(defaultLpsAnchorDir));
 
   return {
     emitterPos,
-    detectorPos,
     anchorPos,
     centerPos,
     armTiltDeg,
@@ -126,10 +121,10 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     armRotationDeg,
     armRotation,
     detectorDiameter,
-    detectorDir,
     emitterDir,
-    detectorUpDir,
-    anchorDir: toRef(defaultAnchorDir),
+    detectorUpDir: emitterUpDir,
+    emitterUpDir,
+    anchorDir: toRef(defaultLpsAnchorDir),
   };
 }
 

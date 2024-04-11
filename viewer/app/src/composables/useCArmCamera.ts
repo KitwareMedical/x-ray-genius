@@ -12,7 +12,7 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
     useCArmStore()
   );
 
-  const { detectorPos, emitterDir, detectorUpDir } = useCArmPosition(imageID);
+  const { emitterPos, emitterDir, emitterUpDir } = useCArmPosition(imageID);
 
   watchEffect(() => {
     const viewAngle =
@@ -21,9 +21,9 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
       Math.atan2(detectorDiameter.value / 2, sourceToDetectorDistance.value);
 
     const cam = view.renderer.getActiveCamera();
-    cam.setPosition(...detectorPos.value);
+    cam.setPosition(...emitterPos.value);
     cam.setDirectionOfProjection(...emitterDir.value);
-    cam.setViewUp(...detectorUpDir.value);
+    cam.setViewUp(...emitterUpDir.value);
     cam.setViewAngle(viewAngle);
 
     view.renderer.resetCameraClippingRange();
