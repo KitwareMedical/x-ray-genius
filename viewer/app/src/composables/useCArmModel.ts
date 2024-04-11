@@ -14,9 +14,24 @@ import { View } from '@/src/core/vtk/types';
 import vtkOBJReader from '@kitware/vtk.js/IO/Misc/OBJReader';
 
 import CArmObj from '../../assets/c-arm-edited-2.obj?raw';
+import { ImageMetadata } from '@/src/types/image';
 
 // approximate distance for an unscaled model (mm)
 const MODEL_SOURCE_TO_DETECTOR_DISTANCE = 1.22;
+
+function getFlipFactors(metadata: ImageMetadata) {
+  const { orientation, lpsOrientation } = metadata;
+  const { Left, Posterior, Superior, Coronal, Sagittal, Axial } =
+    lpsOrientation;
+  const sVec = orientation.slice(Sagittal * 3, Sagittal * 3 + 3) as vec3;
+  const cVec = orientation.slice(Coronal * 3, Coronal * 3 + 3) as vec3;
+  const aVec = orientation.slice(Axial * 3, Axial * 3 + 3) as vec3;
+  return [
+    Math.sign(vec3.dot(sVec, Left)),
+    Math.sign(vec3.dot(cVec, Posterior)),
+    Math.sign(vec3.dot(aVec, Superior)),
+  ] as Vector3;
+}
 
 function useActor(view: View, source: vtkObject) {
   const actor = vtkActor.newInstance();
@@ -130,6 +145,7 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   const imageCenter = computed(() =>
     vtkBoundingBox.getCenter(metadata.value.worldBounds)
   );
+
   const imageDirQuat = computed(() => {
     const rot = quat.create();
     quat.fromMat3(rot, metadata.value.orientation);
@@ -149,10 +165,18 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   });
 
   watchEffect(() => {
+    /**
+     * Model orientation: detector is in Posterior (+Y for vtk.js (LPS)) direction.
+     *
+     * Viewer: viewUp is Anterior. Detector should be in the Anterior direction, facing down to Posterior.
+     */
     const size =
       sourceToDetectorDistance.value / MODEL_SOURCE_TO_DETECTOR_DISTANCE;
-    // flip Y axis
-    actor.setScale(size, -size, size);
+
+    const scaleFactors = getFlipFactors(metadata.value);
+    // flip Y axis so detector points Anterior->Posterior.
+    scaleFactors[1] *= -1;
+    actor.setScale(...(scaleFactors.map((v) => v * size) as Vector3));
 
     const mm = mat4.create();
     // rotate Z, then X
