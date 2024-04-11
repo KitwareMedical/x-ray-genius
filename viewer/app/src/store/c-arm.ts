@@ -1,5 +1,5 @@
 import { Vector3 } from '@kitware/vtk.js/types';
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import { ref, MaybeRef, computed } from 'vue';
 import { Maybe } from '@/src/types';
 import { useImage } from '@/src/composables/useCurrentImage';
@@ -16,7 +16,7 @@ const useCArmStore = defineStore('cArm', () => {
   // [0.0, 1.0] -> 2*PI. aka alpha
   const rotation = ref(0.5);
   const rotationKappaStdDev = ref(DEFAULT_KAPPA_STD_DEV);
-  // [-0.5, 0.5] -> dimensions. [0, 0, 0] is the center.
+  // LPS translation in mm. [0, 0, 0] is the center of the volume.
   const translation = ref<Vector3>([0, 0, 0]);
   // [0.0, 1.0] -> 2*PI. aka beta
   const tilt = ref(0.5);
@@ -112,20 +112,13 @@ const useCArmStore = defineStore('cArm', () => {
 
 export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   const cArmStore = useCArmStore();
+  const { sourceToDetectorDistance, translation } = storeToRefs(cArmStore);
   const { metadata } = useImage(imageId);
+  const lpsOrientation = computed(() => metadata.value.lpsOrientation);
   const dimensions = computed(() => metadata.value.dimensions);
   const spacing = computed(() => metadata.value.spacing);
-  const armTranslation = computed(() => {
-    return cArmStore.translation.map(
-      (v, i) =>
-        v *
-        Math.max(
-          dimensions.value[i] * spacing.value[i],
-          cArmStore.sourceToDetectorDistance
-        )
-    ) as Vector3;
-  });
 
+  const armTranslation = translation;
   // rotation angle around Z
   const armRotation = computed(() => {
     // map [0,1] to [-0.5,0.5] * range
@@ -139,12 +132,29 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   });
   const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
 
+  const getAxisRange = (axis: number) => {
+    const dim = Math.max(
+      dimensions.value[axis] * spacing.value[axis],
+      sourceToDetectorDistance.value
+    );
+    return [-1.5 * dim, 1.5 * dim] as const;
+  };
+  const translationRanges = computed(() => {
+    const { Sagittal, Axial, Coronal } = lpsOrientation.value;
+    return {
+      Sagittal: getAxisRange(Sagittal),
+      Coronal: getAxisRange(Coronal),
+      Axial: getAxisRange(Axial),
+    } as const;
+  });
+
   return {
     armTranslation,
     armRotation,
     armRotationDeg,
     armTilt,
     armTiltDeg,
+    translationRanges,
   };
 }
 

@@ -78,7 +78,19 @@ def run_deepdrr_task(session_pk: str) -> None:
                 f'Running DeepDRR for session {session_pk} (Image {i + 1}/{param_sampler.samples})'
             )
 
-            carm.move_to(alpha=alpha, beta=beta, degrees=True)
+            carm.move_to(
+                alpha=alpha,
+                beta=beta,
+                degrees=True,
+                isocenter=geo.p(
+                    # incoming parameters are in LPS, but deepdrr supine
+                    # is in ILA (-Z, +X, -Y).
+                    # head_foot: +Z, push_pull: +X, raise_lower: +Y
+                    -head_foot_translation,
+                    push_pull_translation,
+                    -raise_lower_translation,
+                ),
+            )
 
             image = projector()
 
