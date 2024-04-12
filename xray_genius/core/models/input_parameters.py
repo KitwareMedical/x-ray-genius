@@ -3,6 +3,9 @@ from django.db import models
 
 from .session import Session
 
+# The default is the default sensor width/height from deepdrr.device.mobile_carm.MobileCArm
+DEFAULT_SENSOR_SIZE = 1536
+
 
 class InputParameters(models.Model):
     session = models.OneToOneField(Session, related_name='parameters', on_delete=models.CASCADE)
@@ -41,5 +44,10 @@ class InputParameters(models.Model):
         ],
         help_text='The number of x-rays to generate with DeepDRR.',
     )
-    # The default is the default sensor width/height from deepdrr.device.mobile_carm.MobileCArm
-    detector_diameter = models.FloatField(help_text='The detector diameter in mm.', default=1536)
+    # Defaults to a 9" diameter
+    detector_diameter = models.FloatField(help_text='The detector diameter in mm.', default=228.6)
+
+    @property
+    def sensor_pixel_pitch(self):
+        '''The sensor pixel pitch'''
+        return self.detector_diameter / DEFAULT_SENSOR_SIZE

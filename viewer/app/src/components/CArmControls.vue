@@ -75,8 +75,9 @@ const detectorDiameter = computed({
 const { currentImageID } = useCurrentImage();
 const {
   armTranslation: physicalTranslation,
-  armRotationDeg,
-  armTiltDeg,
+  armRotation,
+  armTilt,
+  translationRanges,
 } = useCArmPhysicalParameters(currentImageID);
 
 const viewAnimationStore = useViewAnimationStore();
@@ -123,7 +124,7 @@ async function submit() {
             :disabled="store.randomizeRotation"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
-            <div>{{ armRotationDeg.toFixed(2) }}˚</div>
+            <div>{{ armRotation.toFixed(2) }}˚</div>
             <div>Rotation (Rainbow)</div>
           </div>
           <v-checkbox v-model="store.randomizeRotation" class="mt-3">
@@ -162,7 +163,7 @@ async function submit() {
             :disabled="store.randomizeTilt"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
-            <div>{{ armTiltDeg.toFixed(2) }}˚</div>
+            <div>{{ armTilt.toFixed(2) }}˚</div>
             <div>Tilt (Head/Foot)</div>
           </div>
           <v-checkbox v-model="store.randomizeTilt" class="mt-3">
@@ -199,9 +200,9 @@ async function submit() {
       <v-divider height="2px" />
       <v-slider
         v-model="xTranslation"
-        min="-0.5"
-        max="0.5"
-        step="0.001"
+        :min="translationRanges.Sagittal[0]"
+        :max="translationRanges.Sagittal[1]"
+        step="0.1"
         class="mt-5"
         hide-details
         density="compact"
@@ -210,7 +211,7 @@ async function submit() {
       >
         <template #label>
           <v-label class="d-flex flex-column align-center">
-            <div>Left/Right</div>
+            <div>Right/Left</div>
             <div>{{ (physicalTranslation[0] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
@@ -238,9 +239,9 @@ async function submit() {
       </v-slider>
       <v-slider
         v-model="yTranslation"
-        min="-0.5"
-        max="0.5"
-        step="0.001"
+        :min="translationRanges.Coronal[0]"
+        :max="translationRanges.Coronal[1]"
+        step="0.1"
         hide-details
         density="compact"
         :disabled="!currentImageID"
@@ -276,9 +277,9 @@ async function submit() {
       </v-slider>
       <v-slider
         v-model="zTranslation"
-        min="-0.5"
-        max="0.5"
-        step="0.001"
+        :min="translationRanges.Axial[0]"
+        :max="translationRanges.Axial[1]"
+        step="0.1"
         hide-details
         density="compact"
         :disabled="!currentImageID"
