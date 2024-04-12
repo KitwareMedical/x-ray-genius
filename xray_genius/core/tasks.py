@@ -11,6 +11,7 @@ from django.core.files.base import ContentFile, File
 from django.db.models import QuerySet
 
 from .models import OutputImage, Session
+from .models.input_parameters import DEFAULT_SENSOR_SIZE
 from .utils import ParameterSampler
 
 logger = get_task_logger(__name__)
@@ -19,7 +20,7 @@ logger = get_task_logger(__name__)
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
     # Import here to avoid attempting to load CUDA on the web server
-    from deepdrr import MobileCArm, Volume
+    from deepdrr import MobileCArm, Volume, geo
     from deepdrr.projector import Projector  # separate import for CUDA init
     from deepdrr.utils import image_utils
 
@@ -40,12 +41,12 @@ def run_deepdrr_task(session_pk: str) -> None:
             ct = Volume.from_nifti(dest)
 
     source_to_detector_distance: float = session.parameters.source_to_detector_distance
-    detector_diameter: float = session.parameters.detector_diameter
 
     carm = MobileCArm(
         source_to_detector_distance=source_to_detector_distance,
-        sensor_height=detector_diameter,
-        sensor_width=detector_diameter,
+        sensor_height=DEFAULT_SENSOR_SIZE,
+        sensor_width=DEFAULT_SENSOR_SIZE,
+        pixel_size=session.parameters.sensor_pixel_pitch,
     )
 
     param_sampler = ParameterSampler(session.parameters)
