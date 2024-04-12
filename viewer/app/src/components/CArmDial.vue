@@ -18,7 +18,14 @@ const emit = defineEmits<Emits>();
 const props = defineProps<Props>();
 const { size } = toRefs(props);
 
-const percentModel = defineModel({ default: 0.5 });
+// in deg
+const dialPosition = defineModel({ default: 0 });
+const dialPathPercent = computed({
+  get: () => (dialPosition.value + 180) / 360,
+  set: (v) => {
+    dialPosition.value = v * 360 - 180;
+  },
+});
 
 const cArmPath = ref<SVGPathElement | undefined>();
 const svg = ref<SVGElement | undefined>();
@@ -80,7 +87,7 @@ function updateHandlePosition(ev: PointerEvent) {
   const svgY = clientY - svgBbox.top;
   const percent = percentAlongGaugeArc(svgX, svgY);
   drawCArmMarker(percent);
-  percentModel.value = percent;
+  dialPathPercent.value = percent;
 }
 
 function startDrag(ev: PointerEvent) {
@@ -102,7 +109,7 @@ useEventListener(window, 'pointermove', updateHandlePosition);
 useEventListener(window, 'pointerup', endDrag);
 
 onMounted(() => {
-  drawCArmMarker(percentModel.value);
+  drawCArmMarker(dialPathPercent.value);
 });
 
 watch(dragging, (isDragging) => {

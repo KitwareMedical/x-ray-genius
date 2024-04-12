@@ -4,6 +4,7 @@ import { ref, MaybeRef, computed } from 'vue';
 import { Maybe } from '@/src/types';
 import { useImage } from '@/src/composables/useCurrentImage';
 
+const DEG_TO_RAD = Math.PI / 180;
 const INCHES_TO_MM = 25.4;
 const DEFAULT_STANDARD_DEVIATION = 20; // mm
 // 9" I.I. Standard C-arm from the OEC Elite doc
@@ -13,13 +14,13 @@ const DEFAULT_NUMBER_OF_SAMPLES = 100;
 const DEFAULT_KAPPA_STD_DEV = 5; // deg
 
 const useCArmStore = defineStore('cArm', () => {
-  // [0.0, 1.0] -> 2*PI. aka alpha
-  const rotation = ref(0.5);
+  // [-180, 180] deg
+  const rotation = ref(0);
   const rotationKappaStdDev = ref(DEFAULT_KAPPA_STD_DEV);
   // LPS translation in mm. [0, 0, 0] is the center of the volume.
   const translation = ref<Vector3>([0, 0, 0]);
-  // [0.0, 1.0] -> 2*PI. aka beta
-  const tilt = ref(0.5);
+  // [-180, 180] deg
+  const tilt = ref(0);
   const tiltKappaStdDev = ref(DEFAULT_KAPPA_STD_DEV);
   // mm
   const sourceToDetectorDistance = ref(DEFAULT_SOURCE_TO_DETECTOR_DISTANCE);
@@ -112,7 +113,8 @@ const useCArmStore = defineStore('cArm', () => {
 
 export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   const cArmStore = useCArmStore();
-  const { sourceToDetectorDistance, translation } = storeToRefs(cArmStore);
+  const { sourceToDetectorDistance, translation, rotation, tilt } =
+    storeToRefs(cArmStore);
   const { metadata } = useImage(imageId);
   const lpsOrientation = computed(() => metadata.value.lpsOrientation);
   const dimensions = computed(() => metadata.value.dimensions);
@@ -120,17 +122,11 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
 
   const armTranslation = translation;
   // rotation angle around Z
-  const armRotation = computed(() => {
-    // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.rotation - 0.5) * 2 * Math.PI;
-  });
-  const armRotationDeg = computed(() => (armRotation.value * 180) / Math.PI);
+  const armRotation = rotation;
+  const armRotationRad = computed(() => rotation.value * DEG_TO_RAD);
   // tilt angle around X
-  const armTilt = computed(() => {
-    // map [0,1] to [-0.5,0.5] * range
-    return (cArmStore.tilt - 0.5) * 2 * Math.PI;
-  });
-  const armTiltDeg = computed(() => (armTilt.value * 180) / Math.PI);
+  const armTilt = tilt;
+  const armTiltRad = computed(() => tilt.value * DEG_TO_RAD);
 
   const getAxisRange = (axis: number) => {
     const dim = Math.max(
@@ -151,9 +147,9 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   return {
     armTranslation,
     armRotation,
-    armRotationDeg,
+    armRotationRad,
     armTilt,
-    armTiltDeg,
+    armTiltRad,
     translationRanges,
   };
 }

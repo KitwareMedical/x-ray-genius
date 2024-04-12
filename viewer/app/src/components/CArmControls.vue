@@ -75,8 +75,8 @@ const detectorDiameter = computed({
 const { currentImageID } = useCurrentImage();
 const {
   armTranslation: physicalTranslation,
-  armRotationDeg,
-  armTiltDeg,
+  armRotation,
+  armTilt,
   translationRanges,
 } = useCArmPhysicalParameters(currentImageID);
 
@@ -124,7 +124,7 @@ async function submit() {
             :disabled="store.randomizeRotation"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
-            <div>{{ armRotationDeg.toFixed(2) }}˚</div>
+            <div>{{ armRotation.toFixed(2) }}˚</div>
             <div>Rotation (Rainbow)</div>
           </div>
           <v-checkbox v-model="store.randomizeRotation" class="mt-3">
@@ -163,7 +163,7 @@ async function submit() {
             :disabled="store.randomizeTilt"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
-            <div>{{ armTiltDeg.toFixed(2) }}˚</div>
+            <div>{{ armTilt.toFixed(2) }}˚</div>
             <div>Tilt (Head/Foot)</div>
           </div>
           <v-checkbox v-model="store.randomizeTilt" class="mt-3">

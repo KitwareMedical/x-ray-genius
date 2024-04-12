@@ -70,14 +70,14 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
 
   const cArmStore = useCArmStore();
   const { sourceToDetectorDistance, detectorDiameter } = storeToRefs(cArmStore);
-  const { armTranslation, armRotation, armRotationDeg, armTilt, armTiltDeg } =
+  const { armTranslation, armRotation, armRotationRad, armTilt, armTiltRad } =
     useCArmPhysicalParameters(imageID);
 
   const lpsEmitterPos = computed(() => {
     const vec = vec3.create();
     vec3.copy(vec, defaultLpsEmitterPos);
-    vec3.rotateZ(vec, vec, [0, 0, 0], armRotation.value);
-    vec3.rotateX(vec, vec, [0, 0, 0], -armTilt.value);
+    vec3.rotateZ(vec, vec, [0, 0, 0], armRotationRad.value);
+    vec3.rotateX(vec, vec, [0, 0, 0], -armTiltRad.value);
     return vec as Vector3;
   });
 
@@ -91,7 +91,7 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
   const emitterUpDir = computed(() => {
     const vec = vec3.create();
     vec3.copy(vec, defaultLpsEmitterUpDir);
-    vec3.rotateX(vec, vec, [0, 0, 0], -armTilt.value);
+    vec3.rotateX(vec, vec, [0, 0, 0], -armTiltRad.value);
     return vec as Vector3;
   });
 
@@ -116,9 +116,9 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     emitterPos,
     anchorPos,
     centerPos,
-    armTiltDeg,
+    armTiltRad,
     armTilt,
-    armRotationDeg,
+    armRotationRad,
     armRotation,
     detectorDiameter,
     emitterDir,
@@ -132,7 +132,7 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   const geometry = loadModel();
   const { actor } = useActor(view, geometry);
 
-  const { centerPos, armTilt, armRotation } = useCArmPosition(imageID);
+  const { centerPos, armTiltRad, armRotationRad } = useCArmPosition(imageID);
 
   const { sourceToDetectorDistance } = storeToRefs(useCArmStore());
 
@@ -175,8 +175,8 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
 
     const mm = mat4.create();
     // rotate Z, then X
-    mat4.rotateX(mm, mm, armTilt.value);
-    mat4.rotateZ(mm, mm, armRotation.value);
+    mat4.rotateX(mm, mm, armTiltRad.value);
+    mat4.rotateZ(mm, mm, armRotationRad.value);
     // apply model-to-image transform last
     mat4.mul(mm, modelToImage.value, mm);
     actor.setUserMatrix(mm);
