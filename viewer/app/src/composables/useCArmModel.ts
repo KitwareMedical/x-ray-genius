@@ -5,7 +5,7 @@ import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import { Vector3 } from '@kitware/vtk.js/types';
 import { computed } from '@vue/reactivity';
-import { mat4, quat, vec3 } from 'gl-matrix';
+import { mat3, mat4, quat, vec3 } from 'gl-matrix';
 import { MaybeRef, watchEffect, toRef } from 'vue';
 import useCArmStore, { useCArmPhysicalParameters } from '../store/c-arm';
 import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
@@ -142,8 +142,15 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
   );
 
   const imageDirQuat = computed(() => {
+    // get orientation in LPS, so no flipped axes.
+    const { lpsOrientation } = metadata.value;
+    const orientation = [
+      ...lpsOrientation.Left,
+      ...lpsOrientation.Posterior,
+      ...lpsOrientation.Superior,
+    ] as mat3;
     const rot = quat.create();
-    quat.fromMat3(rot, metadata.value.orientation);
+    quat.fromMat3(rot, orientation);
     return rot;
   });
 
@@ -168,10 +175,8 @@ export function useCArmModel(view: View, imageID: MaybeRef<Maybe<string>>) {
     const size =
       sourceToDetectorDistance.value / MODEL_SOURCE_TO_DETECTOR_DISTANCE;
 
-    const scaleFactors = getFlipFactors(metadata.value);
     // flip Y axis so detector points Anterior->Posterior.
-    scaleFactors[1] *= -1;
-    actor.setScale(...(scaleFactors.map((v) => v * size) as Vector3));
+    actor.setScale(size, -size, size);
 
     const mm = mat4.create();
     // rotate Z, then X
