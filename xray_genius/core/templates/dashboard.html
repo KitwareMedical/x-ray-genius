@@ -53,6 +53,27 @@
                         (randomized)
                       {% endif %}
                       <br />
+                      C-Arm Push/Pull:
+                      {% if session.parameters.carm_push_pull %}
+                        {{ session.parameters.carm_push_pull }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
+                      C-Arm Head/Foot Translation:
+                      {% if session.parameters.carm_head_foot_translation %}
+                        {{ session.parameters.carm_head_foot_translation }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
+                      C-Arm Raise/Lower:
+                      {% if session.parameters.carm_raise_lower %}
+                        {{ session.parameters.carm_raise_lower }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
                     {% else %}
                       N/A
                     {% endif %}
