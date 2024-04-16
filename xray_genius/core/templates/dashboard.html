@@ -108,6 +108,15 @@
                                     <p class="text-xs">
                                       C-Arm Beta: {{ img.carm_beta|floatformat:3 }}&deg;
                                     </p>
+                                    <p class="text-xs">
+                                      C-Arm Push/Pull: {{ img.carm_push_pull|floatformat:3 }}&deg;
+                                    </p>
+                                    <p class="text-xs">
+                                      C-Arm Head/Foot Translation: {{ img.carm_head_foot_translation|floatformat:3 }}&deg;
+                                    </p>
+                                    <p class="text-xs">
+                                      C-Arm Raise/Lower: {{ img.carm_raise_lower|floatformat:3 }}&deg;
+                                    </p>
                                     <a href="{{ img.image.url }}" target="_blank">
                                       <button class="btn btn-sm btn-primary text-white">
                                         Visualize <i class="ri-eye-line"></i>
