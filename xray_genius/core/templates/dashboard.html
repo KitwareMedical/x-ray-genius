@@ -104,15 +104,9 @@
                                     <p class="text-xs">Source-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}</p>
                                     <p class="text-xs">
                                       C-Arm Alpha: {{ img.carm_alpha|floatformat:3 }}&deg;
-                                      {% if session.parameters.carm_alpha == None %}
-                                        (κ = {{ session.parameters.carm_alpha_kappa|floatformat:3 }})
-                                      {% endif %}
                                     </p>
                                     <p class="text-xs">
                                       C-Arm Beta: {{ img.carm_beta|floatformat:3 }}&deg;
-                                      {% if session.parameters.carm_beta == None %}
-                                        (κ = {{ session.parameters.carm_beta_kappa|floatformat:3 }})
-                                      {% endif %}
                                     </p>
                                     <a href="{{ img.image.url }}" target="_blank">
                                       <button class="btn btn-sm btn-primary text-white">
