@@ -53,6 +53,27 @@
                         (randomized)
                       {% endif %}
                       <br />
+                      C-Arm Push/Pull:
+                      {% if session.parameters.carm_push_pull %}
+                        {{ session.parameters.carm_push_pull }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
+                      C-Arm Head/Foot Translation:
+                      {% if session.parameters.carm_head_foot_translation %}
+                        {{ session.parameters.carm_head_foot_translation }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
+                      C-Arm Raise/Lower:
+                      {% if session.parameters.carm_raise_lower %}
+                        {{ session.parameters.carm_raise_lower }}&deg;
+                      {% else %}
+                        (randomized)
+                      {% endif %}
+                      <br />
                     {% else %}
                       N/A
                     {% endif %}
@@ -83,15 +104,18 @@
                                     <p class="text-xs">Source-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}</p>
                                     <p class="text-xs">
                                       C-Arm Alpha: {{ img.carm_alpha|floatformat:3 }}&deg;
-                                      {% if session.parameters.carm_alpha == None %}
-                                        (κ = {{ session.parameters.carm_alpha_kappa|floatformat:3 }})
-                                      {% endif %}
                                     </p>
                                     <p class="text-xs">
                                       C-Arm Beta: {{ img.carm_beta|floatformat:3 }}&deg;
-                                      {% if session.parameters.carm_beta == None %}
-                                        (κ = {{ session.parameters.carm_beta_kappa|floatformat:3 }})
-                                      {% endif %}
+                                    </p>
+                                    <p class="text-xs">
+                                      C-Arm Push/Pull: {{ img.carm_push_pull|floatformat:3 }}&deg;
+                                    </p>
+                                    <p class="text-xs">
+                                      C-Arm Head/Foot Translation: {{ img.carm_head_foot_translation|floatformat:3 }}&deg;
+                                    </p>
+                                    <p class="text-xs">
+                                      C-Arm Raise/Lower: {{ img.carm_raise_lower|floatformat:3 }}&deg;
                                     </p>
                                     <a href="{{ img.image.url }}" target="_blank">
                                       <button class="btn btn-sm btn-primary text-white">

@@ -49,5 +49,5 @@ class InputParameters(models.Model):
 
     @property
     def sensor_pixel_pitch(self):
-        '''The sensor pixel pitch'''
+        """The sensor pixel pitch."""
         return self.detector_diameter / DEFAULT_SENSOR_SIZE
