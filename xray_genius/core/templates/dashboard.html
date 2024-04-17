@@ -40,38 +40,35 @@
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
                       C-Arm Alpha:
-                      {% if session.parameters.carm_alpha %}
+                      {% if session.parameters.carm_alpha is not None %}
                         {{ session.parameters.carm_alpha }}&deg;
                       {% else %}
                         (randomized)
                       {% endif %}
                       <br />
                       C-Arm Beta:
-                      {% if session.parameters.carm_beta %}
+                      {% if session.parameters.carm_beta is not None %}
                         {{ session.parameters.carm_beta }}&deg;
                       {% else %}
                         (randomized)
                       {% endif %}
                       <br />
                       C-Arm Push/Pull:
-                      {% if session.parameters.carm_push_pull %}
-                        {{ session.parameters.carm_push_pull }}&deg;
-                      {% else %}
-                        (randomized)
+                      {{ session.parameters.carm_push_pull_translation }}mm
+                      {% if session.parameters.carm_push_pull_std_dev is not None %}
+                        ± {{ session.parameters.carm_push_pull_std_dev }}mm
                       {% endif %}
                       <br />
-                      C-Arm Head/Foot Translation:
-                      {% if session.parameters.carm_head_foot_translation %}
-                        {{ session.parameters.carm_head_foot_translation }}&deg;
-                      {% else %}
-                        (randomized)
+                      C-Arm Head/Foot:
+                      {{ session.parameters.carm_head_foot_translation }}mm
+                      {% if session.parameters.carm_head_foot_std_dev is not None %}
+                        ± {{ session.parameters.carm_head_foot_std_dev }}mm
                       {% endif %}
                       <br />
                       C-Arm Raise/Lower:
-                      {% if session.parameters.carm_raise_lower %}
-                        {{ session.parameters.carm_raise_lower }}&deg;
-                      {% else %}
-                        (randomized)
+                      {{ session.parameters.carm_raise_lower_translation }}mm
+                      {% if session.parameters.carm_raise_lower_std_dev is not None %}
+                        ± {{ session.parameters.carm_raise_lower_std_dev }}mm
                       {% endif %}
                       <br />
                     {% else %}

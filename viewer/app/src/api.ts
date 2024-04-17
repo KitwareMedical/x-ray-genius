@@ -23,16 +23,16 @@ function getParameterUrl(sessionPk: string) {
 }
 
 export interface CArmParameters {
-  carmAlpha?: number;
+  carmAlpha?: number | null;
   carmAlphaKappa?: number;
-  carmBeta?: number;
+  carmBeta?: number | null;
   carmBetaKappa?: number;
   carmPushPullTranslation?: number;
   carmHeadFootTranslation?: number;
   carmRaiseLowerTranslation?: number;
-  carmPushPullStdDev?: number;
-  carmHeadFootStdDev?: number;
-  carmRaiseLowerStdDev?: number;
+  carmPushPullStdDev?: number | null;
+  carmHeadFootStdDev?: number | null;
+  carmRaiseLowerStdDev?: number | null;
   sourceToDetectorDistance: number;
   detectorDiameter: number;
   numSamples: number;
@@ -56,12 +56,9 @@ function kappaStdDevToConcentration(sdev: number) {
 export function exportApiParameters(): CArmParameters {
   const {
     randomizeRotation,
-    rotation,
     rotationKappaStdDev,
     randomizeTilt,
-    tilt,
     tiltKappaStdDev,
-    translation: relativeTranslation,
     randomizeX,
     randomizeY,
     randomizeZ,
@@ -73,26 +70,22 @@ export function exportApiParameters(): CArmParameters {
     detectorDiameter,
   } = storeToRefs(useCArmStore());
 
-  const { currentImageID, currentImageMetadata } = useCurrentImage();
-  const dimensions = computed(() => currentImageMetadata.value.dimensions);
-  const translation = computed(() => {
-    return relativeTranslation.value.map((v, i) => v * dimensions.value[i]);
-  });
+  const { currentImageID } = useCurrentImage();
 
   const { armTranslation, armRotation, armTilt } =
     useCArmPhysicalParameters(currentImageID);
 
   return {
-    carmAlpha: randomizeRotation.value ? undefined : armRotation.value,
+    carmAlpha: randomizeRotation.value ? null : armRotation.value,
     carmAlphaKappa: kappaStdDevToConcentration(rotationKappaStdDev.value),
-    carmBeta: randomizeTilt.value ? undefined : armTilt.value,
+    carmBeta: randomizeTilt.value ? null : armTilt.value,
     carmBetaKappa: kappaStdDevToConcentration(tiltKappaStdDev.value),
     carmPushPullTranslation: armTranslation.value[0],
     carmRaiseLowerTranslation: armTranslation.value[1],
     carmHeadFootTranslation: armTranslation.value[2],
-    carmPushPullStdDev: randomizeX.value ? randStdDevX.value : undefined,
-    carmRaiseLowerStdDev: randomizeY.value ? randStdDevY.value : undefined,
-    carmHeadFootStdDev: randomizeZ.value ? randStdDevZ.value : undefined,
+    carmPushPullStdDev: randomizeX.value ? randStdDevX.value : null,
+    carmRaiseLowerStdDev: randomizeY.value ? randStdDevY.value : null,
+    carmHeadFootStdDev: randomizeZ.value ? randStdDevZ.value : null,
     sourceToDetectorDistance: sourceToDetectorDistance.value,
     detectorDiameter: detectorDiameter.value,
     numSamples: numberOfSamples.value || 100,
