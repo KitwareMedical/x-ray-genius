@@ -40,6 +40,10 @@ def run_deepdrr_task(session_pk: str) -> None:
         else:
             ct = Volume.from_nifti(dest)
 
+    # place CT at center of the world, oriented supine (ILA)
+    ct.supine()
+    ct.place_center(geo.p(0, 0, 0))
+
     source_to_detector_distance: float = session.parameters.source_to_detector_distance
 
     carm = MobileCArm(
