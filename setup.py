@@ -23,7 +23,7 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
-        'Framework :: Django :: 4.2',
+        'Framework :: Django :: 5.0',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
@@ -37,7 +37,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'celery',
-        'django<4.2',
+        'django>=5.0,<5.1',
         'django-allauth',
         'django-click',
         'django-configurations[database,email]',
@@ -53,7 +53,7 @@ setup(
         'pydantic',
         'scipy',
         # Production-only
-        'django-composed-configuration[prod]>=0.20',
+        'django-composed-configuration[prod]>=0.25',
         'django-s3-file-field[s3]>=1.0.0',
         'gunicorn',
     ],
@@ -64,7 +64,7 @@ setup(
         'dev': [
             'django-autotyping',
             'django-browser-reload',
-            'django-composed-configuration[dev]>=0.18',
+            'django-composed-configuration[dev]>=0.25',
             'django-debug-toolbar',
             'django-s3-file-field[minio]>=1.0.0',
             'django-stubs',
