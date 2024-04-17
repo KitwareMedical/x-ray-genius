@@ -69,7 +69,7 @@ def sample_gaussian_with_defaults(
     Returns:
     - A numpy array of sampled values.
     """
-    if translation is not None and std_dev is not None:
+    if translation is not None and std_dev is None:
         return [translation] * num_samples
 
     return sample_gaussian_distribution(
