@@ -26,7 +26,8 @@ def run_deepdrr_task(session_pk: str) -> None:
     from scipy.spatial.transform import Rotation
 
     def to_supine(ct: Volume):
-        """Turns the volume to be face up.
+        """
+        Turn the volume to be face up.
 
         This aligns the patient so that, in world space,
         the anterior side is toward +Z, inferior is toward +X,
@@ -38,11 +39,11 @@ def run_deepdrr_task(session_pk: str) -> None:
         """
         if ct.anatomical_coordinate_system == 'RAS':
             ct.world_from_anatomical = geo.FrameTransform.from_rt(
-                rotation=Rotation.from_euler("xz", [90, -90], degrees=True).as_matrix().squeeze(),
+                rotation=Rotation.from_euler('xz', [90, -90], degrees=True).as_matrix().squeeze(),
             )
         elif ct.anatomical_coordinate_system == 'LPS':
             ct.world_from_anatomical = geo.FrameTransform.from_rt(
-                rotation=Rotation.from_euler("xz", [-90, 90], degrees=True).as_matrix().squeeze(),
+                rotation=Rotation.from_euler('xz', [-90, 90], degrees=True).as_matrix().squeeze(),
             )
         else:
             raise NotImplementedError(
