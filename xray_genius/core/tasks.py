@@ -23,6 +23,31 @@ def run_deepdrr_task(session_pk: str) -> None:
     from deepdrr import MobileCArm, Volume, geo
     from deepdrr.projector import Projector  # separate import for CUDA init
     from deepdrr.utils import image_utils
+    from scipy.spatial.transform import Rotation
+
+    def to_supine(ct: Volume):
+        """Turns the volume to be face up.
+
+        This aligns the patient so that, in world space,
+        the anterior side is toward +Z, inferior is toward +X,
+        and left is toward +Y.
+
+        Raises:
+            NotImplementedError: If the anatomical coordinate system is not "RAS" or "LPS".
+
+        """
+        if ct.anatomical_coordinate_system == 'RAS':
+            ct.world_from_anatomical = geo.FrameTransform.from_rt(
+                rotation=Rotation.from_euler("xz", [90, -90], degrees=True).as_matrix().squeeze(),
+            )
+        elif ct.anatomical_coordinate_system == 'LPS':
+            ct.world_from_anatomical = geo.FrameTransform.from_rt(
+                rotation=Rotation.from_euler("xz", [-90, 90], degrees=True).as_matrix().squeeze(),
+            )
+        else:
+            raise NotImplementedError(
+                f'Cannot handle anatomical coordinate system {ct.anatomical_coordinate_system}'
+            )
 
     session = Session.objects.select_related('parameters', 'input_scan').get(pk=session_pk)
 
@@ -41,7 +66,7 @@ def run_deepdrr_task(session_pk: str) -> None:
             ct = Volume.from_nifti(dest)
 
     # place CT at center of the world, oriented supine (ILA)
-    ct.supine()
+    to_supine(ct)
     ct.place_center(geo.p(0, 0, 0))
 
     source_to_detector_distance: float = session.parameters.source_to_detector_distance
