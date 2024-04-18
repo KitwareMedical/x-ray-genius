@@ -30,5 +30,6 @@ class Session(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
     input_scan = models.ForeignKey(CTInputFile, on_delete=models.CASCADE, related_name='sessions')
     status = models.CharField(max_length=32, choices=Status.choices, default=Status.NOT_STARTED)
+    celery_task_id = models.CharField(max_length=255, null=True, blank=True)
 
     output_images_zip = models.FileField(upload_to='output_images/zips', null=True, blank=True)

@@ -39,6 +39,11 @@ urlpatterns = [
         views.cancel_batch_run,
         name='cancel-batch-run',
     ),
+    path(
+        'session/<uuid:session_pk>/trace/',
+        views.get_task_trace,
+        name='get-task-trace',
+    ),
     # TODO: these are hardcoded because the frontend refers to them directly as absolute URLs
     path(
         'itk/<path:path>',
