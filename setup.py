@@ -36,9 +36,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'celery',
+        'celery>=5.4',
         'django>=5.0,<5.1',
         'django-allauth',
+        'django-celery-results',
         'django-click',
         'django-configurations[database,email]',
         'django-extensions',

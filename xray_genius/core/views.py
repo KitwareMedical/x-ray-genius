@@ -2,12 +2,15 @@ from collections.abc import Callable
 from typing import ParamSpec, TypeVar
 from urllib.parse import urlencode
 
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Exists, OuterRef, Subquery
 from django.http import HttpRequest, HttpResponseBadRequest
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from django_celery_results.models import TaskResult
 
 from .forms import CTInputFileUploadForm
 from .models import Session
@@ -35,6 +38,15 @@ def dashboard(request: HttpRequest):
         Session.objects.select_related('input_scan', 'parameters')
         .filter(owner=request.user)
         .order_by('-created')
+        .annotate(
+            has_task_result=Subquery(
+                Exists(
+                    TaskResult.objects.filter(
+                        task_id=OuterRef('celery_task_id'),
+                    )
+                ),
+            ),
+        )
     )
 
     # Whether or not the page should refresh every 5 seconds automatically.
@@ -114,7 +126,8 @@ def initiate_batch_run(request: HttpRequest, session_pk: str):
             return HttpResponseBadRequest('Invalid start state.')
         session.status = Session.Status.RUNNING
         session.save()
-    run_deepdrr_task.delay(session_pk)
+    task = run_deepdrr_task.delay(session_pk)
+    Session.objects.filter(pk=session_pk).update(celery_task_id=task.id)
     return redirect('dashboard')
 
 
@@ -126,3 +139,20 @@ def cancel_batch_run(request: HttpRequest, session_pk: str):
         session.status = Session.Status.CANCELLED
         session.save()
     return redirect('dashboard')
+
+
+@require_GET
+def get_task_trace(request: HttpRequest, session_pk: str):
+    # Only staff and superusers can view task info, regardless of
+    # who owns the session.
+    if not request.user.is_staff and not request.user.is_superuser:
+        raise PermissionDenied()
+    session = get_object_or_404(Session, pk=session_pk)
+    task_result = get_object_or_404(TaskResult, task_id=session.celery_task_id)
+    return render(
+        request,
+        'task_trace.html',
+        context={
+            'task_result': task_result,
+        },
+    )

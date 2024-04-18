@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block body %}
+  <div class="bg-neutral m-4 p-4 rounded-lg shadow-lg">
+    <h2 class="text-xl font-semibold mb-2">Task Result Details</h2>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <p class="font-semibold">Task ID:</p>
+        <p>{{ task_result.task_id }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Task Name:</p>
+        <p>{{ task_result.task_name }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Task State:</p>
+        <p>{{ task_result.get_status_display }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Worker:</p>
+        <p>{{ task_result.worker }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Started at:</p>
+        <p>{{ task_result.date_created }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Completed at:</p>
+        <p>{{ task_result.date_done }}</p>
+      </div>
+      <div class="col-span-2">
+        <p class="font-semibold">Traceback (scrollable):</p>
+        <pre class="text-sm overflow-auto max-h-40">
+          {{ task_result.traceback|default:"No traceback available" }}
+        </pre>
+      </div>
+    </div>
+  </div>
+
+{% endblock body %}

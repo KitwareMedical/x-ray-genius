@@ -33,6 +33,9 @@ class XrayGeniusMixin(ConfigMixin):
         'default': {},
     }
 
+    CELERY_RESULT_BACKEND = 'django-db'
+    CELERY_RESULT_EXTENDED = True
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         # Install local apps first, to ensure any overridden resources are found first
@@ -46,6 +49,7 @@ class XrayGeniusMixin(ConfigMixin):
             'allauth.socialaccount.providers.google',
             'widget_tweaks',
             'django_vite',
+            'django_celery_results',
         ]
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware
