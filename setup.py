@@ -39,6 +39,7 @@ setup(
         'celery>=5.4',
         'django>=5.0,<5.1',
         'django-allauth',
+        'django-celery-results',
         'django-click',
         'django-configurations[database,email]',
         'django-extensions',

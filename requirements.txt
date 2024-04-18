@@ -7,7 +7,7 @@ billiard==4.2.0
 boto3==1.34.86
 botocore==1.34.86
 Brotli==1.1.0
-celery==5.3.6
+celery==5.4.0
 certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
@@ -22,6 +22,7 @@ dj-email-url==1.0.6
 Django==5.0.4
 django-allauth==0.61.1
 django-auth-style==0.8.1
+django-celery-results==2.5.1
 django-click==2.3.0
 django-composed-configuration==0.25.0
 django-configurations==2.5.1
