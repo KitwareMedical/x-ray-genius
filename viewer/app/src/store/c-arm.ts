@@ -121,11 +121,9 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   const spacing = computed(() => metadata.value.spacing);
 
   const armTranslation = translation;
-  // rotation angle around Z. Negated to match deepdrr alpha param.
-  const armRotation = computed(() => -rotation.value);
+  const armRotation = rotation;
   const armRotationRad = computed(() => armRotation.value * DEG_TO_RAD);
-  // tilt angle around X. Negated to match deepdrr beta param.
-  const armTilt = computed(() => -tilt.value);
+  const armTilt = tilt;
   const armTiltRad = computed(() => armTilt.value * DEG_TO_RAD);
 
   const getAxisRange = (axis: number) => {
