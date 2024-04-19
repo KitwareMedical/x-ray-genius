@@ -77,7 +77,7 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
     const vec = vec3.create();
     vec3.copy(vec, defaultLpsEmitterPos);
     vec3.rotateZ(vec, vec, [0, 0, 0], armRotationRad.value);
-    vec3.rotateX(vec, vec, [0, 0, 0], -armTiltRad.value);
+    vec3.rotateX(vec, vec, [0, 0, 0], armTiltRad.value);
     return vec as Vector3;
   });
 
@@ -91,7 +91,7 @@ export function useCArmPosition(imageID: MaybeRef<Maybe<string>>) {
   const emitterUpDir = computed(() => {
     const vec = vec3.create();
     vec3.copy(vec, defaultLpsEmitterUpDir);
-    vec3.rotateX(vec, vec, [0, 0, 0], -armTiltRad.value);
+    vec3.rotateX(vec, vec, [0, 0, 0], armTiltRad.value);
     return vec as Vector3;
   });
 
