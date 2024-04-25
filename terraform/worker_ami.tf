@@ -208,7 +208,7 @@ resource "aws_s3_object" "celery_conf" {
 
 CELERY_APP="xray_genius.celery"
 CELERYD_NODES="worker"
-CELERYD_OPTS=""
+CELERYD_OPTS="--without-heartbeat"
 CELERY_BIN="/home/celery/xray-genius/venv/bin/celery"
 CELERYD_PID_FILE="/var/run/celery/%n.pid"
 CELERYD_LOG_FILE="/var/log/celery/%n%I.log"
