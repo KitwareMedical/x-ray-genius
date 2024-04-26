@@ -42,7 +42,7 @@ def sample_von_mises_angles_degrees(mean_angle_deg: float, kappa: float, num_sam
     """
     mean_angle_rad = np.deg2rad(mean_angle_deg)  # Convert mean angle to radians
     sampled_angles_rad = vonmises.rvs(kappa, loc=mean_angle_rad, size=num_samples)  # Sample
-    sampled_angles_deg = np.mod(np.rad2deg(sampled_angles_rad), 360)  # Convert back to degrees
+    sampled_angles_deg = np.rad2deg(sampled_angles_rad)
     return sampled_angles_deg
 
 
