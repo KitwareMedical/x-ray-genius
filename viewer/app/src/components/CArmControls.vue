@@ -121,7 +121,6 @@ async function submit() {
             :size="200"
             @start-drag="startDrag"
             @end-drag="endDrag"
-            :disabled="store.randomizeRotation"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
             <div>{{ armRotation.toFixed(2) }}˚</div>
@@ -129,7 +128,7 @@ async function submit() {
           </div>
           <v-checkbox v-model="store.randomizeRotation" class="mt-3">
             <template v-slot:label>
-              <span class="mr-2">Randomize Rotation (alpha)</span>
+              <span class="mr-2">Add Rotation Randomization (alpha)</span>
               <v-tooltip bottom>
                 <template v-slot:activator="{ props }">
                   <v-icon v-bind="props" class="help-icon">
@@ -160,7 +159,6 @@ async function submit() {
             :size="200"
             @start-drag="startDrag"
             @end-drag="endDrag"
-            :disabled="store.randomizeTilt"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
             <div>{{ armTilt.toFixed(2) }}˚</div>
@@ -168,7 +166,7 @@ async function submit() {
           </div>
           <v-checkbox v-model="store.randomizeTilt" class="mt-3">
             <template v-slot:label>
-              <span class="mr-2">Randomize Tilt</span>
+              <span class="mr-2">Add Tilt Randomization (beta)</span>
               <v-tooltip bottom>
                 <template v-slot:activator="{ props }">
                   <v-icon v-bind="props" class="help-icon">

@@ -39,18 +39,14 @@
                     File name: {{ session.input_scan.filename }}<br />
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
-                      C-Arm Alpha:
-                      {% if session.parameters.carm_alpha is not None %}
-                        {{ session.parameters.carm_alpha }}&deg;
-                      {% else %}
-                        (randomized)
+                      C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;
+                      {% if session.parameters.carm_alpha_kappa is not None %}
+                        ± {{ session.parameters.carm_alpha_kappa }} stddev
                       {% endif %}
                       <br />
-                      C-Arm Beta:
-                      {% if session.parameters.carm_beta is not None %}
-                        {{ session.parameters.carm_beta }}&deg;
-                      {% else %}
-                        (randomized)
+                      C-Arm Beta: {{ session.parameters.carm_beta }}&deg;
+                      {% if session.parameters.carm_alpha_kappa is not None %}
+                        ± {{ session.parameters.carm_beta_kappa }} stddev
                       {% endif %}
                       <br />
                       C-Arm Push/Pull:
