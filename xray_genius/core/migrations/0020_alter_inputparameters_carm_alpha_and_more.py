@@ -13,22 +13,36 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='inputparameters',
             name='carm_alpha',
-            field=models.FloatField(default=0, help_text='The desired alpha angulation of the C-arm in degrees.'),
+            field=models.FloatField(
+                default=0, help_text='The desired alpha angulation of the C-arm in degrees.'
+            ),
         ),
         migrations.AlterField(
             model_name='inputparameters',
             name='carm_alpha_kappa',
-            field=models.FloatField(blank=True, help_text='The desired kappa value to use in the von Mises distriubtion for C-arm alpha.', null=True),
+            field=models.FloatField(
+                blank=True,
+                help_text='The desired kappa value to use in the von Mises distriubtion'
+                'for C-arm alpha.',
+                null=True,
+            ),
         ),
         migrations.AlterField(
             model_name='inputparameters',
             name='carm_beta',
-            field=models.FloatField(default=0, help_text='The desired secondary angulation of the C-arm in degrees.'),
+            field=models.FloatField(
+                default=0, help_text='The desired secondary angulation of the C-arm in degrees.'
+            ),
         ),
         migrations.AlterField(
             model_name='inputparameters',
             name='carm_beta_kappa',
-            field=models.FloatField(blank=True, help_text='The desired kappa value to use in the von Mises distriubtion for C-arm beta.', null=True),
+            field=models.FloatField(
+                blank=True,
+                help_text='The desired kappa value to use in the von Mises distriubtion'
+                'for C-arm beta.',
+                null=True,
+            ),
         ),
         migrations.AlterField(
             model_name='inputparameters',
