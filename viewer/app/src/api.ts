@@ -55,8 +55,10 @@ function kappaStdDevToConcentration(sdev: number) {
 
 export function exportApiParameters(): CArmParameters {
   const {
+    rotation,
     randomizeRotation,
     rotationKappaStdDev,
+    tilt,
     randomizeTilt,
     tiltKappaStdDev,
     randomizeX,
@@ -72,15 +74,14 @@ export function exportApiParameters(): CArmParameters {
 
   const { currentImageID } = useCurrentImage();
 
-  const { armTranslation, armRotation, armTilt } =
-    useCArmPhysicalParameters(currentImageID);
+  const { armTranslation } = useCArmPhysicalParameters(currentImageID);
 
   return {
-    carmAlpha: armRotation.value,
+    carmAlpha: rotation.value,
     carmAlphaKappa: randomizeRotation.value
       ? kappaStdDevToConcentration(rotationKappaStdDev.value)
       : null,
-    carmBeta: armTilt.value,
+    carmBeta: tilt.value,
     carmBetaKappa: randomizeTilt.value
       ? kappaStdDevToConcentration(tiltKappaStdDev.value)
       : null,
