@@ -73,12 +73,8 @@ const detectorDiameter = computed({
 });
 
 const { currentImageID } = useCurrentImage();
-const {
-  armTranslation: physicalTranslation,
-  armRotation,
-  armTilt,
-  translationRanges,
-} = useCArmPhysicalParameters(currentImageID);
+const { armTranslation: physicalTranslation, translationRanges } =
+  useCArmPhysicalParameters(currentImageID);
 
 const viewAnimationStore = useViewAnimationStore();
 const animationKey = Symbol('CArmControls');
@@ -123,7 +119,7 @@ async function submit() {
             @end-drag="endDrag"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
-            <div>{{ armRotation.toFixed(2) }}˚</div>
+            <div>{{ rotation.toFixed(2) }}˚</div>
             <div>Rotation (Rainbow)</div>
           </div>
           <v-checkbox v-model="store.randomizeRotation" class="mt-3">
@@ -161,7 +157,7 @@ async function submit() {
             @end-drag="endDrag"
           ></c-arm-dial>
           <div class="text-center label mt-n8 d-flex flex-column align-center">
-            <div>{{ armTilt.toFixed(2) }}˚</div>
+            <div>{{ tilt.toFixed(2) }}˚</div>
             <div>Tilt (Head/Foot)</div>
           </div>
           <v-checkbox v-model="store.randomizeTilt" class="mt-3">
@@ -209,7 +205,7 @@ async function submit() {
       >
         <template #label>
           <v-label class="d-flex flex-column align-center">
-            <div>Right/Left</div>
+            <div>Push/Pull</div>
             <div>{{ (physicalTranslation[0] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>
@@ -247,7 +243,7 @@ async function submit() {
       >
         <template #label>
           <v-label class="d-flex flex-column align-center">
-            <div>Up/Down</div>
+            <div>Raise/Lower</div>
             <div>{{ (physicalTranslation[1] / 10).toFixed(1) }} cm</div>
           </v-label>
         </template>

@@ -121,7 +121,7 @@ export function useCArmPhysicalParameters(imageId: MaybeRef<Maybe<string>>) {
   const spacing = computed(() => metadata.value.spacing);
 
   const armTranslation = translation;
-  const armRotation = rotation;
+  const armRotation = computed(() => -rotation.value);
   const armRotationRad = computed(() => armRotation.value * DEG_TO_RAD);
   const armTilt = tilt;
   const armTiltRad = computed(() => armTilt.value * DEG_TO_RAD);
