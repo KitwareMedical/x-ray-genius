@@ -38,33 +38,33 @@
                   <td>
                     File name: {{ session.input_scan.filename }}<br />
                     {% if session.parameters %}
-                      Source-to-detector distance: {{ session.parameters.source_to_detector_distance }}mm<br />
-                      C-Arm Alpha: {{ session.parameters.carm_alpha }}&deg;
+                      Source-to-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}mm<br />
+                      C-Arm Alpha: {{ session.parameters.carm_alpha|floatformat:3 }}&deg;
                       {% if session.parameters.carm_alpha_kappa is not None %}
-                        ± {{ session.parameters.carm_alpha_kappa }} stddev
+                        ± {{ session.parameters.carm_alpha_kappa|floatformat:3 }} stddev
                       {% endif %}
                       <br />
-                      C-Arm Beta: {{ session.parameters.carm_beta }}&deg;
+                      C-Arm Beta: {{ session.parameters.carm_beta|floatformat:3 }}&deg;
                       {% if session.parameters.carm_alpha_kappa is not None %}
-                        ± {{ session.parameters.carm_beta_kappa }} stddev
+                        ± {{ session.parameters.carm_beta_kappa|floatformat:3 }} stddev
                       {% endif %}
                       <br />
                       C-Arm Push/Pull:
-                      {{ session.parameters.carm_push_pull_translation }}mm
+                      {{ session.parameters.carm_push_pull_translation|floatformat:3 }}mm
                       {% if session.parameters.carm_push_pull_std_dev is not None %}
-                        ± {{ session.parameters.carm_push_pull_std_dev }}mm
+                        ± {{ session.parameters.carm_push_pull_std_dev|floatformat:3 }}mm
                       {% endif %}
                       <br />
                       C-Arm Head/Foot:
-                      {{ session.parameters.carm_head_foot_translation }}mm
+                      {{ session.parameters.carm_head_foot_translation|floatformat:3 }}mm
                       {% if session.parameters.carm_head_foot_std_dev is not None %}
-                        ± {{ session.parameters.carm_head_foot_std_dev }}mm
+                        ± {{ session.parameters.carm_head_foot_std_dev|floatformat:3 }}mm
                       {% endif %}
                       <br />
                       C-Arm Raise/Lower:
-                      {{ session.parameters.carm_raise_lower_translation }}mm
+                      {{ session.parameters.carm_raise_lower_translation|floatformat:3 }}mm
                       {% if session.parameters.carm_raise_lower_std_dev is not None %}
-                        ± {{ session.parameters.carm_raise_lower_std_dev }}mm
+                        ± {{ session.parameters.carm_raise_lower_std_dev|floatformat:3 }}mm
                       {% endif %}
                       <br />
                     {% else %}
@@ -105,7 +105,7 @@
                                       C-Arm Push/Pull: {{ img.carm_push_pull|floatformat:3 }}&deg;
                                     </p>
                                     <p class="text-xs">
-                                      C-Arm Head/Foot Translation: {{ img.carm_head_foot_translation|floatformat:3 }}&deg;
+                                      C-Arm Head/Foot: {{ img.carm_head_foot_translation|floatformat:3 }}&deg;
                                     </p>
                                     <p class="text-xs">
                                       C-Arm Raise/Lower: {{ img.carm_raise_lower|floatformat:3 }}&deg;
