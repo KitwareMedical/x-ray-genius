@@ -104,15 +104,19 @@ class ParameterSampler:
         )
         self.carm_alpha = (
             [input_parameters.carm_alpha] * self.samples
-            if input_parameters.carm_alpha is not None
+            if input_parameters.carm_alpha_kappa is None
             else sample_von_mises_angles_degrees(
-                mean_angle_deg=0, kappa=input_parameters.carm_alpha_kappa, num_samples=self.samples
+                mean_angle_deg=input_parameters.carm_alpha,
+                kappa=input_parameters.carm_alpha_kappa,
+                num_samples=self.samples,
             )
         )
         self.carm_beta = (
             [input_parameters.carm_beta] * self.samples
-            if input_parameters.carm_beta is not None
+            if input_parameters.carm_beta_kappa is None
             else sample_von_mises_angles_degrees(
-                mean_angle_deg=0, kappa=input_parameters.carm_beta_kappa, num_samples=self.samples
+                mean_angle_deg=input_parameters.carm_beta,
+                kappa=input_parameters.carm_beta_kappa,
+                num_samples=self.samples,
             )
         )

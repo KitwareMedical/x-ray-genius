@@ -16,24 +16,28 @@ class InputParameters(models.Model):
     )
 
     # Optional parameters; these are randomized if not provided
-    carm_push_pull_translation = models.FloatField(null=True, blank=True)
-    carm_head_foot_translation = models.FloatField(null=True, blank=True)
-    carm_raise_lower_translation = models.FloatField(null=True, blank=True)
+    carm_push_pull_translation = models.FloatField(null=False, blank=False, default=0)
+    carm_head_foot_translation = models.FloatField(null=False, blank=False, default=0)
+    carm_raise_lower_translation = models.FloatField(null=False, blank=False, default=0)
     carm_push_pull_std_dev = models.FloatField(null=True, blank=True)
     carm_head_foot_std_dev = models.FloatField(null=True, blank=True)
     carm_raise_lower_std_dev = models.FloatField(null=True, blank=True)
     carm_alpha = models.FloatField(
-        null=True, blank=True, help_text='The desired alpha angulation of the C-arm in degrees.'
+        default=0, blank=False, help_text='The desired alpha angulation of the C-arm in degrees.'
     )
     carm_alpha_kappa = models.FloatField(
-        default=100,
+        null=True,
+        blank=True,
         help_text='The desired kappa value to use in the von Mises distriubtion for C-arm alpha.',
     )
     carm_beta = models.FloatField(
-        null=True, blank=True, help_text='The desired secondary angulation of the C-arm in degrees.'
+        default=0,
+        blank=False,
+        help_text='The desired secondary angulation of the C-arm in degrees.',
     )
     carm_beta_kappa = models.FloatField(
-        default=100,
+        null=True,
+        blank=True,
         help_text='The desired kappa value to use in the von Mises distriubtion for C-arm beta.',
     )
     num_samples = models.PositiveIntegerField(

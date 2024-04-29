@@ -5,7 +5,7 @@ import { watch, computed, toRefs, ref, onMounted } from 'vue';
 
 interface Props {
   size: number;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 type Emits = {

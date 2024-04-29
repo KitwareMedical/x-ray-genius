@@ -23,10 +23,10 @@ function getParameterUrl(sessionPk: string) {
 }
 
 export interface CArmParameters {
-  carmAlpha?: number | null;
-  carmAlphaKappa?: number;
-  carmBeta?: number | null;
-  carmBetaKappa?: number;
+  carmAlpha?: number;
+  carmAlphaKappa?: number | null;
+  carmBeta?: number;
+  carmBetaKappa?: number | null;
   carmPushPullTranslation?: number;
   carmHeadFootTranslation?: number;
   carmRaiseLowerTranslation?: number;
@@ -76,10 +76,14 @@ export function exportApiParameters(): CArmParameters {
     useCArmPhysicalParameters(currentImageID);
 
   return {
-    carmAlpha: randomizeRotation.value ? null : armRotation.value,
-    carmAlphaKappa: kappaStdDevToConcentration(rotationKappaStdDev.value),
-    carmBeta: randomizeTilt.value ? null : armTilt.value,
-    carmBetaKappa: kappaStdDevToConcentration(tiltKappaStdDev.value),
+    carmAlpha: armRotation.value,
+    carmAlphaKappa: randomizeRotation.value
+      ? kappaStdDevToConcentration(rotationKappaStdDev.value)
+      : null,
+    carmBeta: armTilt.value,
+    carmBetaKappa: randomizeTilt.value
+      ? kappaStdDevToConcentration(tiltKappaStdDev.value)
+      : null,
     carmPushPullTranslation: armTranslation.value[0],
     carmRaiseLowerTranslation: armTranslation.value[1],
     carmHeadFootTranslation: armTranslation.value[2],
