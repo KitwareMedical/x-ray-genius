@@ -77,6 +77,10 @@ def run_deepdrr_task(session_pk: str) -> None:
         sensor_height=DEFAULT_SENSOR_SIZE,
         sensor_width=DEFAULT_SENSOR_SIZE,
         pixel_size=session.parameters.sensor_pixel_pitch,
+        min_alpha=-180,
+        max_alpha=180,
+        min_beta=-180,
+        max_beta=180,
     )
 
     param_sampler = ParameterSampler(session.parameters)
