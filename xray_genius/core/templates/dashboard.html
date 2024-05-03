@@ -45,7 +45,7 @@
                       {% endif %}
                       <br />
                       C-Arm Beta: {{ session.parameters.carm_beta|floatformat:3 }}&deg;
-                      {% if session.parameters.carm_alpha_kappa_degrees is not None %}
+                      {% if session.parameters.carm_beta_kappa_degrees is not None %}
                         ± {{ session.parameters.carm_beta_kappa_degrees|floatformat:2 }}&deg;
                       {% endif %}
                       <br />
