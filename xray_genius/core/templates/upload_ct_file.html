@@ -20,7 +20,8 @@
       </label>
       {% render_field form.file id="fileInput" class="hidden" %}
 
-      <p class="mt-4 text-gray-500">or drag and drop them here</p>
+      {% comment %} TODO: implement drag/drop file upload {% endcomment %}
+      {% comment %} <p class="mt-4 text-gray-500">or drag and drop them here</p> {% endcomment %}
     </div>
     {% if form.errors %}
       <div class="alert alert-error" role="alert">
