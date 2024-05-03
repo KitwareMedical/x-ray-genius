@@ -1,3 +1,5 @@
+import math
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -5,6 +7,10 @@ from .session import Session
 
 # The default is the default sensor width/height from deepdrr.device.mobile_carm.MobileCArm
 DEFAULT_SENSOR_SIZE = 1536
+
+
+def concentration_to_degrees(conc: float) -> float:
+    return math.sqrt(1 / conc) / (math.pi / 180)
 
 
 class InputParameters(models.Model):
@@ -55,3 +61,15 @@ class InputParameters(models.Model):
     def sensor_pixel_pitch(self):
         """The sensor pixel pitch."""
         return self.detector_diameter / DEFAULT_SENSOR_SIZE
+
+    @property
+    def carm_alpha_kappa_degrees(self):
+        if self.carm_alpha_kappa is None:
+            return None
+        return concentration_to_degrees(self.carm_alpha_kappa)
+
+    @property
+    def carm_beta_kappa_degrees(self):
+        if self.carm_beta_kappa is None:
+            return None
+        return concentration_to_degrees(self.carm_beta_kappa)

@@ -40,13 +40,13 @@
                     {% if session.parameters %}
                       Source-to-detector distance: {{ session.parameters.source_to_detector_distance|floatformat:3 }}mm<br />
                       C-Arm Alpha: {{ session.parameters.carm_alpha|floatformat:3 }}&deg;
-                      {% if session.parameters.carm_alpha_kappa is not None %}
-                        ± {{ session.parameters.carm_alpha_kappa|floatformat:3 }} stddev
+                      {% if session.parameters.carm_alpha_kappa_degrees is not None %}
+                        ± {{ session.parameters.carm_alpha_kappa_degrees|floatformat:2 }}&deg;
                       {% endif %}
                       <br />
                       C-Arm Beta: {{ session.parameters.carm_beta|floatformat:3 }}&deg;
-                      {% if session.parameters.carm_alpha_kappa is not None %}
-                        ± {{ session.parameters.carm_beta_kappa|floatformat:3 }} stddev
+                      {% if session.parameters.carm_alpha_kappa_degrees is not None %}
+                        ± {{ session.parameters.carm_beta_kappa_degrees|floatformat:2 }}&deg;
                       {% endif %}
                       <br />
                       C-Arm Push/Pull:
