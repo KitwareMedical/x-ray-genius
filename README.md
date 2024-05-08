@@ -8,6 +8,7 @@ This is the simplest configuration for developers to start with.
 
 ### Initial Setup
 1. Install Nvidia GPU drivers, cuda, and the `nvidia-container-toolkit` if they are not already installed.
+   - You can verify that the `nvidia-container-toolkit` is installed by running `nvidia-ctk --version`.
 2. Run `docker compose run --rm django ./manage.py migrate`
 3. Run `docker compose run --rm django ./manage.py createsuperuser`
    and follow the prompts to create your own user
