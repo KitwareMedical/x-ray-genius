@@ -55,6 +55,7 @@ services:
     volumes:
       - .:/opt/django-project
       - /opt/django-project/node_modules
+      - /opt/django-project/viewer/node_modules
     ports:
       - 8383:8383
       - 8080:8080
