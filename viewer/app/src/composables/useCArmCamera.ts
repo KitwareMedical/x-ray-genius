@@ -24,6 +24,7 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
 
     const [width, height] = size.value;
     const aspect = width / height;
+    // Camera view angle is the vertical view angle
     const cameraViewAngle =
       width <= height ? emitterViewAngle / aspect : emitterViewAngle;
 

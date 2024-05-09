@@ -61,14 +61,14 @@ const numberOfSamples = computed({
 const sourceToDetectorDistance = computed({
   get: () => store.sourceToDetectorDistance,
   set: (v) => {
-    store.setSourceToDetectorDistance(v);
+    store.setSourceToDetectorDistance(+v);
   },
 });
 
 const detectorDiameter = computed({
   get: () => store.detectorDiameter,
   set: (v) => {
-    store.setDetectorDiameter(v);
+    store.setDetectorDiameter(+v);
   },
 });
 
