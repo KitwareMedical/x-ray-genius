@@ -9,13 +9,10 @@ RUN apk update && apk add g++ make python3 pixman-dev cairo-dev pango-dev
 # over in the container.
 COPY ./package.json /opt/django-project/package.json
 COPY ./package-lock.json /opt/django-project/package-lock.json
-COPY ./viewer/package.json /opt/django-project/viewer/package.json
-COPY ./viewer/package-lock.json /opt/django-project/viewer/package-lock.json
+COPY ./viewer/ /opt/django-project/viewer/
 RUN npm install
 
-# Copy statically built wasm/other binary files to the shared Django volume
-COPY ./viewer/core/VolView/src/io /opt/django-project/viewer/core/VolView/src/io
-COPY ./viewer/core/VolView/src/io/itk-dicom/emscripten-build/* /opt/django-project/viewer/dist/itk/pipelines
-COPY ./viewer/core/VolView/src/io/resample/emscripten-build/* /opt/django-project/viewer/dist/itk/pipelines
+# Build static files for the viewer. They will go in the shared volume with Django so it can serve them.
+RUN npm run build:viewer
 
 WORKDIR /opt/django-project
