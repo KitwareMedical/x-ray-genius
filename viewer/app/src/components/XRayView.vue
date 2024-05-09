@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import { ref, toRefs, watchPostEffect } from 'vue';
+import {
+  ref,
+  toRefs,
+  effectScope,
+  onUnmounted,
+  toRaw,
+  provide,
+  computed,
+  watch,
+} from 'vue';
 import type { VtkViewApi } from '@/src/types/vtk-types';
 import { useCurrentImage } from '@/src/composables/useCurrentImage';
 import VtkBaseVolumeRepresentation from '@/src/components/vtk/VtkBaseVolumeRepresentation.vue';
 import useVolumeColoringStore from '@/src/store/view-configs/volume-coloring';
-import { effectScope } from 'vue';
 import { useVtkView } from '@/src/core/vtk/useVtkView';
-import { onUnmounted } from 'vue';
-import { toRaw } from 'vue';
-import { provide } from 'vue';
 import { VtkViewContext } from '@/src/components/vtk/context';
 import { useCArmCamera } from '../composables/useCArmCamera';
 import { useViewAnimationListener } from '@/src/composables/useViewAnimationListener';
 import { usePointerDelta } from '../composables/usePointerDelta';
-import { watchEffect } from 'vue';
 import { vtkFieldRef } from '@/src/core/vtk/vtkFieldRef';
-import { computed } from 'vue';
-import { watch } from 'vue';
 import { whenever } from '@vueuse/core';
-import { Vector2 } from '@kitware/vtk.js/types';
 import { OpacityPoints } from '@/src/types/views';
 import useViewAnimationStore from '@/src/store/view-animation';
+import { useDetectorModel } from '../composables/useDetectorModel';
 
 interface Props {
   id: string;
@@ -66,6 +68,7 @@ watch(
 );
 
 useCArmCamera(view, currentImageID);
+useDetectorModel(view, currentImageID);
 
 // mouse dragging behavior
 
