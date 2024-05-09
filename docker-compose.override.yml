@@ -9,6 +9,9 @@ services:
     env_file: ./dev/.env.docker-compose
     volumes:
       - .:/opt/django-project
+      # Mount the viewer/dist directory to the container so that Django
+      # can serve the static files built by the node container
+      - viewer-dist:/opt/django-project/viewer/dist
     ports:
       - 8000:8000
     depends_on:
@@ -56,6 +59,10 @@ services:
       - .:/opt/django-project
       - /opt/django-project/node_modules
       - /opt/django-project/viewer/node_modules
+      - viewer-dist:/opt/django-project/viewer/dist
     ports:
       - 8383:8383
       - 8080:8080
+
+volumes:
+  viewer-dist:
