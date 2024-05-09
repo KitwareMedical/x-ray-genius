@@ -13,4 +13,9 @@ COPY ./viewer/package.json /opt/django-project/viewer/package.json
 COPY ./viewer/package-lock.json /opt/django-project/viewer/package-lock.json
 RUN npm install
 
+# Copy statically built wasm/other binary files to the shared Django volume
+COPY ./viewer/core/VolView/src/io /opt/django-project/viewer/core/VolView/src/io
+COPY ./viewer/core/VolView/src/io/itk-dicom/emscripten-build/* /opt/django-project/viewer/dist/itk/pipelines
+COPY ./viewer/core/VolView/src/io/resample/emscripten-build/* /opt/django-project/viewer/dist/itk/pipelines
+
 WORKDIR /opt/django-project
