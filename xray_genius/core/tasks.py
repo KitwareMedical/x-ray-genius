@@ -74,6 +74,7 @@ def run_deepdrr_task(session_pk: str) -> None:
 
     carm = MobileCArm(
         source_to_detector_distance=source_to_detector_distance,
+        source_to_isocenter_vertical_distance=source_to_detector_distance / 2,
         sensor_height=DEFAULT_SENSOR_SIZE,
         sensor_width=DEFAULT_SENSOR_SIZE,
         pixel_size=session.parameters.sensor_pixel_pitch,
