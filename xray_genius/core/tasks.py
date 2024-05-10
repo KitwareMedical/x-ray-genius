@@ -1,10 +1,10 @@
 from io import BytesIO
 from pathlib import Path
+import shutil
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from uuid import uuid4
 from zipfile import ZipFile
 
-from PIL import Image
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.files.base import ContentFile, File
@@ -20,9 +20,11 @@ logger = get_task_logger(__name__)
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
     # Import here to avoid attempting to load CUDA on the web server
+    from PIL import Image
     from deepdrr import MobileCArm, Volume, geo
     from deepdrr.projector import Projector  # separate import for CUDA init
-    from deepdrr.utils import image_utils
+    import numpy as np
+    import png
     from scipy.spatial.transform import Rotation
 
     def to_supine(ct: Volume):
@@ -132,16 +134,24 @@ def run_deepdrr_task(session_pk: str) -> None:
 
             with TemporaryDirectory() as tmpdir:
                 dest = Path(tmpdir) / 'image.png'
-                image_utils.save(dest, image)
-                img = File(BytesIO(dest.read_bytes()), name=f'{uuid4()}.png')
+                name = uuid4()
+
+                if image.dtype in (np.float16, np.float32, np.float64):
+                    image_u16 = np.clip(image * 0xFFFF, 0, 0xFFFF).astype(np.uint16)
+                    image_u8 = np.clip(image * 0xFF, 0, 0xFF).astype(np.uint8)
+                else:
+                    logger.warning('Naive cast image %r (unknown dtype %r).', name, image.dtype)
+                    image_u16 = image.astype(np.uint16)
+                    image_u8 = image.astype(np.uint8)
+
+                png.from_array(image_u16, mode='L;16').save(dest)
+                img = File(BytesIO(dest.read_bytes()), name=f'{name}.png')
 
                 thumbnail_dest = Path(tmpdir) / 'thumbnail.png'
-                thumnail_img = Image.open(dest)
-                thumnail_img.thumbnail((64, 64))
-                thumnail_img.save(thumbnail_dest)
-                thumbnail = File(
-                    BytesIO(thumbnail_dest.read_bytes()), name=f'{uuid4()}_thumbnail.png'
-                )
+                thumbnail_img = Image.fromarray(image_u8)
+                thumbnail_img.thumbnail((64, 64))
+                thumbnail_img.save(thumbnail_dest)
+                thumbnail = File(BytesIO(thumbnail_dest.read_bytes()), name=f'{name}_thumbnail.png')
 
                 output_image = OutputImage.objects.create(
                     image=img,
@@ -170,11 +180,11 @@ def zip_images_task(session_pk: str) -> None:
             for output_image in output_images.iterator():
                 image_name = Path(output_image.image.name).name
 
-                with Image.open(output_image.image) as img:
-                    with TemporaryDirectory() as tmpdir:
-                        image_name = Path(tmpdir) / image_name
-                        img.save(image_name)
-                        zip_file.write(filename=image_name, arcname=image_name.name)
+                # Preserve bit-depth. Do not use Image.open.
+                with output_image.image.open('r') as src:
+                    with NamedTemporaryFile() as dst:
+                        shutil.copyfileobj(src, dst)
+                        zip_file.write(filename=dst.name, arcname=image_name)
 
         with NamedTemporaryFile() as zip_output:
             buffer.seek(0)
