@@ -147,14 +147,14 @@ def run_deepdrr_task(session_pk: str) -> None:
                     image_u8 = image.astype(np.uint8)
 
                 png.from_array(image_u16, mode='L;16').save(dest)
-                img = File(BytesIO(dest.read_bytes()), name=f'{uuid4()}.png')
+                img = File(BytesIO(dest.read_bytes()), name=f'{name}.png')
 
                 thumbnail_dest = Path(tmpdir) / 'thumbnail.png'
                 thumbnail_img = Image.fromarray(image_u8)
                 thumbnail_img.thumbnail((64, 64))
                 thumbnail_img.save(thumbnail_dest)
                 thumbnail = File(
-                    BytesIO(thumbnail_dest.read_bytes()), name=f'{uuid4()}_thumbnail.png'
+                    BytesIO(thumbnail_dest.read_bytes()), name=f'{name}_thumbnail.png'
                 )
 
                 output_image = OutputImage.objects.create(
