@@ -23,7 +23,6 @@ def run_deepdrr_task(session_pk: str) -> None:
     from PIL import Image
     from deepdrr import MobileCArm, Volume, geo
     from deepdrr.projector import Projector  # separate import for CUDA init
-    from deepdrr.utils import image_utils
     import numpy as np
     import png
     from scipy.spatial.transform import Rotation
