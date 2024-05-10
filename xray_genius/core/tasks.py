@@ -1,7 +1,6 @@
-import shutil
-
 from io import BytesIO
 from pathlib import Path
+import shutil
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from uuid import uuid4
 from zipfile import ZipFile
@@ -21,12 +20,12 @@ logger = get_task_logger(__name__)
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
     # Import here to avoid attempting to load CUDA on the web server
-    import png
-    import numpy as np
     from PIL import Image
     from deepdrr import MobileCArm, Volume, geo
     from deepdrr.projector import Projector  # separate import for CUDA init
     from deepdrr.utils import image_utils
+    import numpy as np
+    import png
     from scipy.spatial.transform import Rotation
 
     def to_supine(ct: Volume):
@@ -139,8 +138,8 @@ def run_deepdrr_task(session_pk: str) -> None:
                 name = uuid4()
 
                 if image.dtype in (np.float16, np.float32, np.float64):
-                    image_u16 = np.clip(image * 0xffff, 0, 0xffff).astype(np.uint16)
-                    image_u8 = np.clip(image * 0xff, 0, 0xff).astype(np.uint8)
+                    image_u16 = np.clip(image * 0xFFFF, 0, 0xFFFF).astype(np.uint16)
+                    image_u8 = np.clip(image * 0xFF, 0, 0xFF).astype(np.uint8)
                 else:
                     logger.warning('Naive cast image %r (unknown dtype %r).', name, image.dtype)
                     image_u16 = image.astype(np.uint16)
@@ -153,9 +152,7 @@ def run_deepdrr_task(session_pk: str) -> None:
                 thumbnail_img = Image.fromarray(image_u8)
                 thumbnail_img.thumbnail((64, 64))
                 thumbnail_img.save(thumbnail_dest)
-                thumbnail = File(
-                    BytesIO(thumbnail_dest.read_bytes()), name=f'{name}_thumbnail.png'
-                )
+                thumbnail = File(BytesIO(thumbnail_dest.read_bytes()), name=f'{name}_thumbnail.png')
 
                 output_image = OutputImage.objects.create(
                     image=img,
