@@ -61,6 +61,7 @@ setup(
     extras_require={
         'worker': [
             'deepdrr',
+            'pypng',
         ],
         'dev': [
             'django-autotyping',
