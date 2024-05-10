@@ -24,6 +24,7 @@ class ParametersRequestSchema(ModelSchema):
             'carm_head_foot_std_dev',
             'carm_raise_lower_std_dev',
             'source_to_detector_distance',
+            'detector_diameter',
             'num_samples',
         ]
 
