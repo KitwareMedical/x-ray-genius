@@ -181,7 +181,7 @@ def zip_images_task(session_pk: str) -> None:
                 image_name = Path(output_image.image.name).name
 
                 # Preserve bit-depth. Do not use Image.open.
-                with output_image.image.open('r') as src:
+                with output_image.image.open('rb') as src:
                     with NamedTemporaryFile() as dst:
                         shutil.copyfileobj(src, dst)
                         zip_file.write(filename=dst.name, arcname=image_name)
