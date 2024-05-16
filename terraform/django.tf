@@ -13,6 +13,7 @@ module "django" {
 
   project_slug     = "xray-genius"
   route53_zone_id  = data.aws_route53_zone.this.zone_id
+  heroku_app_name  = "otm-xray-genius"
   heroku_team_name = data.heroku_team.this.name
   subdomain_name   = "app"
 
