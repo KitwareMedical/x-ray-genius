@@ -5,6 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'core/img/favicon.svg' %}">
 
     <title>X-Ray Genius</title>
 
@@ -19,7 +20,7 @@
   <body>
     <div class="navbar bg-base-200">
       <div class="navbar-start">
-        <button class="btn pointer-events-none text-xl normal-case">X-Ray Genius</button>
+        <img src="{% static 'core/img/logo.svg' %}" alt="X-Ray Genius" style="width: 5rem; height: auto; margin-left: 1rem; margin-right: 1rem;" />
         <ul class="menu menu-horizontal bg-base-100 p-[4px] rounded-xl">
           <li>
             <a href="{% url 'dashboard' %}" class="active">
