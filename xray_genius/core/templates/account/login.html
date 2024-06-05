@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load socialaccount %}
+
+{% block body %}
+
+  <div class="p-10">
+
+    <div class="flex items-center justify-center h-full mt-10">
+      <div class="w-full max-w-md bg-base-300 p-8 rounded-lg shadow-lg">
+        <h1 class="text-lg font-bold mb-4">Login</h1>
+        <div class="my-4">
+          {% get_providers as socialaccount_providers %}
+          {% if socialaccount_providers %}
+            <ul class="grid grid-cols-1 gap-2 my-6">
+              {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+            </ul>
+            {% include "socialaccount/snippets/login_extra.html" %}
+
+            <div class="divider">
+              OR
+            </div>
+          {% endif %}
+
+          <form method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Username</span>
+              </label>
+              <input type="text" name="login" class="input input-bordered" placeholder="Enter your username">
+              {% if form.errors.login %}
+                <p class="text-red-500">{{ form.errors.login }}</p>
+              {% endif %}
+            </div>
+            <div class="form-control mt-4">
+              <label class="label">
+                <span class="label-text">Password</span>
+              </label>
+              <input type="password" name="password" class="input input-bordered" placeholder="Enter your password">
+              {% if form.errors.password %}
+                <p class="text-red-500">{{ form.errors.password }}</p>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary mt-6">Login</button>
+          </form>
+
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <p class="text-red-500">{{ error }}</p>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <style>
+    .form-control {
+      margin-bottom: 1rem;
+    }
+  </style>
+
+{% endblock body %}
