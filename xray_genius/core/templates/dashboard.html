@@ -159,7 +159,7 @@
                           </form>
                         {% else %}
                           <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
-                            <button class="btn btn-xs btn-error">
+                            <button class="btn btn-sm btn-error">
                               Set Batch Parameters <i class="ri-dropdown-list"></i>
                             </button>
                           </a>
