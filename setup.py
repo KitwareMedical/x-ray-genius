@@ -38,7 +38,7 @@ setup(
     install_requires=[
         'celery>=5.4',
         'django>=5.0,<5.1',
-        'django-allauth',
+        'django-allauth[socialaccount]',
         'django-celery-results',
         'django-click',
         'django-configurations[database,email]',
