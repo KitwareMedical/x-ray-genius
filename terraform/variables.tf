@@ -25,3 +25,15 @@ variable "git_repository" {
   description = "The HTTP URL of the git repository to clone."
   sensitive   = true
 }
+
+variable "django_sentry_dsn" {
+  type        = string
+  description = "The Sentry DSN for the Python Django application."
+  sensitive   = true
+}
+
+variable "viewer_sentry_dsn" {
+  type        = string
+  description = "The Sentry DSN for the VolView Vue.js application."
+  sensitive   = true
+}
