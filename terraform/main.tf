@@ -16,9 +16,6 @@ terraform {
     heroku = {
       source = "heroku/heroku"
     }
-    sentry = {
-      source = "jianyuan/sentry"
-    }
   }
 }
 
@@ -28,8 +25,4 @@ provider "aws" {
 }
 provider "heroku" {
   # Must set HEROKU_EMAIL, HEROKU_API_KEY envvars
-}
-
-provider "sentry" {
-  # Must set SENTRY_AUTH_TOKEN envvar
 }

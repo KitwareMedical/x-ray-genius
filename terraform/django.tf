@@ -29,8 +29,8 @@ module "django" {
   additional_django_vars = {
     DJANGO_GOOGLE_OAUTH_CLIENT_ID = var.google_oauth_client_id
     DJANGO_GOOGLE_OAUTH_SECRET    = var.google_oauth_secret
-    DJANGO_SENTRY_DSN             = data.sentry_key.django.dsn_public
-    VITE_SENTRY_DSN               = data.sentry_key.viewer.dsn_public
+    DJANGO_SENTRY_DSN             = var.django_sentry_dsn
+    VITE_SENTRY_DSN               = var.viewer_sentry_dsn
   }
 
   # This is needed in order to run the node build process for
