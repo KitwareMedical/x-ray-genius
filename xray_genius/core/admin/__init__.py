@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from xray_genius.core.models import CTInputFile, InputParameters, OutputImage, Session
+from xray_genius.core.models import (
+    CTInputFile,
+    InputParameters,
+    OutputImage,
+    SampleDataset,
+    SampleDatasetFile,
+    Session,
+)
 
 admin.site.site_header = 'X-Ray Genius Admin'
 admin.site.site_title = 'X-Ray Genius Admin'
@@ -31,3 +38,12 @@ class SessionAdmin(admin.ModelAdmin):
         SessionInputParametersInline,
         SessionOutputImageInline,
     )
+
+
+class SampleDatasetFileInline(admin.TabularInline):
+    model = SampleDatasetFile
+
+
+@admin.register(SampleDataset)
+class SampleDatasetAdmin(admin.ModelAdmin):
+    inlines = (SampleDatasetFileInline,)
