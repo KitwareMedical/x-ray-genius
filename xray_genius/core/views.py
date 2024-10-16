@@ -50,7 +50,7 @@ def permission_check(view: Callable[P, T]) -> Callable[P, T]:
         if session_pk := kwargs.get('session_pk'):
             session = get_object_or_404(Session, pk=session_pk)
             if session.owner != request.user:
-                raise Http404()
+                raise Http404
         return view(request, *args, **kwargs)
 
     return check
@@ -197,7 +197,7 @@ def get_task_trace(request: HttpRequest, session_pk: str):
     # Only staff and superusers can view task info, regardless of
     # who owns the session.
     if not request.user.is_staff and not request.user.is_superuser:
-        raise PermissionDenied()
+        raise PermissionDenied
     session = get_object_or_404(Session, pk=session_pk)
     task_result = get_object_or_404(TaskResult, task_id=session.celery_task_id)
     return render(

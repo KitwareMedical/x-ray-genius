@@ -37,7 +37,7 @@ def set_parameters(
         session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
 
         if session.owner != request.user:
-            raise Http404()
+            raise Http404
 
         if session.status not in (Session.Status.NOT_STARTED, Session.Status.CANCELLED):
             return HttpResponseBadRequest('Session is not in a valid state to update parameters')

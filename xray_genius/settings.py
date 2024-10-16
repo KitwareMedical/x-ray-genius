@@ -74,7 +74,8 @@ class XrayGeniusMixin(ConfigMixin):
         configuration.INSTALLED_APPS = [
             'daphne',
             'xray_genius.core.apps.CoreConfig',
-        ] + configuration.INSTALLED_APPS
+            *configuration.INSTALLED_APPS,
+        ]
 
         # Install additional apps
         configuration.INSTALLED_APPS += [

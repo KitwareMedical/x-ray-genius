@@ -23,7 +23,7 @@ def test_dashboard_permissions(user, user_factory, session_factory, client: Clie
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
-    ['view_name', 'http_method', 'expected_status'],
+    ('view_name', 'http_method', 'expected_status'),
     [
         ('download-input-ct-file', 'get', 302),
         ('viewer', 'get', 200),

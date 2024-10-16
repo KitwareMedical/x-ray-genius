@@ -49,7 +49,7 @@ def load_test_data(girder_api_key: str) -> None:
             click.echo(f'Processing session {click.style(session_dir.name, fg="yellow")}...')
             with transaction.atomic():
                 session = Session.objects.get(pk=session_dir.name)
-                ct_scan = [f for f in session_dir.iterdir() if f.is_file()][0]
+                ct_scan = next(f for f in session_dir.iterdir() if f.is_file())
                 input_ct = File(BytesIO(ct_scan.read_bytes()), name=ct_scan.name)
                 session.input_scan.file = input_ct
                 session.save()

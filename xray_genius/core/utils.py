@@ -22,9 +22,7 @@ def sample_gaussian_distribution(mean: float, std_dev: float, num_samples=1000):
     - A numpy array of sampled values.
     """
     # Random sampling from a Gaussian distribution
-    sampled_values = np.random.normal(mean, std_dev, num_samples)
-
-    return sampled_values
+    return np.random.normal(mean, std_dev, num_samples)
 
 
 def sample_von_mises_angles_degrees(mean_angle_deg: float, kappa: float, num_samples: int = 1):
@@ -42,8 +40,7 @@ def sample_von_mises_angles_degrees(mean_angle_deg: float, kappa: float, num_sam
     """
     mean_angle_rad = np.deg2rad(mean_angle_deg)  # Convert mean angle to radians
     sampled_angles_rad = vonmises.rvs(kappa, loc=mean_angle_rad, size=num_samples)  # Sample
-    sampled_angles_deg = np.rad2deg(sampled_angles_rad)
-    return sampled_angles_deg
+    return np.rad2deg(sampled_angles_rad)
 
 
 def sample_gaussian_with_defaults(
