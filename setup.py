@@ -23,7 +23,7 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
-        'Framework :: Django :: 5.0',
+        'Framework :: Django :: 5.1',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
@@ -37,7 +37,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'celery>=5.4',
-        'django>=5.0,<5.1',
+        'django>=5.1,<5.2',
         'django-allauth[socialaccount]',
         'django-celery-results',
         'django-click',
