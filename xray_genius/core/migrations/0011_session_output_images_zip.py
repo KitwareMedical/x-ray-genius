@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0010_remove_outputimage_parameters_outputimage_carm_alpha_and_more'),
     ]

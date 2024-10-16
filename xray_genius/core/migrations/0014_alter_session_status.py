@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0013_inputparameters_carm_alpha_kappa_and_more'),
     ]

@@ -20,9 +20,9 @@ def sample_gaussian_distribution(mean: float, std_dev: float, num_samples=1000):
 
     Returns:
     - A numpy array of sampled values.
-    """
+    """  # noqa: RUF002
     # Random sampling from a Gaussian distribution
-    return np.random.normal(mean, std_dev, num_samples)
+    return np.random.normal(mean, std_dev, num_samples)  # noqa: NPY002
 
 
 def sample_von_mises_angles_degrees(mean_angle_deg: float, kappa: float, num_samples: int = 1):

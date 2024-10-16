@@ -173,7 +173,7 @@ def initiate_batch_run(request: HttpRequest, session_pk: str):
         if not session.parameters:
             # Error: parameters missing. The UI should prevent this from ever happening.
             return HttpResponseBadRequest('Parameters missing')
-        elif session.status != Session.Status.NOT_STARTED:
+        if session.status != Session.Status.NOT_STARTED:
             return HttpResponseBadRequest('Invalid start state.')
         session.status = Session.Status.QUEUED
         session.save()

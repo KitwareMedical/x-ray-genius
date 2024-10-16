@@ -5,7 +5,7 @@ import pytest
 from xray_genius.core.models import Session
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_dashboard_permissions(user, user_factory, session_factory, client: Client):
     client.force_login(user)
 
@@ -21,7 +21,7 @@ def test_dashboard_permissions(user, user_factory, session_factory, client: Clie
     assert set(response.context['sessions']).intersection(owned_sessions) == set(owned_sessions)
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     ('view_name', 'http_method', 'expected_status'),
     [
@@ -56,7 +56,7 @@ def test_permissions_views(
     assert response.status_code == expected_status
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_permissions_parameters_rest_endpoint(
     user, user_factory, ct_input_file_factory, client: Client
 ):

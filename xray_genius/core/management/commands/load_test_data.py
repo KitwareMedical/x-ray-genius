@@ -37,14 +37,14 @@ def load_test_data(girder_api_key: str) -> None:
     call_command('loaddata', 'testdata')
 
     with TemporaryDirectory() as tmp_dir:
-        tmp_dir = Path(tmp_dir)
-        extracted_dir = tmp_dir / 'testdata'
+        tmp_dir_path = Path(tmp_dir)
+        extracted_dir = tmp_dir_path / 'testdata'
         click.echo(click.style('Downloading test data from DKC...', fg='cyan'), nl=False)
-        gc.downloadFile(fileId=GIRDER_FILE_ID, path=str(tmp_dir / 'testdata.tar'))
+        gc.downloadFile(fileId=GIRDER_FILE_ID, path=str(tmp_dir_path / 'testdata.tar'))
         click.echo(click.style('done', fg='green'))
-        with tarfile.open(tmp_dir / 'testdata.tar', 'r') as tar:
-            (tmp_dir / 'testdata').mkdir()
-            tar.extractall(extracted_dir)
+        with tarfile.open(tmp_dir_path / 'testdata.tar', 'r') as tar:
+            (tmp_dir_path / 'testdata').mkdir()
+            tar.extractall(extracted_dir)  # noqa: S202
         for session_dir in extracted_dir.iterdir():
             click.echo(f'Processing session {click.style(session_dir.name, fg="yellow")}...')
             with transaction.atomic():

@@ -20,3 +20,6 @@ class SampleDatasetFile(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     file = models.FileField(upload_to='sample_data')
+
+    def __str__(self) -> str:
+        return self.name

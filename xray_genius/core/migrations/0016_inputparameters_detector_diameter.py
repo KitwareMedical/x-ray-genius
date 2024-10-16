@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0015_rename_carm_push_pull_inputparameters_carm_push_pull_translation_and_more'),
     ]

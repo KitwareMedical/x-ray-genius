@@ -14,6 +14,9 @@ class CTInputFile(models.Model):
 
     file = S3FileField()
 
+    def __str__(self) -> str:
+        return self.filename
+
     @property
     def filename(self):
         return Path(self.file.name).name
