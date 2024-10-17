@@ -1,0 +1,130 @@
+[
+    {
+        "model": "core.sampledataset",
+        "pk": 1,
+        "fields": {
+            "name": "VerSe Spine CT",
+            "description": "This is a CT volume that includes the spine vertebrae.  It comes from the VerSe image collection.  This is an example of a CT that might be acquired for diagnostic or spinal surgery planning purposes.  These data are released under the Creative Commons Attribution-ShareAlike 4.0 International license, which is described here for the VerSe data: https://osf.io/amh4f",
+            "license": "Creative Commons Attribution 4.0 International",
+            "source": "VerSe 2020 dataset"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 1,
+        "fields": {
+            "sample_dataset": 1,
+            "file": "sample_data/verse_spine_ct/sub-verse536_dir-ax_ct.nii.gz"
+        }
+    },
+
+    {
+        "model": "core.sampledataset",
+        "pk": 2,
+        "fields": {
+            "name": "Hip CT",
+            "description": "This is a CT volume that includes the pelvis and L and R hips.  It comes from the TotalSegmentator image collection.  There is no obvious pathology in this image, but it is an example of a field of view that might be acquired for pelvic fracture surgery planning, lower spine diagnostic or planning, or some kind of revision surgery of hip fracture or total hip.  Figure 1 shows an assembled 3D Slicer scene with a typical FOV and image that would be used during a total hip replacement procedure to assess the placement of implants.  These are extremely common images, since there are on the order of 400K total hips done in North America annually.  The C-arm is tilted slightly towards the head for the classic hip AP view.  Figure 2 (Left) image is an example of an actual fluoroscopic view with right hip implant visible and some of the measurements they make to assess the implant position and angulation.   FIgure 2 (right) is the postoperative X-ray that is taken to assess the quality / success of the surgery.  Note the much larger FOV and better image quality.",
+            "license": "Creative Commons Attribution 4.0 International",
+            "source": "TotalSegmentator CT volume and segmentations from case S0042"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 2,
+        "fields": {
+            "sample_dataset": 2,
+            "file": "sample_data/hip_ct/ct.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 3,
+        "fields": {
+            "sample_dataset": 2,
+            "file": "sample_data/hip_ct/femur_left.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 4,
+        "fields": {
+            "sample_dataset": 2,
+            "file": "sample_data/hip_ct/femur_right.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 5,
+        "fields": {
+            "sample_dataset": 2,
+            "file": "sample_data/hip_ct/hip_left.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 6,
+        "fields": {
+            "sample_dataset": 2,
+            "file": "sample_data/hip_ct/hip_right.nii.gz"
+        }
+    },
+
+    {
+        "model": "core.sampledataset",
+        "pk": 3,
+        "fields": {
+            "name": "Lumbar Spine CT",
+            "description": "This is a CT volume that includes the lumbar spine vertebrae.  It comes from the TotalSegmentator image collection.  This is an example of a CT that might be acquired for diagnostic or spinal surgery planning purposes.  Figure 1 shows an assembled 3D Slicer scene with the following components:  The lumbar vertebrae (L1-L5) are segmented and shown in green.  A DRR image is shown in the upper-left, with an approximate field of view typical of a 12” C-arm view, where the image intensifier has been placed as close to the patient as possible in an anterior-posterior (AP) view over the operating table (very common imaging protocol). The approximate x-ray source and detector position, along with the cone angle, are shown in the 3D view (upper right).  A DRR view from the lateral perspective is shown in Figure 2.  Figure 3 shows real clinical image for contrast.  Note that images acquired with an image intensifier are round, due to the fact that the image intensifier is cylindrical.  Also note the difference in naive ray casting through the image (using the 3D Slicer DRRGeneratorModule) and actual clinical image quality.",
+            "license": "Creative Commons Attribution 4.0 International",
+            "source": "TotalSegmentator CT volume and segmentations from case S0010"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 7,
+        "fields": {
+            "sample_dataset": 3,
+            "file": "sample_data/lumbar_spine_ct/ct.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 8,
+        "fields": {
+            "sample_dataset": 3,
+            "file": "sample_data/lumbar_spine_ct/vertebrae_L1.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 9,
+        "fields": {
+            "sample_dataset": 3,
+            "file": "sample_data/lumbar_spine_ct/vertebrae_L2.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 10,
+        "fields": {
+            "sample_dataset": 3,
+            "file": "sample_data/lumbar_spine_ct/vertebrae_L3.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 11,
+        "fields": {
+            "sample_dataset": 3,
+            "file": "sample_data/lumbar_spine_ct/vertebrae_L4.nii.gz"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 12,
+        "fields": {
+            "sample_dataset": 3,
+            "file": "sample_data/lumbar_spine_ct/vertebrae_L5.nii.gz"
+        }
+    }
+]
