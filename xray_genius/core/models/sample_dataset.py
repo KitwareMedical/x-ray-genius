@@ -15,4 +15,7 @@ class SampleDatasetFile(models.Model):
     sample_dataset = models.ForeignKey(
         SampleDataset, on_delete=models.CASCADE, related_name='files'
     )
+
+    name = models.CharField(max_length=255)
+    description = models.TextField()
     file = models.FileField(upload_to='sample_data')
