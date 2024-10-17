@@ -14,6 +14,8 @@
         "pk": 1,
         "fields": {
             "sample_dataset": 1,
+            "name": "sub-verse536_dir-ax_ct.nii.gz",
+            "description": "The CT volume",
             "file": "sample_data/verse_spine_ct/sub-verse536_dir-ax_ct.nii.gz"
         }
     },
@@ -33,6 +35,8 @@
         "pk": 2,
         "fields": {
             "sample_dataset": 2,
+            "name": "ct.nii.gz",
+            "description": "The CT volume",
             "file": "sample_data/hip_ct/ct.nii.gz"
         }
     },
@@ -41,6 +45,8 @@
         "pk": 3,
         "fields": {
             "sample_dataset": 2,
+            "name": "femur_left.nii.gz",
+            "description": "Left femur segmentation",
             "file": "sample_data/hip_ct/femur_left.nii.gz"
         }
     },
@@ -49,6 +55,8 @@
         "pk": 4,
         "fields": {
             "sample_dataset": 2,
+            "name": "femur_right.nii.gz",
+            "description": "Right femur segmentation",
             "file": "sample_data/hip_ct/femur_right.nii.gz"
         }
     },
@@ -57,6 +65,8 @@
         "pk": 5,
         "fields": {
             "sample_dataset": 2,
+            "name": "hip_left.nii.gz",
+            "description": "Left pelvis (hip w/ acetabulum, etc.) segmentation",
             "file": "sample_data/hip_ct/hip_left.nii.gz"
         }
     },
@@ -65,6 +75,8 @@
         "pk": 6,
         "fields": {
             "sample_dataset": 2,
+            "name": "hip_right.nii.gz",
+            "description": "Right pelvis (hip w/ acetabulum, etc.) segmentation",
             "file": "sample_data/hip_ct/hip_right.nii.gz"
         }
     },
@@ -84,6 +96,8 @@
         "pk": 7,
         "fields": {
             "sample_dataset": 3,
+            "name": "ct.nii.gz",
+            "description": "The CT volume",
             "file": "sample_data/lumbar_spine_ct/ct.nii.gz"
         }
     },
@@ -92,6 +106,8 @@
         "pk": 8,
         "fields": {
             "sample_dataset": 3,
+            "name": "vertebrae_L1.nii.gz",
+            "description": "Lumbar vertebra 1 segmentation",
             "file": "sample_data/lumbar_spine_ct/vertebrae_L1.nii.gz"
         }
     },
@@ -100,6 +116,8 @@
         "pk": 9,
         "fields": {
             "sample_dataset": 3,
+            "name": "vertebrae_L2.nii.gz",
+            "description": "Lumbar vertebra 2 segmentation",
             "file": "sample_data/lumbar_spine_ct/vertebrae_L2.nii.gz"
         }
     },
@@ -108,6 +126,8 @@
         "pk": 10,
         "fields": {
             "sample_dataset": 3,
+            "name": "vertebrae_L3.nii.gz",
+            "description": "Lumbar vertebra 3 segmentation",
             "file": "sample_data/lumbar_spine_ct/vertebrae_L3.nii.gz"
         }
     },
@@ -116,6 +136,8 @@
         "pk": 11,
         "fields": {
             "sample_dataset": 3,
+            "name": "vertebrae_L4.nii.gz",
+            "description": "Lumbar vertebra 4 segmentation",
             "file": "sample_data/lumbar_spine_ct/vertebrae_L4.nii.gz"
         }
     },
@@ -124,6 +146,8 @@
         "pk": 12,
         "fields": {
             "sample_dataset": 3,
+            "name": "vertebrae_L5.nii.gz",
+            "description": "Lumbar vertebra 5 segmentation",
             "file": "sample_data/lumbar_spine_ct/vertebrae_L5.nii.gz"
         }
     }
