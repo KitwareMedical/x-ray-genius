@@ -94,34 +94,36 @@
       </div>
     </div>
 
-    <div
-      class="bg-gray-800 border-dashed border-4 border-neutral p-8 m-4 rounded-lg text-center"
-    >
-      <h2 class="text-xl font-bold text-white mb-4">Or Upload Your Own Files</h2>
-
-      <form
-        method="post"
-        enctype="multipart/form-data"
-        action="{% url 'create-session' %}"
+    {% if request.user.is_superuser or request.user.is_staff %}
+      <div
+        class="bg-gray-800 border-dashed border-4 border-neutral p-8 m-4 rounded-lg text-center"
       >
-        {% csrf_token %}
-        <div class="mb-4">
-          <label for="fileInput" class="btn btn-accent">
-            Choose Files to Upload
-          </label>
-          {% render_field form.file id="fileInput" class="hidden" %}
-        </div>
+        <h2 class="text-xl font-bold text-white mb-4">Or Upload Your Own Files (Admins Only)</h2>
 
-        {% if form.errors %}
-          <div class="alert alert-error mt-4">
-            <i class="ri-error-warning-fill"></i>
-            <div>{{ form.errors }}</div>
+        <form
+          method="post"
+          enctype="multipart/form-data"
+          action="{% url 'create-session' %}"
+        >
+          {% csrf_token %}
+          <div class="mb-4">
+            <label for="fileInput" class="btn btn-accent">
+              Choose Files to Upload
+            </label>
+            {% render_field form.file id="fileInput" class="hidden" %}
           </div>
-        {% endif %}
-        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">
-          Start session with uploaded file
-        </button>
-      </div>
-    </form>
+
+          {% if form.errors %}
+            <div class="alert alert-error mt-4">
+              <i class="ri-error-warning-fill"></i>
+              <div>{{ form.errors }}</div>
+            </div>
+          {% endif %}
+          <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">
+            Start session with uploaded file
+          </button>
+        </div>
+    {% endif %}
+  </form>
 
 {% endblock %}
