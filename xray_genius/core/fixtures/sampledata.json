@@ -11,7 +11,7 @@
     },
     {
         "model": "core.sampledatasetfile",
-        "pk": 2,
+        "pk": 1,
         "fields": {
             "sample_dataset": 1,
             "name": "ct.nii.gz",
@@ -32,7 +32,7 @@
     },
     {
         "model": "core.sampledatasetfile",
-        "pk": 7,
+        "pk": 2,
         "fields": {
             "sample_dataset": 2,
             "name": "ct.nii.gz",
@@ -53,7 +53,7 @@
     },
     {
         "model": "core.sampledatasetfile",
-        "pk": 1,
+        "pk": 3,
         "fields": {
             "sample_dataset": 3,
             "name": "sub-verse536_dir-ax_ct.nii.gz",
