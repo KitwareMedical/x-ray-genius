@@ -158,7 +158,6 @@ def volview_viewer(request: HttpRequest, session_pk: str):
 
 
 @permission_check
-@quota_check
 @require_POST
 def initiate_batch_run(request: HttpRequest, session_pk: str):
     with transaction.atomic():
