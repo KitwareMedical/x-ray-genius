@@ -56,6 +56,25 @@
         </div>
       {% endif %}
     </div>
+
+    {% comment %} Help modal {% endcomment %}
+    <input type="checkbox" id="help-modal" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box bg-base-100 p-6 rounded-lg shadow-lg">
+        <h2 class="text-lg font-bold mb-4">Contact Us</h2>
+        <p class="mb-4">If you need assistance, please contact us at:</p>
+        <ul class="list-disc pl-5">
+          <li>Email: support@xray-genius.com</li>
+        </ul>
+        <div class="modal-action">
+          <label for="help-modal" class="btn btn-sm btn-error">Close</label>
+        </div>
+      </div>
+    </div>
+    <label for="help-modal" class="btn btn-info btn-lg fixed bottom-4 right-4 rounded-lg">
+      <i class="ri-question-line"></i> Help
+    </label>
+
     {% block body %} {% endblock body %}
   </body>
 </html>
