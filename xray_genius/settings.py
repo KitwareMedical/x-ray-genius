@@ -12,6 +12,7 @@ from composed_configuration import (
     ProductionBaseConfiguration,
     TestingBaseConfiguration,
 )
+from configurations import values
 
 if TYPE_CHECKING:
     from django_autotyping.typing import AutotypingSettingsDict
@@ -35,6 +36,9 @@ class XrayGeniusMixin(ConfigMixin):
 
     CELERY_RESULT_BACKEND = 'django-db'
     CELERY_RESULT_EXTENDED = True
+
+    # The maximum number of sessions a user can start
+    USER_SESSION_LIMIT = values.IntegerValue(5)
 
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:

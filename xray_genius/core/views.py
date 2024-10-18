@@ -2,7 +2,9 @@ from collections.abc import Callable
 from typing import ParamSpec, TypeVar
 from urllib.parse import urlencode
 
-from django.core.exceptions import PermissionDenied
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.db import transaction
 from django.db.models import Exists, OuterRef, Subquery
 from django.http import HttpRequest, HttpResponseBadRequest
@@ -18,6 +20,24 @@ from .tasks import delete_session_task, run_deepdrr_task
 
 T = TypeVar('T')
 P = ParamSpec('P')
+
+
+def user_has_reached_session_limit(user: User) -> bool:
+    if user.is_superuser or user.is_staff:
+        # Superusers and staff can start as many sessions as they want
+        return False
+    return Session.objects.filter(owner=user).count() >= settings.USER_SESSION_LIMIT
+
+
+def quota_check(view: Callable[P, T]) -> Callable[P, T]:
+    def check(request: HttpRequest, *args, **kwargs):
+        if user_has_reached_session_limit(request.user):
+            raise SuspiciousOperation(
+                'User has reached session limit, but tried to start a new session through the API.'
+            )
+        return view(request, *args, **kwargs)
+
+    return check
 
 
 def permission_check(view: Callable[P, T]) -> Callable[P, T]:
@@ -60,11 +80,13 @@ def dashboard(request: HttpRequest):
             'sessions': sessions,
             'SessionStatus': Session.Status,
             'should_refresh': should_refresh,
+            'should_disable_new_session_button': user_has_reached_session_limit(request.user),
         },
     )
 
 
 @permission_check
+@quota_check
 @require_http_methods(['GET', 'POST'])
 def upload_ct_input_file(request: HttpRequest):
     if request.method == 'POST':
@@ -92,6 +114,7 @@ def upload_ct_input_file(request: HttpRequest):
 
 
 @permission_check
+@quota_check
 @require_POST
 def start_session_with_sample_data(request: HttpRequest, sample_dataset_file_pk: int):
     sample_dataset = get_object_or_404(SampleDatasetFile, pk=sample_dataset_file_pk)
@@ -108,6 +131,10 @@ def start_session_with_sample_data(request: HttpRequest, sample_dataset_file_pk:
 @permission_check
 @require_POST
 def delete_session(request: HttpRequest, session_pk: str):
+    # Only staff and superusers can delete sessions
+    if not request.user.is_staff and not request.user.is_superuser:
+        raise SuspiciousOperation('Non-admin attempted to delete a session.')
+
     with transaction.atomic():
         session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
         session.status = Session.Status.DELETING
@@ -124,6 +151,7 @@ def download_ct_file(request: HttpRequest, session_pk: str):
 
 
 @permission_check
+@quota_check
 @require_GET
 def volview_viewer(request: HttpRequest, session_pk: str):
     session = get_object_or_404(Session, pk=session_pk)
@@ -131,6 +159,7 @@ def volview_viewer(request: HttpRequest, session_pk: str):
 
 
 @permission_check
+@quota_check
 @require_POST
 def initiate_batch_run(request: HttpRequest, session_pk: str):
     with transaction.atomic():
