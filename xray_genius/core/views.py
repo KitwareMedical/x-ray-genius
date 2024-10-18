@@ -36,6 +36,7 @@ def permission_check(view: Callable[P, T]) -> Callable[P, T]:
 def dashboard(request: HttpRequest):
     sessions = (
         Session.objects.select_related('input_scan', 'parameters')
+        .prefetch_related('output_images')
         .filter(owner=request.user)
         .order_by('-created')
         .annotate(
