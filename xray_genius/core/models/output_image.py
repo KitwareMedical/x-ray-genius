@@ -1,11 +1,13 @@
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
+from django_extensions.db.fields import CreationDateTimeField
 
 from .session import Session
 
 
 class OutputImage(models.Model):
+    created = CreationDateTimeField()
     image = models.ImageField(upload_to='output_images')
     thumbnail = models.ImageField(upload_to='output_images/thumbnails')
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='output_images')

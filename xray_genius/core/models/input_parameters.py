@@ -2,6 +2,7 @@ import math
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django_extensions.db.fields import CreationDateTimeField
 
 from .session import Session
 
@@ -14,6 +15,8 @@ def concentration_to_degrees(conc: float) -> float:
 
 
 class InputParameters(models.Model):
+    created = CreationDateTimeField()
+
     session = models.OneToOneField(Session, related_name='parameters', on_delete=models.CASCADE)
 
     # Required parameter
