@@ -151,7 +151,6 @@ def download_ct_file(request: HttpRequest, session_pk: str):
 
 
 @permission_check
-@quota_check
 @require_GET
 def volview_viewer(request: HttpRequest, session_pk: str):
     session = get_object_or_404(Session, pk=session_pk)
