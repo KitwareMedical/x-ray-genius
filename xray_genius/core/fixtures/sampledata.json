@@ -3,27 +3,6 @@
         "model": "core.sampledataset",
         "pk": 1,
         "fields": {
-            "name": "VerSe Spine CT",
-            "description": "This is a CT volume that includes the spine vertebrae.  It comes from the VerSe image collection.  This is an example of a CT that might be acquired for diagnostic or spinal surgery planning purposes.  These data are released under the Creative Commons Attribution-ShareAlike 4.0 International license, which is described here for the VerSe data: https://osf.io/amh4f",
-            "license": "Creative Commons Attribution 4.0 International",
-            "source": "VerSe 2020 dataset"
-        }
-    },
-    {
-        "model": "core.sampledatasetfile",
-        "pk": 1,
-        "fields": {
-            "sample_dataset": 1,
-            "name": "sub-verse536_dir-ax_ct.nii.gz",
-            "description": "The CT volume",
-            "file": "sample_data/verse_spine_ct/sub-verse536_dir-ax_ct.nii.gz"
-        }
-    },
-
-    {
-        "model": "core.sampledataset",
-        "pk": 2,
-        "fields": {
             "name": "Hip CT",
             "description": "This is a CT volume that includes the pelvis and L and R hips.  It comes from the TotalSegmentator image collection.  There is no obvious pathology in this image, but it is an example of a field of view that might be acquired for pelvic fracture surgery planning, lower spine diagnostic or planning, or some kind of revision surgery of hip fracture or total hip.",
             "license": "Creative Commons Attribution 4.0 International",
@@ -34,7 +13,7 @@
         "model": "core.sampledatasetfile",
         "pk": 2,
         "fields": {
-            "sample_dataset": 2,
+            "sample_dataset": 1,
             "name": "ct.nii.gz",
             "description": "The CT volume",
             "file": "sample_data/hip_ct/ct.nii.gz"
@@ -43,7 +22,7 @@
 
     {
         "model": "core.sampledataset",
-        "pk": 3,
+        "pk": 2,
         "fields": {
             "name": "Lumbar Spine CT",
             "description": "This is a CT volume that includes the lumbar spine vertebrae.  It comes from the TotalSegmentator image collection.  This is an example of a CT that might be acquired for diagnostic or spinal surgery planning purposes.",
@@ -55,10 +34,31 @@
         "model": "core.sampledatasetfile",
         "pk": 7,
         "fields": {
-            "sample_dataset": 3,
+            "sample_dataset": 2,
             "name": "ct.nii.gz",
             "description": "The CT volume",
             "file": "sample_data/lumbar_spine_ct/ct.nii.gz"
+        }
+    },
+
+    {
+        "model": "core.sampledataset",
+        "pk": 3,
+        "fields": {
+            "name": "VerSe Spine CT",
+            "description": "This is a CT volume that includes the spine vertebrae.  It comes from the VerSe image collection.  This is an example of a CT that might be acquired for diagnostic or spinal surgery planning purposes.  These data are released under the Creative Commons Attribution-ShareAlike 4.0 International license, which is described here for the VerSe data: https://osf.io/amh4f",
+            "license": "Creative Commons Attribution 4.0 International",
+            "source": "VerSe 2020 dataset"
+        }
+    },
+    {
+        "model": "core.sampledatasetfile",
+        "pk": 1,
+        "fields": {
+            "sample_dataset": 3,
+            "name": "sub-verse536_dir-ax_ct.nii.gz",
+            "description": "The CT volume",
+            "file": "sample_data/verse_spine_ct/sub-verse536_dir-ax_ct.nii.gz"
         }
     }
 ]
