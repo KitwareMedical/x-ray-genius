@@ -1,39 +1,127 @@
 {% extends 'base.html' %}
 
 {% load widget_tweaks %}
-
 {% block body %}
   <head>
     {{ form.media }}
   </head>
-  <form
-    method="post"
-    enctype="multipart/form-data"
-    action="{% url 'create-session' %}"
-  >
+  <div class="bg-gray-900 border border-gray-700 p-8 m-4 rounded-lg text-center">
+    <h2 class="text-xl font-bold text-white mb-4">Choose a Sample Dataset</h2>
+
+    <div>
+      <label for="sampleDataModal" class="btn btn-primary">
+        Choose Sample Data
+      </label>
+    </div>
+
+    <input type="checkbox" id="sampleDataModal" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box bg-gray-900 text-white relative max-w-4xl">
+        <label
+          for="sampleDataModal"
+          class="btn btn-sm btn-circle absolute right-2 top-2"
+          aria-label="Close"
+        >✕</label
+          >
+
+          <h2 class="text-2xl font-bold mb-4">Available Sample Datasets</h2>
+
+          <div class="space-y-4">
+            {% for dataset in sample_datasets %}
+              <div class="collapse bg-gray-800 border border-gray-700 rounded-lg">
+                <input type="checkbox" class="peer" />
+                <div
+                  class="collapse-title flex justify-between items-center p-4 text-lg font-semibold text-gray-200"
+                >
+                  {{ dataset.name }}
+                  <i class="ri-arrow-drop-down-line text-4xl"></i>
+                </div>
+                <div class="collapse-content p-4 text-left">
+                  <div class="mt-2 text-sm text-gray-300 flex flex-wrap gap-2">
+                    <span class="badge badge-primary whitespace-normal">
+                      <strong>License:&nbsp;</strong> {{ dataset.license }}
+                    </span>
+                    <span class="badge badge-info whitespace-normal">
+                      <strong>Source:&nbsp;</strong> {{ dataset.source }}
+                    </span>
+                  </div>
+
+                  <p class="mt-4 text-sm text-gray-400">{{ dataset.description }}</p>
+
+                  <div class="overflow-x-auto mt-4">
+                    <table class="table-auto w-full text-left text-white">
+                      <thead>
+                        <tr class="bg-gray-800">
+                          <th class="px-4 py-2">File Name</th>
+                          <th class="px-4 py-2">Description</th>
+                          <th class="px-4 py-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for file in dataset.files.all %}
+                          <tr class="border-t border-gray-700">
+                            <td class="px-4 py-2">{{ file.name }}</td>
+                            <td class="px-4 py-2">{{ file.description }}</td>
+                            <td class="px-4 py-2">
+                              <form
+                                method="post"
+                                action="{% url 'create-session-from-sample-data' file.id %}"
+                              >
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                  Start Session with this File
+                                </button>
+                              </form>
+                            </td>
+                          </tr>
+                        {% empty %}
+                          <tr>
+                            <td colspan="3" class="px-4 py-2 text-gray-500">
+                              No files available.
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-gray-500">No datasets available.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div
       class="bg-gray-800 border-dashed border-4 border-neutral p-8 m-4 rounded-lg text-center"
     >
-      {% csrf_token %}
-      <label for="fileInput" class="btn btn-accent">
-        Choose Files to Upload
-      </label>
-      {% render_field form.file id="fileInput" class="hidden" %}
+      <h2 class="text-xl font-bold text-white mb-4">Or Upload Your Own Files</h2>
 
-      {% comment %} TODO: implement drag/drop file upload {% endcomment %}
-      {% comment %} <p class="mt-4 text-gray-500">or drag and drop them here</p> {% endcomment %}
-    </div>
-    {% if form.errors %}
-      <div class="alert alert-error" role="alert">
-        <i class="ri-error-warning-fill"></i>
-        <div>
-          {{ form.errors }}
+      <form
+        method="post"
+        enctype="multipart/form-data"
+        action="{% url 'create-session' %}"
+      >
+        {% csrf_token %}
+        <div class="mb-4">
+          <label for="fileInput" class="btn btn-accent">
+            Choose Files to Upload
+          </label>
+          {% render_field form.file id="fileInput" class="hidden" %}
         </div>
+
+        {% if form.errors %}
+          <div class="alert alert-error mt-4">
+            <i class="ri-error-warning-fill"></i>
+            <div>{{ form.errors }}</div>
+          </div>
+        {% endif %}
+        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">
+          Start session with uploaded file
+        </button>
       </div>
-    {% endif %}
-    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded mt-4">
-      Start session
-    </button>
-  </form>
+    </form>
 
 {% endblock %}

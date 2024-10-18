@@ -13,7 +13,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from django_celery_results.models import TaskResult
 
 from .forms import CTInputFileUploadForm
-from .models import Session
+from .models import CTInputFile, SampleDataset, SampleDatasetFile, Session
 from .tasks import delete_session_task, run_deepdrr_task
 
 T = TypeVar('T')
@@ -85,8 +85,23 @@ def upload_ct_input_file(request: HttpRequest):
         'upload_ct_file.html',
         {
             'form': form,
+            'sample_datasets': SampleDataset.objects.prefetch_related('files'),
         },
     )
+
+
+@permission_check
+@require_POST
+def start_session_with_sample_data(request: HttpRequest, sample_dataset_file_pk: int):
+    sample_dataset = get_object_or_404(SampleDatasetFile, pk=sample_dataset_file_pk)
+    with transaction.atomic():
+        ct_input_file = CTInputFile.objects.create(file=sample_dataset.file)
+        session = Session.objects.create(owner=request.user, input_scan=ct_input_file)
+        return redirect(
+            reverse('viewer', kwargs={'session_pk': session.pk})
+            + '?'
+            + urlencode({'urls': ct_input_file.file.url})
+        )
 
 
 @permission_check
