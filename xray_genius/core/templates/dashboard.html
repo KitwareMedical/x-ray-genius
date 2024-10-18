@@ -12,11 +12,21 @@
         </div>
       </div>
       <div class="navbar-end">
-        <a href="{% url 'create-session' %}" class="btn btn-primary">
+        <a href="{% url 'create-session' %}" class="btn btn-primary {% if should_disable_new_session_button %}btn-disabled{% endif %}">
           New Simulation Session <i class="ri-add-line"></i>
         </a>
       </div>
     </div>
+
+    {% if should_disable_new_session_button %}
+      <div class="my-4">
+        <div class="alert alert-error">
+          <div class="flex-1">
+            You have reached the maximum number of sessions allowed.
+          </div>
+        </div>
+      </div>
+    {% endif %}
 
     {% if sessions %}
       <div class="my-4">
@@ -190,13 +200,15 @@
                           </button>
                         </form>
                       {% endif %}
-                      {% if session.status != SessionStatus.RUNNING %}
-                        <form action="{% url 'delete-session' session.pk %}" method="post">
-                          {% csrf_token %}
-                          <button class="btn btn-sm btn-error">
-                            Delete Session <i class="ri-close-line"></i>
-                          </button>
-                        </form>
+                      {% if request.user.is_staff or request.user.is_superuser %}
+                        {% if session.status != SessionStatus.RUNNING %}
+                          <form action="{% url 'delete-session' session.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-error">
+                              Delete Session <i class="ri-close-line"></i>
+                            </button>
+                          </form>
+                        {% endif %}
                       {% endif %}
 
                       {% if request.user.is_staff or request.user.is_superuser %}
