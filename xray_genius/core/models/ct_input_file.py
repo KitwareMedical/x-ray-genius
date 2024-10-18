@@ -5,6 +5,8 @@ from django.db.models import signals
 from django.dispatch import receiver
 from s3_file_field.fields import S3FileField
 
+from .sample_dataset import SampleDatasetFile
+
 
 class CTInputFile(models.Model):
     file = S3FileField()
@@ -16,4 +18,6 @@ class CTInputFile(models.Model):
 
 @receiver(signals.post_delete, sender=CTInputFile)
 def delete_file(sender: type[CTInputFile], instance: CTInputFile, **kwargs):
-    instance.file.delete()
+    # Only delete the associated S3 blob if it is not part of a sample dataset
+    if not SampleDatasetFile.objects.filter(file=instance.file).exists():
+        instance.file.delete()

@@ -18,6 +18,11 @@ urlpatterns = [
     path('api/v1/', api.urls),
     path('', views.dashboard, name='dashboard'),
     path('session/', views.upload_ct_input_file, name='create-session'),
+    path(
+        'session/from-sample-data/<int:sample_dataset_file_pk>/',
+        views.start_session_with_sample_data,
+        name='create-session-from-sample-data',
+    ),
     path('session/<uuid:session_pk>/delete/', views.delete_session, name='delete-session'),
     path(
         'session/<uuid:session_pk>/input-ct-file/',
