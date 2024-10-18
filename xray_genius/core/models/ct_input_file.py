@@ -3,12 +3,15 @@ from pathlib import Path
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
+from django_extensions.db.fields import CreationDateTimeField
 from s3_file_field.fields import S3FileField
 
 from .sample_dataset import SampleDatasetFile
 
 
 class CTInputFile(models.Model):
+    created = CreationDateTimeField()
+
     file = S3FileField()
 
     @property
