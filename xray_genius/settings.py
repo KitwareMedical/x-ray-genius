@@ -40,6 +40,8 @@ class XrayGeniusMixin(ConfigMixin):
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)
 
+    REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(False)
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         # Install local apps first, to ensure any overridden resources are found first
