@@ -320,6 +320,8 @@ async function submit() {
         v-model="numberOfSamples"
         outlined
         type="number"
+        min="1"
+        max="100"
       ></v-text-field>
       <v-row>
         <v-col cols="6">
