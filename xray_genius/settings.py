@@ -95,9 +95,6 @@ class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):
         configuration.INSTALLED_APPS.append('django_browser_reload')
         configuration.MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
 
-        # Configure django-fastdev in dev-only
-        configuration.INSTALLED_APPS.append('django_fastdev')
-
         # Configure django-vite to use the vite dev server in dev environments
         configuration.DJANGO_VITE['default']['dev_mode'] = True
         configuration.DJANGO_VITE['default']['dev_server_port'] = 8080
