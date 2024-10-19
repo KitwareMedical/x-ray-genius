@@ -68,6 +68,7 @@ setup(
             'django-browser-reload',
             'django-composed-configuration[dev]>=0.25',
             'django-debug-toolbar',
+            'django-fastdev',
             'django-s3-file-field[minio]>=1.0.0',
             'django-stubs',
             'girder-client',
