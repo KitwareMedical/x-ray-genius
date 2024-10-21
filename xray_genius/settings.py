@@ -29,6 +29,14 @@ class XrayGeniusMixin(ConfigMixin):
     ACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusAccountAdapter'
     SOCIALACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusSocialAccountAdapter'
 
+    # Disabling this causes the user to be redirected to the socialaccount signup form, which
+    # we need to do to show the TOS checkbox
+    SOCIALACCOUNT_AUTO_SIGNUP = False
+
+    # Use custom signup forms to show the TOS checkbox
+    ACCOUNT_FORMS = {'signup': 'xray_genius.core.allauth.XrayGeniusAccountSignupForm'}
+    SOCIALACCOUNT_FORMS = {'signup': 'xray_genius.core.allauth.XrayGeniusSocialAccountSignupForm'}
+
     DJANGO_VITE = {
         # Initially empty, to be populated in `mutate_configuration`
         'default': {},
