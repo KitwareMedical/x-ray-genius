@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 
 class XrayGeniusMixin(ConfigMixin):
+    ASGI_APPLICATION = 'xray_genius.asgi.application'
     WSGI_APPLICATION = 'xray_genius.wsgi.application'
     ROOT_URLCONF = 'xray_genius.urls'
 
@@ -54,6 +55,7 @@ class XrayGeniusMixin(ConfigMixin):
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         # Install local apps first, to ensure any overridden resources are found first
         configuration.INSTALLED_APPS = [
+            'daphne',
             'xray_genius.core.apps.CoreConfig',
         ] + configuration.INSTALLED_APPS
 
