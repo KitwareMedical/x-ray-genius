@@ -124,3 +124,6 @@ class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfigu
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
+        # composed-configuration's 600 second default is too high with our
+        # low-tier postgres instance combined with our high celery concurrency + ASGI.
+        configuration.DATABASES['default']['CONN_MAX_AGE'] = 90
