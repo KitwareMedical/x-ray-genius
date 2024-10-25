@@ -121,6 +121,17 @@ class ProductionConfiguration(XrayGeniusMixin, ProductionBaseConfiguration):
 
 
 class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfiguration):
+    # composed-configuration's 600 second default is too high with our
+    # low-tier postgres instance combined with our high celery concurrency + ASGI.
+    DATABASES = values.DatabaseURLValue(
+        environ_name='DATABASE_URL',
+        environ_prefix=None,
+        environ_required=True,
+        engine='django.db.backends.postgresql',
+        conn_max_age=60,
+        ssl_require=True,
+    )
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
