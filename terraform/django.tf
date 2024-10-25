@@ -29,6 +29,9 @@ module "django" {
   ec2_worker_volume_size       = 100 # deepdrr requires more disk space than the default 30 GB.
 
   additional_django_vars = {
+    # Must limit threads so as not to exhaust postgres connection pool
+    # https://mattbasta.medium.com/django-channels-asgi-and-heroku-e1bc9559330b
+    ASGI_THREADS                  = 5
     DJANGO_GOOGLE_OAUTH_CLIENT_ID = var.google_oauth_client_id
     DJANGO_GOOGLE_OAUTH_SECRET    = var.google_oauth_secret
     DJANGO_SENTRY_DSN             = var.django_sentry_dsn
