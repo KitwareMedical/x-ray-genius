@@ -36,8 +36,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'celery>=5.4',
+        'celery[redis]>=5.4',
         'channels[daphne]',
+        'channels-redis',
         'django>=5.1,<5.2',
         'django-allauth[socialaccount]',
         'django-celery-results',

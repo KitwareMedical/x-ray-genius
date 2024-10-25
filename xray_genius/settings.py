@@ -124,3 +124,9 @@ class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfigu
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
+
+    # This can be deleted once the following PR is incorporated:
+    # https://github.com/kitware-resonant/django-composed-configuration/pull/213
+    CELERY_BROKER_URL = values.Value(
+        environ_name='REDIS_URL', environ_prefix=None, environ_required=True
+    )

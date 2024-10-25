@@ -19,10 +19,10 @@ jobs:
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
-      rabbitmq:
-        image: rabbitmq:management
+      redis:
+        image: redis:latest
         ports:
-          - 5672:5672
+          - 6379:6379
       minio:
         # This image does not require any command arguments (which GitHub Actions don't support)
         image: bitnami/minio:latest
@@ -55,6 +55,7 @@ jobs:
         run: |
           tox
         env:
+          DJANGO_CELERY_BROKER_URL: redis://localhost:6379/0
           DJANGO_DATABASE_URL: postgres://postgres:postgres@localhost:5432/django
           DJANGO_MINIO_STORAGE_ENDPOINT: localhost:9000
           DJANGO_MINIO_STORAGE_ACCESS_KEY: minioAccessKey
