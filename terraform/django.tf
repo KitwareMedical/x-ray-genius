@@ -44,4 +44,13 @@ module "django" {
     "https://github.com/dmathieu/heroku-buildpack-submodules.git",
     "heroku/nodejs",
   ]
+
+  # Disable cloudamqp, use Redis as celery broker instead
+  heroku_cloudamqp_plan = null
+}
+
+resource "heroku_addon" "heroku_redis" {
+  count  = 1
+  app_id = module.django.heroku_app_id
+  plan   = "heroku-redis:mini"
 }
