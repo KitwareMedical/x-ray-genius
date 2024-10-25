@@ -37,6 +37,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'celery>=5.4',
+        'channels[daphne]',
         'django>=5.1,<5.2',
         'django-allauth[socialaccount]',
         'django-celery-results',
@@ -56,7 +57,6 @@ setup(
         # Production-only
         'django-composed-configuration[prod]>=0.25',
         'django-s3-file-field[s3]>=1.0.0',
-        'gunicorn',
     ],
     extras_require={
         'worker': [
