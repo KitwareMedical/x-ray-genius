@@ -121,23 +121,23 @@ class ProductionConfiguration(XrayGeniusMixin, ProductionBaseConfiguration):
 
 
 class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfiguration):
-    # composed-configuration's 600 second default is too high with our
-    # low-tier postgres instance combined with our high celery concurrency + ASGI.
+    # This can be deleted once the following PR is incorporated:
+    # https://github.com/kitware-resonant/django-composed-configuration/pull/213
+    CELERY_BROKER_URL = values.Value(
+        environ_name='REDIS_URL', environ_prefix=None, environ_required=True
+    )
+
+    # CONN_MAX_AGE is, as of Django 4.x, simply incompatible with ASGI.
+    # See https://code.djangoproject.com/ticket/33497
     DATABASES = values.DatabaseURLValue(
         environ_name='DATABASE_URL',
         environ_prefix=None,
         environ_required=True,
         engine='django.db.backends.postgresql',
-        conn_max_age=60,
+        conn_max_age=0,
         ssl_require=True,
     )
 
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
-
-    # This can be deleted once the following PR is incorporated:
-    # https://github.com/kitware-resonant/django-composed-configuration/pull/213
-    CELERY_BROKER_URL = values.Value(
-        environ_name='REDIS_URL', environ_prefix=None, environ_required=True
-    )
