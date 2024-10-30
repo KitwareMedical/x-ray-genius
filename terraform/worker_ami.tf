@@ -175,23 +175,29 @@ Description=Celery Service
 After=network.target
 
 [Service]
-Type=forking
 User=celery
 Group=celery
-EnvironmentFile=${local.celery_conf_location}
+
 WorkingDirectory=/home/celery/xray-genius/
 RuntimeDirectory=celery
-TimeoutStartSec=1200
-ExecStartPre=bash -c "git pull origin main && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt"
-ExecStart=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi start $${CELERYD_NODES} \
-    --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
-    --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS}"
-ExecStop=bash -c "$${CELERY_BIN} multi stopwait $${CELERYD_NODES} \
-    --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
-    --loglevel=$${CELERYD_LOG_LEVEL}"
-ExecReload=bash -c "$${CELERY_BIN} -A $${CELERY_APP} multi restart $${CELERYD_NODES} \
-    --pidfile=$${CELERYD_PID_FILE} --logfile=$${CELERYD_LOG_FILE} \
-    --loglevel=$${CELERYD_LOG_LEVEL} $${CELERYD_OPTS}"
+
+Environment=LC_ALL=C.UTF-8
+Environment=LANG=C.UTF-8
+
+# Application config environment
+EnvironmentFile=${local.celery_conf_location}
+
+ExecStartPre=bash -c "git pull origin main && source /home/celery/xray-genius/venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt"
+ExecStart=/home/celery/xray-genius/venv/bin/celery \
+    --app xray_genius.celery \
+    worker \
+    --loglevel INFO \
+    --without-heartbeat
+
+TimeoutStopSec=90s
+# Only SIGTERM the main process, since Celery is pre-fork by default
+KillMode=mixed
+
 Restart=always
 
 [Install]
@@ -203,22 +209,6 @@ resource "aws_s3_object" "celery_conf" {
   bucket = aws_s3_bucket.image_builder.id
   key    = "celery.conf"
   content = <<EOF
-# See
-# https://docs.celeryq.dev/en/latest/userguide/daemonizing.html#usage-systemd
-
-CELERY_APP="xray_genius.celery"
-CELERYD_NODES="worker"
-CELERYD_OPTS="--without-heartbeat"
-CELERY_BIN="/home/celery/xray-genius/venv/bin/celery"
-CELERYD_PID_FILE="/var/run/celery/%n.pid"
-CELERYD_LOG_FILE="/var/log/celery/%n%I.log"
-CELERYD_LOG_LEVEL="INFO"
-
-# The below lines should be uncommented if using the celerybeat.service example
-# unit file, but are unnecessary otherwise
-# CELERYBEAT_PID_FILE="/var/run/celery/beat.pid"
-# CELERYBEAT_LOG_FILE="/var/log/celery/beat.log"
-
 # Django environment variables
 ${join("\n", [
   for k, v in module.django.all_django_vars : "${k}=\"${v}\""
