@@ -51,7 +51,7 @@ class XrayGeniusMixin(ConfigMixin):
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
             'CONFIG': {
                 # Use /1 for channels backend, as /0 is used by celery
-                'hosts': [f'{os.environ["REDIS_URL"]}/1'],
+                'hosts': [f'{os.environ["REDIS_URL"]}/1?ssl_cert_reqs=none'],
             },
         },
     }
@@ -131,12 +131,6 @@ class ProductionConfiguration(XrayGeniusMixin, ProductionBaseConfiguration):
 
 
 class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfiguration):
-    # This can be deleted once the following PR is incorporated:
-    # https://github.com/kitware-resonant/django-composed-configuration/pull/213
-    CELERY_BROKER_URL = values.Value(
-        environ_name='REDIS_URL', environ_prefix=None, environ_required=True
-    )
-
     # CONN_MAX_AGE is, as of Django 4.x, simply incompatible with ASGI.
     # See https://code.djangoproject.com/ticket/33497
     DATABASES = values.DatabaseURLValue(
@@ -151,3 +145,9 @@ class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfigu
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
+
+    @property
+    def CELERY_BROKER_URL(self) -> str:  # noqa: N802
+        # Unfortunately, we have to disable SSL verification for the Redis URL
+        # because the official Heroku Redis uses self-signed certs
+        return f'{os.environ["REDIS_URL"]}/0?ssl_cert_reqs=none'
