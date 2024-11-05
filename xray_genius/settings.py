@@ -46,6 +46,16 @@ class XrayGeniusMixin(ConfigMixin):
     CELERY_RESULT_BACKEND = 'django-db'
     CELERY_RESULT_EXTENDED = True
 
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                # Use /1 for channels backend, as /0 is used by celery
+                'hosts': [f'{os.environ["REDIS_URL"]}/1'],
+            },
+        },
+    }
+
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)
 

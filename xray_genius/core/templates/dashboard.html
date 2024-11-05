@@ -243,9 +243,37 @@
     }
   </style>
 
+  <div class="hidden" id="ws-url" data-url="{{ ws_url_prefix }}/dashboard/"></div>
+
   {% if should_refresh %}
     <script>
-      setTimeout(() => location.reload(), 5000);
+      const wsUrl = document.getElementById('ws-url').dataset.url;
+
+      const ws = new WebSocket(wsUrl);
+      ws.onopen = () => {
+        console.log('WebSocket connection opened');
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log('Message from server:', data);
+        // TODO we can use data.progress, data.description, and data.state to dynamically
+        // show progress on the page if we want.
+        if (data.status === 'succeeded' || data.status === 'failed') {
+          // TODO do fancier page updates with htmx / SPA framework / whatever
+          location.reload();
+        }
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket connection closed');
+        // TODO do fancier page updates with htmx / SPA framework / whatever
+        location.reload();
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
     </script>
   {% endif %}
 {% endblock body %}
