@@ -60,6 +60,7 @@ jobs:
           DJANGO_MINIO_STORAGE_ENDPOINT: localhost:9000
           DJANGO_MINIO_STORAGE_ACCESS_KEY: minioAccessKey
           DJANGO_MINIO_STORAGE_SECRET_KEY: minioSecretKey
+          REDIS_URL: redis://localhost:6379/0
 
   build-node:
     runs-on: ubuntu-latest

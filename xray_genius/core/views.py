@@ -22,6 +22,11 @@ T = TypeVar('T')
 P = ParamSpec('P')
 
 
+def ws_url_prefix(request: HttpRequest) -> str:
+    scheme = 'wss' if request.is_secure() else 'ws'
+    return f'{scheme}://{request.get_host()}'
+
+
 def user_has_reached_session_limit(user: User) -> bool:
     if user.is_superuser or user.is_staff:
         # Superusers and staff can start as many sessions as they want
@@ -81,6 +86,7 @@ def dashboard(request: HttpRequest):
             'SessionStatus': Session.Status,
             'should_refresh': should_refresh,
             'should_disable_new_session_button': user_has_reached_session_limit(request.user),
+            'ws_url_prefix': ws_url_prefix(request),
         },
     )
 

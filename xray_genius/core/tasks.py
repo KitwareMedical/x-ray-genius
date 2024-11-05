@@ -12,6 +12,7 @@ from django.db.models import QuerySet
 
 from .models import OutputImage, Session
 from .models.input_parameters import DEFAULT_SENSOR_SIZE
+from .notifications import TaskTracker
 from .utils import ParameterSampler
 
 logger = get_task_logger(__name__)
@@ -19,6 +20,12 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
+    try:
+        session = Session.objects.select_related('parameters', 'input_scan').get(pk=session_pk)
+    except Session.DoesNotExist:
+        logger.info('Session %s was deleted, aborting processing', session_pk)
+        return
+
     # Import here to avoid attempting to load CUDA on the web server
     from PIL import Image
     from deepdrr import MobileCArm, Volume, geo
@@ -52,120 +59,129 @@ def run_deepdrr_task(session_pk: str) -> None:
                 f'Cannot handle anatomical coordinate system {ct.anatomical_coordinate_system}'
             )
 
-    session = Session.objects.select_related('parameters', 'input_scan').get(pk=session_pk)
+    state = {'type': 'session_update', 'session_pk': str(session_pk)}
+    tracker = TaskTracker(state=state, group_names=[f'dashboard_{session.owner.pk}'])
+    with tracker.running():
+        tracker.description = 'Reading input file'
+        tracker.flush()
 
-    with TemporaryDirectory() as f:
-        dest = Path(f) / f'temp.{".".join(session.input_scan.file.name.split(".")[1:]).lower()}'
-        dest.write_bytes(session.input_scan.file.read())
-        if dest.suffix == '.nrrd':
-            ct = Volume.from_nrrd(dest)
-        elif dest.suffix == '.dcm':
-            ct = Volume.from_dicom(
-                dest,
-                # TODO: remove this when the cache_dir is set correctly upstream.
-                cache_dir=dest.parent / 'cache',
-            )
-        else:
-            ct = Volume.from_nifti(dest)
+        with TemporaryDirectory() as f:
+            dest = Path(f) / f'temp.{".".join(session.input_scan.file.name.split(".")[1:]).lower()}'
+            dest.write_bytes(session.input_scan.file.read())
+            if dest.suffix == '.nrrd':
+                ct = Volume.from_nrrd(dest)
+            elif dest.suffix == '.dcm':
+                ct = Volume.from_dicom(
+                    dest,
+                    # TODO: remove this when the cache_dir is set correctly upstream.
+                    cache_dir=dest.parent / 'cache',
+                )
+            else:
+                ct = Volume.from_nifti(dest)
 
-    # place CT at center of the world, oriented supine (ILA)
-    to_supine(ct)
-    ct.place_center(geo.p(0, 0, 0))
+        # place CT at center of the world, oriented supine (ILA)
+        to_supine(ct)
+        ct.place_center(geo.p(0, 0, 0))
 
-    source_to_detector_distance: float = session.parameters.source_to_detector_distance
+        source_to_detector_distance: float = session.parameters.source_to_detector_distance
 
-    carm = MobileCArm(
-        source_to_detector_distance=source_to_detector_distance,
-        source_to_isocenter_vertical_distance=source_to_detector_distance / 2,
-        sensor_height=DEFAULT_SENSOR_SIZE,
-        sensor_width=DEFAULT_SENSOR_SIZE,
-        pixel_size=session.parameters.sensor_pixel_pitch,
-        min_alpha=-180,
-        max_alpha=180,
-        min_beta=-180,
-        max_beta=180,
-    )
+        carm = MobileCArm(
+            source_to_detector_distance=source_to_detector_distance,
+            source_to_isocenter_vertical_distance=source_to_detector_distance / 2,
+            sensor_height=DEFAULT_SENSOR_SIZE,
+            sensor_width=DEFAULT_SENSOR_SIZE,
+            pixel_size=session.parameters.sensor_pixel_pitch,
+            min_alpha=-180,
+            max_alpha=180,
+            min_beta=-180,
+            max_beta=180,
+        )
 
-    param_sampler = ParameterSampler(session.parameters)
+        param_sampler = ParameterSampler(session.parameters)
 
-    # Initialize the Projector object (allocates GPU memory)
-    with Projector(ct, carm=carm) as projector:
-        for i, (
-            push_pull_translation,
-            head_foot_translation,
-            raise_lower_translation,
-            alpha,
-            beta,
-        ) in enumerate(
-            zip(
-                param_sampler.carm_push_pull_translation,
-                param_sampler.carm_head_foot_translation,
-                param_sampler.carm_raise_lower_translation,
-                param_sampler.carm_alpha,
-                param_sampler.carm_beta,
-                strict=True,
-            )
-        ):
-            session.refresh_from_db(fields=['status'])
-            if session.status == Session.Status.CANCELLED:
-                logger.info(f'Session {session_pk} was cancelled')
-                OutputImage.objects.filter(session=session).delete()
-                return
+        # Initialize the Projector object (allocates GPU memory)
+        with Projector(ct, carm=carm) as projector:
+            for i, (
+                push_pull_translation,
+                head_foot_translation,
+                raise_lower_translation,
+                alpha,
+                beta,
+            ) in enumerate(
+                zip(
+                    param_sampler.carm_push_pull_translation,
+                    param_sampler.carm_head_foot_translation,
+                    param_sampler.carm_raise_lower_translation,
+                    param_sampler.carm_alpha,
+                    param_sampler.carm_beta,
+                    strict=True,
+                )
+            ):
+                session.refresh_from_db(fields=['status'])
+                if session.status == Session.Status.CANCELLED:
+                    logger.info(f'Session {session_pk} was cancelled')
+                    OutputImage.objects.filter(session=session).delete()
+                    return
 
-            logger.info(
-                f'Running DeepDRR for session {session_pk} (Image {i + 1}/{param_sampler.samples})'
-            )
-
-            carm.move_to(
-                alpha=alpha,
-                beta=beta,
-                degrees=True,
-                isocenter=geo.p(
-                    # incoming parameters are in LPS, but deepdrr supine
-                    # is in ILA (-Z, +X, -Y).
-                    # head_foot: +Z, push_pull: +X, raise_lower: +Y
-                    -head_foot_translation,
-                    push_pull_translation,
-                    -raise_lower_translation,
-                ),
-            )
-
-            image = projector()
-
-            with TemporaryDirectory() as tmpdir:
-                dest = Path(tmpdir) / 'image.png'
-                name = uuid4()
-
-                if image.dtype in (np.float16, np.float32, np.float64):
-                    image_u16 = np.clip(image * 0xFFFF, 0, 0xFFFF).astype(np.uint16)
-                    image_u8 = np.clip(image * 0xFF, 0, 0xFF).astype(np.uint8)
-                else:
-                    logger.warning('Naive cast image %r (unknown dtype %r).', name, image.dtype)
-                    image_u16 = image.astype(np.uint16)
-                    image_u8 = image.astype(np.uint8)
-
-                png.from_array(image_u16, mode='L;16').save(dest)
-                img = File(BytesIO(dest.read_bytes()), name=f'{name}.png')
-
-                thumbnail_dest = Path(tmpdir) / 'thumbnail.png'
-                thumbnail_img = Image.fromarray(image_u8)
-                thumbnail_img.thumbnail((64, 64))
-                thumbnail_img.save(thumbnail_dest)
-                thumbnail = File(BytesIO(thumbnail_dest.read_bytes()), name=f'{name}_thumbnail.png')
-
-                output_image = OutputImage.objects.create(
-                    image=img,
-                    thumbnail=thumbnail,
-                    session=session,
-                    carm_push_pull=push_pull_translation,
-                    carm_head_foot_translation=head_foot_translation,
-                    carm_raise_lower=raise_lower_translation,
-                    carm_alpha=alpha,
-                    carm_beta=beta,
+                tracker.progress = i / param_sampler.samples
+                tracker.description = f'Generating image {i + 1} of {param_sampler.samples}'
+                tracker.flush(max_rate_seconds=0.5)
+                logger.info(
+                    f'Running DeepDRR for session {session_pk} ({i + 1}/{param_sampler.samples})'
                 )
 
-    Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
-    logger.info(f'Created output image {output_image.pk} for session {session_pk}')
+                carm.move_to(
+                    alpha=alpha,
+                    beta=beta,
+                    degrees=True,
+                    isocenter=geo.p(
+                        # incoming parameters are in LPS, but deepdrr supine
+                        # is in ILA (-Z, +X, -Y).
+                        # head_foot: +Z, push_pull: +X, raise_lower: +Y
+                        -head_foot_translation,
+                        push_pull_translation,
+                        -raise_lower_translation,
+                    ),
+                )
+
+                image = projector()
+
+                with TemporaryDirectory() as tmpdir:
+                    dest = Path(tmpdir) / 'image.png'
+                    name = uuid4()
+
+                    if image.dtype in (np.float16, np.float32, np.float64):
+                        image_u16 = np.clip(image * 0xFFFF, 0, 0xFFFF).astype(np.uint16)
+                        image_u8 = np.clip(image * 0xFF, 0, 0xFF).astype(np.uint8)
+                    else:
+                        logger.warning('Naive cast image %r (unknown dtype %r).', name, image.dtype)
+                        image_u16 = image.astype(np.uint16)
+                        image_u8 = image.astype(np.uint8)
+
+                    png.from_array(image_u16, mode='L;16').save(dest)
+                    img = File(BytesIO(dest.read_bytes()), name=f'{name}.png')
+
+                    thumbnail_dest = Path(tmpdir) / 'thumbnail.png'
+                    thumbnail_img = Image.fromarray(image_u8)
+                    thumbnail_img.thumbnail((64, 64))
+                    thumbnail_img.save(thumbnail_dest)
+                    thumbnail = File(
+                        BytesIO(thumbnail_dest.read_bytes()), name=f'{name}_thumbnail.png'
+                    )
+
+                    output_image = OutputImage.objects.create(
+                        image=img,
+                        thumbnail=thumbnail,
+                        session=session,
+                        carm_push_pull=push_pull_translation,
+                        carm_head_foot_translation=head_foot_translation,
+                        carm_raise_lower=raise_lower_translation,
+                        carm_alpha=alpha,
+                        carm_beta=beta,
+                    )
+
+        Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
+        logger.info(f'Created output image {output_image.pk} for session {session_pk}')
 
     zip_images_task.delay(session_pk)
 
