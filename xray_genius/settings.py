@@ -48,10 +48,16 @@ class XrayGeniusMixin(ConfigMixin):
 
     CHANNEL_LAYERS = {
         'default': {
+            # TODO: switch to channels_redis.pubsub.RedisPubSubChannelLayer when it's out of beta
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
             'CONFIG': {
-                # Use /1 for channels backend, as /0 is used by celery
-                'hosts': [f'{os.environ["REDIS_URL"]}/1?ssl_cert_reqs=none'],
+                # Use db 1 for channels backend, as 0 is used by celery
+                'hosts': [
+                    {
+                        'address': os.environ['REDIS_URL'],
+                        'db': 1,
+                    }
+                ],
             },
         },
     }
@@ -146,8 +152,10 @@ class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfigu
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
 
+        # Redis providers on Heroku use self-signed certs, so we need to disable verification
+        configuration.CHANNEL_LAYERS['default']['CONFIG']['hosts'][0]['ssl_cert_reqs'] = None
+
     @property
     def CELERY_BROKER_URL(self) -> str:  # noqa: N802
-        # Unfortunately, we have to disable SSL verification for the Redis URL
-        # because the official Heroku Redis uses self-signed certs
+        # Redis providers on Heroku use self-signed certs, so we need to disable verification
         return f'{os.environ["REDIS_URL"]}/0?ssl_cert_reqs=none'
