@@ -163,6 +163,10 @@ resource "aws_imagebuilder_infrastructure_configuration" "image_builder" {
 resource "aws_imagebuilder_image" "image_builder" {
   image_recipe_arn                 = aws_imagebuilder_image_recipe.image_builder.arn
   infrastructure_configuration_arn = aws_imagebuilder_infrastructure_configuration.image_builder.arn
+
+  timeouts {
+    create = "2h"
+  }
 }
 
 resource "aws_s3_bucket" "image_builder" {
