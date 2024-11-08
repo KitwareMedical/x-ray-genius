@@ -1,6 +1,8 @@
 locals {
-  celery_service_location = "/etc/systemd/system/celery.service"
-  celery_conf_location    = "/etc/conf.d/celery"
+  celery_service_location  = "/etc/systemd/system/celery.service"
+  celery_conf_location     = "/etc/conf.d/celery"
+  celery_logfile_directory = "/var/log/celery"
+  celery_logfile_filename  = "celery.log"
 }
 
 resource "aws_iam_instance_profile" "image_builder" {
@@ -119,10 +121,10 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Install python dependencies
               "venv/bin/pip install --upgrade pip",
               "venv/bin/pip install -r requirements.worker.txt",
-              # Ensure celery log/run directories exists
-              "sudo mkdir -p /var/log/celery /var/run/celery",
+              # Ensure celery log directory exists
+              "sudo mkdir -p ${local.celery_logfile_directory}",
               # Give `celery` user ownership of the home directory + log/run directories
-              "sudo chown -R celery:celery /home/celery /var/log/celery /var/run/celery",
+              "sudo chown -R celery:celery /home/celery ${local.celery_logfile_directory}",
               # Enable the celery systemd service
               "sudo systemctl enable celery.service",
             ]
@@ -198,6 +200,7 @@ ExecStartPre=bash -c "git pull origin main && source /home/celery/xray-genius/ve
 ExecStart=/home/celery/xray-genius/venv/bin/celery \
     --app xray_genius.celery \
     worker \
+    --logfile ${local.celery_logfile_directory}/${local.celery_logfile_filename} \
     --loglevel INFO \
     --without-heartbeat
 
