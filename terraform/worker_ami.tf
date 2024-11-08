@@ -116,6 +116,9 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Create and activate a virtual environment
               "python3.11 -m venv venv",
               "source venv/bin/activate",
+              # Install python dependencies
+              "venv/bin/pip install --upgrade pip",
+              "venv/bin/pip install -r requirements.worker.txt",
               # Ensure celery log/run directories exists
               "sudo mkdir -p /var/log/celery /var/run/celery",
               # Give `celery` user ownership of the home directory + log/run directories
