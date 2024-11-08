@@ -135,6 +135,7 @@ def run_deepdrr_task(session_pk: str) -> None:
                 if session.status == Session.Status.CANCELLED:
                     logger.info(f'Session {session_pk} was cancelled')
                     OutputImage.objects.filter(session=session).delete()
+                    Session.objects.filter(pk=session_pk).update(status=Session.Status.NOT_STARTED)
                     return
 
                 tracker.progress = i / param_sampler.samples

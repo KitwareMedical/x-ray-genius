@@ -23,7 +23,7 @@ class Session(models.Model):
         QUEUED = 'queued', 'Queued'
         RUNNING = 'running', 'Running'
         PROCESSED = 'processed', 'Processed'
-        CANCELLED = 'cancelled', 'Cancelled'
+        CANCELLED = 'cancelled', 'Cancelling'
         DELETING = 'deleting', 'Deleting'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
