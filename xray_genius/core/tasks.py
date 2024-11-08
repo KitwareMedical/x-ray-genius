@@ -8,6 +8,7 @@ from zipfile import ZipFile
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.files.base import ContentFile, File
+from django.db import transaction
 from django.db.models import QuerySet
 
 from .models import OutputImage, Session
@@ -21,6 +22,19 @@ logger = get_task_logger(__name__)
 @shared_task
 def run_deepdrr_task(session_pk: str) -> None:
     try:
+        with transaction.atomic():
+            # First, lock the session and ensure it's in the proper state.
+            # Then, before releasing the lock, update the state.
+            # This is done to prevent race conditions if this task is executed
+            # multiple times concurrently, which is always a possibility due to
+            # us using `acks_late` in Celery.
+            session = Session.objects.select_for_update().get(pk=session_pk)
+            if session.status != Session.Status.QUEUED:
+                logger.error(f'Session {session_pk} is not queued, aborting processing')
+                return
+            session.status = Session.Status.RUNNING
+            session.save()
+        # Refetch the session without the lock with joined data
         session = Session.objects.select_related('parameters', 'input_scan').get(pk=session_pk)
     except Session.DoesNotExist:
         logger.info('Session %s was deleted, aborting processing', session_pk)

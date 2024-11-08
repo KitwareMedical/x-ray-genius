@@ -20,6 +20,7 @@ class Session(models.Model):
 
     class Status(models.TextChoices):
         NOT_STARTED = 'not-started', 'Not Started'
+        QUEUED = 'queued', 'Queued'
         RUNNING = 'running', 'Running'
         PROCESSED = 'processed', 'Processed'
         CANCELLED = 'cancelled', 'Cancelled'
