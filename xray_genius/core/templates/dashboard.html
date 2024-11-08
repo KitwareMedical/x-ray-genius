@@ -86,7 +86,7 @@
                       <span class="text-{{ session.status|status_class }}">
                         {{ session.get_status_display }}
                       </span>
-                      {% if session.status == SessionStatus.RUNNING %}
+                      {% if session.status == SessionStatus.QUEUED or session.status == SessionStatus.RUNNING or session.status == SessionStatus.CANCELLED %}
                         <span class="ml-2 animate-spin text-primary">&#9696;</span>
                       {% endif %}
                     </div>
@@ -190,15 +190,15 @@
                             Update Parameters <i class="ri-dropdown-list"></i>
                           </button>
                         </a>
-                        <form
-                          action="{% url 'initiate-batch-run' session.pk %}"
-                          method="post"
+                        <div
+                          class="tooltip"
+                          data-tip="Session is being cancelled. Please wait and refresh the page."
                         >
-                          {% csrf_token %}
-                          <button class="btn btn-sm btn-primary">
+                          <button class="btn btn-sm disabled btn-disabled	">
                             Run <i class="ri-play-line"></i>
                           </button>
-                        </form>
+                        </div>
+
                       {% endif %}
                       {% if request.user.is_staff or request.user.is_superuser %}
                         {% if session.status != SessionStatus.RUNNING %}
