@@ -268,7 +268,9 @@
       ws.onclose = () => {
         console.log('WebSocket connection closed');
         // TODO do fancier page updates with htmx / SPA framework / whatever
-        location.reload();
+        // Don't reload page here for now, because under Websocket error conditions it can cause the
+        // page to enter an infinite reload loop.
+        // location.reload();
       };
 
       ws.onerror = (error) => {
