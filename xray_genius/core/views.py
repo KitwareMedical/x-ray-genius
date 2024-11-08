@@ -173,7 +173,7 @@ def initiate_batch_run(request: HttpRequest, session_pk: str):
             return HttpResponseBadRequest('Parameters missing')
         elif session.status not in (Session.Status.NOT_STARTED, Session.Status.CANCELLED):
             return HttpResponseBadRequest('Invalid start state.')
-        session.status = Session.Status.RUNNING
+        session.status = Session.Status.QUEUED
         session.save()
     task = run_deepdrr_task.delay(session_pk)
     Session.objects.filter(pk=session_pk).update(celery_task_id=task.id)
