@@ -95,6 +95,11 @@ resource "aws_imagebuilder_component" "image_builder" {
             commands = [
               "sudo apt-get update",
               "sudo apt-get --yes upgrade",
+              # Install AWS CloudWatch Logs agent
+              "sudo apt-get --yes install collectd",
+              "wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+              "sudo dpkg --install --skip-same-version ./amazon-cloudwatch-agent.deb",
+              "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:${aws_ssm_parameter.celery_worker_cloudwatch_agent_config.name} -s",
               # Install Python
               "sudo add-apt-repository ppa:deadsnakes/ppa --yes",
               "sudo apt-get --yes install python3.11 python3.11-dev python3.11-venv",
