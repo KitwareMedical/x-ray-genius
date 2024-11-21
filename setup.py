@@ -52,6 +52,7 @@ setup(
         'django-vite',
         'django-widget-tweaks',
         'numpy',
+        'psycopg[pool]',
         'pillow',
         'pydantic',
         'scipy',
