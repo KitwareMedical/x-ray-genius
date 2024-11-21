@@ -13,6 +13,7 @@ from composed_configuration import (
     TestingBaseConfiguration,
 )
 from configurations import values
+import dj_database_url
 
 if TYPE_CHECKING:
     from django_autotyping.typing import AutotypingSettingsDict
@@ -137,17 +138,6 @@ class ProductionConfiguration(XrayGeniusMixin, ProductionBaseConfiguration):
 
 
 class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfiguration):
-    # CONN_MAX_AGE is, as of Django 4.x, simply incompatible with ASGI.
-    # See https://code.djangoproject.com/ticket/33497
-    DATABASES = values.DatabaseURLValue(
-        environ_name='DATABASE_URL',
-        environ_prefix=None,
-        environ_required=True,
-        engine='django.db.backends.postgresql',
-        conn_max_age=0,
-        ssl_require=True,
-    )
-
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
@@ -159,3 +149,18 @@ class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfigu
     def CELERY_BROKER_URL(self) -> str:  # noqa: N802
         # Redis providers on Heroku use self-signed certs, so we need to disable verification
         return f'{os.environ["REDIS_URL"]}/0?ssl_cert_reqs=none'
+
+    @property
+    def DATABASES(self):  # noqa: N802
+        return {
+            'default': {
+                **dj_database_url.parse(os.environ['DATABASE_URL']),
+                'OPTIONS': {
+                    'pool': {
+                        # We have 20 available postgres connections on our service tier, and some
+                        # will be required by the workers and maybe other miscellaneous access.
+                        'max_size': 12,
+                    },
+                },
+            },
+        }
