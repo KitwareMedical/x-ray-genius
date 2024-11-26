@@ -52,7 +52,7 @@ but allows developers to run Python code on their native system.
    2. `./manage.py runserver`
 3. Run in a separate terminal:
    1. `source ./dev/export-env.sh`
-   2. `celery --app xray_genius.celery worker --loglevel INFO --without-heartbeat --pool solo`
+   2. `celery --app xray_genius.celery worker --loglevel INFO --pool solo`
 4. Run in a separate terminal:
    1. `npm start`
 5. Optionally, run `./manage.py load_test_data <girder_api_key>`

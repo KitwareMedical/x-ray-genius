@@ -206,8 +206,7 @@ ExecStart=/home/celery/xray-genius/venv/bin/celery \
     --app xray_genius.celery \
     worker \
     --logfile ${local.celery_logfile_directory}/${local.celery_logfile_filename} \
-    --loglevel INFO \
-    --without-heartbeat
+    --loglevel INFO
 
 TimeoutStopSec=90s
 # Only SIGTERM the main process, since Celery is pre-fork by default

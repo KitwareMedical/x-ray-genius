@@ -28,7 +28,6 @@ services:
       "--app", "xray_genius.celery",
       "worker",
       "--loglevel", "INFO",
-      "--without-heartbeat",
       "--pool",
       "solo",
     ]
