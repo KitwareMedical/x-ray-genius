@@ -8,8 +8,8 @@ data "heroku_team" "this" {
 }
 
 module "django" {
-  source  = "girder/girder4/heroku"
-  version = "0.13.0"
+  source  = "kitware-resonant/resonant/heroku"
+  version = "1.1.1"
 
   project_slug     = "xray-genius"
   route53_zone_id  = data.aws_route53_zone.this.zone_id
