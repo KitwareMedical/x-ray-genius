@@ -44,9 +44,6 @@ class XrayGeniusMixin(ConfigMixin):
         'default': {},
     }
 
-    # Because we are using Redis rather than CloudAMQP, we can use the heartbeat features.
-    # We can use this channel to monitor the workers.
-    CELERY_BROKER_HEARTBEAT = 10
     CELERY_RESULT_BACKEND = 'django-db'
     CELERY_RESULT_EXTENDED = True
 
