@@ -76,7 +76,9 @@ def dashboard(request: HttpRequest):
     )
 
     # Whether or not the page should refresh every 5 seconds automatically.
-    should_refresh = sessions.filter(status=Session.Status.RUNNING).exists()
+    should_refresh = sessions.filter(
+        status__in=(Session.Status.QUEUED, Session.Status.RUNNING)
+    ).exists()
 
     return render(
         request,
