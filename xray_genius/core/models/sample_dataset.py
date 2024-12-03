@@ -5,7 +5,8 @@ class SampleDataset(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     license = models.TextField()
-    source = models.TextField()
+    source_name = models.TextField()
+    source_url = models.URLField()
 
     def __str__(self) -> str:
         return self.name
