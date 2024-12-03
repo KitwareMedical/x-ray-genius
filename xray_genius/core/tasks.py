@@ -1,3 +1,4 @@
+from datetime import timedelta
 from io import BytesIO
 from pathlib import Path
 import shutil
@@ -19,7 +20,9 @@ from .utils import ParameterSampler
 logger = get_task_logger(__name__)
 
 
-@shared_task
+@shared_task(
+    soft_time_limit=timedelta(minutes=10).total_seconds(),
+)
 def run_deepdrr_task(session_pk: str) -> None:
     try:
         with transaction.atomic():
@@ -204,7 +207,7 @@ def run_deepdrr_task(session_pk: str) -> None:
     zip_images_task.delay(session_pk)
 
 
-@shared_task
+@shared_task(soft_time_limit=30)
 def zip_images_task(session_pk: str) -> None:
     session = Session.objects.get(pk=session_pk)
 
@@ -228,7 +231,7 @@ def zip_images_task(session_pk: str) -> None:
     logger.info('Created zip file for session %s', session_pk)
 
 
-@shared_task
+@shared_task(soft_time_limit=60)
 def delete_session_task(session_pk: str) -> None:
     # This delete query will also trigger a bunch of Django signals
     # that make DELETE calls to S3, so we do this in an async task.
