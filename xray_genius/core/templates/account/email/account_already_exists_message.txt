@@ -1,0 +1,17 @@
+{% extends "account/email/account_already_exists_message.txt" %}
+
+{% block content %}
+{% autoescape off %}
+
+You are receiving this email because someone attempted to sign up for an account using your email address:
+
+{{ email }}
+
+This email address is already linked to an existing account. If you have forgotten your password, you can use this link to reset your password:
+
+{{ password_reset_url }}
+
+If you did not make this request, need assistance, or have any other questions, please contact us at kitware@kitware.com.
+
+{% endautoescape %}
+{% endblock content %}
