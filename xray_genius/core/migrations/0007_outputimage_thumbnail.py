@@ -5,15 +5,15 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import uuid4
 
-from PIL import Image
 from django.apps.registry import Apps
 from django.core.files import File
 from django.db import migrations, models
 from django.db.backends.base.schema import BaseDatabaseSchemaEditor
+from PIL import Image
 
 
 def add_thumbnails(apps: Apps, schema_editor: BaseDatabaseSchemaEditor):
-    OutputImage = apps.get_model('core', 'OutputImage')  # noqa: N806
+    OutputImage = apps.get_model('core', 'OutputImage')
     for output_image in OutputImage.objects.iterator():
         with TemporaryDirectory() as tmpdir:
             dest = Path(tmpdir) / 'image.png'
@@ -25,14 +25,13 @@ def add_thumbnails(apps: Apps, schema_editor: BaseDatabaseSchemaEditor):
 
 
 def remove_thumbnails(apps: Apps, schema_editor: BaseDatabaseSchemaEditor):
-    OutputImage = apps.get_model('core', 'OutputImage')  # noqa: N806
+    OutputImage = apps.get_model('core', 'OutputImage')
     for output_image in OutputImage.objects.iterator():
         output_image.thumbnail.delete()
         output_image.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0006_remove_outputimage_file_outputimage_image'),
     ]

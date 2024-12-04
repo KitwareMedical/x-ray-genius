@@ -30,7 +30,7 @@ def run_deepdrr_task(session_pk: str) -> None:
             # us using `acks_late` in Celery.
             session = Session.objects.select_for_update().get(pk=session_pk)
             if session.status != Session.Status.QUEUED:
-                logger.error(f'Session {session_pk} is not queued, aborting processing')
+                logger.error('Session %s is not queued, aborting processing', session_pk)
                 return
             session.status = Session.Status.RUNNING
             session.save()
@@ -41,10 +41,10 @@ def run_deepdrr_task(session_pk: str) -> None:
         return
 
     # Import here to avoid attempting to load CUDA on the web server
-    from PIL import Image
     from deepdrr import MobileCArm, Volume, geo
     from deepdrr.projector import Projector  # separate import for CUDA init
     import numpy as np
+    from PIL import Image
     import png
     from scipy.spatial.transform import Rotation
 
@@ -133,7 +133,7 @@ def run_deepdrr_task(session_pk: str) -> None:
             ):
                 session.refresh_from_db(fields=['status'])
                 if session.status == Session.Status.CANCELLED:
-                    logger.info(f'Session {session_pk} was cancelled')
+                    logger.info('Session %s was cancelled', session_pk)
                     OutputImage.objects.filter(session=session).delete()
                     Session.objects.filter(pk=session_pk).update(status=Session.Status.NOT_STARTED)
                     return
@@ -142,7 +142,10 @@ def run_deepdrr_task(session_pk: str) -> None:
                 tracker.description = f'Generating image {i + 1} of {param_sampler.samples}'
                 tracker.flush(max_rate_seconds=0.5)
                 logger.info(
-                    f'Running DeepDRR for session {session_pk} ({i + 1}/{param_sampler.samples})'
+                    'Running DeepDRR for session %s (%d/%d)',
+                    session_pk,
+                    i + 1,
+                    param_sampler.samples,
                 )
 
                 carm.move_to(
@@ -196,7 +199,7 @@ def run_deepdrr_task(session_pk: str) -> None:
                     )
 
         Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
-        logger.info(f'Created output image {output_image.pk} for session {session_pk}')
+        logger.info('Created output image %s for session %s', output_image.pk, session_pk)
 
     zip_images_task.delay(session_pk)
 
@@ -212,10 +215,9 @@ def zip_images_task(session_pk: str) -> None:
                 image_name = Path(output_image.image.name).name
 
                 # Preserve bit-depth. Do not use Image.open.
-                with output_image.image.open('rb') as src:
-                    with NamedTemporaryFile() as dst:
-                        shutil.copyfileobj(src, dst)
-                        zip_file.write(filename=dst.name, arcname=image_name)
+                with output_image.image.open('rb') as src, NamedTemporaryFile() as dst:
+                    shutil.copyfileobj(src, dst)
+                    zip_file.write(filename=dst.name, arcname=image_name)
 
         with NamedTemporaryFile() as zip_output:
             buffer.seek(0)
@@ -223,7 +225,7 @@ def zip_images_task(session_pk: str) -> None:
             buffer.seek(0)
             session.output_images_zip.save('images.zip', ContentFile(buffer.read()), save=True)
 
-    logger.info(f'Created zip file for session {session_pk}')
+    logger.info('Created zip file for session %s', session_pk)
 
 
 @shared_task
@@ -231,4 +233,4 @@ def delete_session_task(session_pk: str) -> None:
     # This delete query will also trigger a bunch of Django signals
     # that make DELETE calls to S3, so we do this in an async task.
     Session.objects.filter(pk=session_pk).delete()
-    logger.info(f'Deleted session {session_pk}')
+    logger.info('Deleted session %s', session_pk)

@@ -23,6 +23,9 @@ class OutputImage(models.Model):
         null=True, blank=True, help_text='The desired secondary angulation of the C-arm in degrees.'
     )
 
+    def __str__(self) -> str:
+        return f'Output Image {self.pk} (Session {self.session_id})'
+
 
 @receiver(signals.pre_delete, sender=OutputImage)
 def delete_file(sender: type[OutputImage], instance: OutputImage, **kwargs):

@@ -60,6 +60,9 @@ class InputParameters(models.Model):
     # Defaults to a 9" diameter
     detector_diameter = models.FloatField(help_text='The detector diameter in mm.', default=228.6)
 
+    def __str__(self) -> str:
+        return f'Input Parameters (Session {self.session_id})'
+
     @property
     def sensor_pixel_pitch(self):
         """The sensor pixel pitch."""

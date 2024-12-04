@@ -66,7 +66,7 @@ class XrayGeniusMixin(ConfigMixin):
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)
 
-    REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(True)
+    REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(default=True)
 
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
@@ -74,7 +74,8 @@ class XrayGeniusMixin(ConfigMixin):
         configuration.INSTALLED_APPS = [
             'daphne',
             'xray_genius.core.apps.CoreConfig',
-        ] + configuration.INSTALLED_APPS
+            *configuration.INSTALLED_APPS,
+        ]
 
         # Install additional apps
         configuration.INSTALLED_APPS += [

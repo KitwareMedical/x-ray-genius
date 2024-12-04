@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0021_alter_inputparameters_carm_alpha_kappa_and_more'),
     ]
