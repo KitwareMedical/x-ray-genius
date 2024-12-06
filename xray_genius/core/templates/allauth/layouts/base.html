@@ -1,0 +1,6 @@
+{% extends "allauth/layouts/base.html" %}
+{% load static %}
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/dist/styles.css' %}" />
+{% endblock extra_head %}
