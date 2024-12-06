@@ -11,6 +11,7 @@ This email address is already linked to an existing account. If you have forgott
 
 {{ password_reset_url }}
 
+{# TODO: set up new email address or form for help? #}
 If you did not make this request, need assistance, or have any other questions, please contact us at kitware@kitware.com.
 
 {% endautoescape %}
