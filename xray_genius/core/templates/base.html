@@ -18,44 +18,7 @@
     {% block head_extra %}{% endblock %}
   </head>
   <body>
-    <div class="navbar bg-base-200">
-      <div class="navbar-start">
-        <img src="{% static 'core/img/logo.svg' %}" alt="X-Ray Genius" style="width: 12rem; height: auto; margin-left: 1rem; margin-right: 1rem;" />
-        <ul class="menu menu-horizontal bg-base-100 p-[4px] rounded-xl">
-          {% if request.user.is_authenticated %}
-            <li>
-              <a href="{% url 'dashboard' %}" class="active">
-                <i class="ri-dashboard-fill"></i>
-                Dashboard
-              </a>
-            </li>
-          {% endif %}
-          {% if request.user.is_staff %}
-            <li>
-              <a href="{% url 'admin:index' %}">
-                <i class="ri-admin-fill"></i>
-                Admin
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
-      {% if request.user.is_authenticated %}
-        <div class="navbar-end">
-          <form method="post" action="{% url 'account_logout' %}">
-            {% csrf_token %}
-            <div class="menu menu-horizontal">
-              <li>
-                <button class="btn btn-accent btn-sm mx-1 rounded-lg">
-                  <i class="ri-logout-box-line"></i>
-                  Logout
-                </button>
-              </li>
-            </div>
-          </form>
-        </div>
-      {% endif %}
-    </div>
+    {% include 'snippets/navbar.html' %}
 
     {% comment %} Help modal {% endcomment %}
     <input type="checkbox" id="help-modal" class="modal-toggle" />

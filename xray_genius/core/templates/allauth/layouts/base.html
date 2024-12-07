@@ -4,3 +4,7 @@
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'core/dist/styles.css' %}" />
 {% endblock extra_head %}
+{% block body %}
+    {% include 'snippets/navbar.html' %}
+    {{ block.super }}
+{% endblock body %}
