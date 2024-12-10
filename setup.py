@@ -52,7 +52,7 @@ setup(
         'django-oauth-toolkit',
         'django-vite',
         'django-widget-tweaks',  # required by django-allauth-ui
-        'numpy',
+        'numpy~=2.1.2',  # deepdrr doesn't work with numpy >= 2.2.0, but it doesn't specify this
         'psycopg[pool]',
         'pillow',
         'pydantic',
