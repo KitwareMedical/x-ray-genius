@@ -77,11 +77,17 @@ class XrayGeniusMixin(ConfigMixin):
             *configuration.INSTALLED_APPS,
         ]
 
+        # allauth-ui replaces django-auth-style
+        configuration.INSTALLED_APPS[configuration.INSTALLED_APPS.index('auth_style')] = (
+            'allauth_ui'
+        )
+
         # Install additional apps
         configuration.INSTALLED_APPS += [
             's3_file_field',
             'allauth.socialaccount.providers.google',
-            'widget_tweaks',
+            'widget_tweaks',  # required by django-allauth-ui
+            'slippers',  # required by django-allauth-ui
             'django_vite',
             'django_celery_results',
         ]

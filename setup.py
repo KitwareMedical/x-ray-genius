@@ -41,6 +41,7 @@ setup(
         'channels-redis',
         'django>=5.1,<5.2',
         'django-allauth[socialaccount]',
+        'django-allauth-ui',
         'django-celery-results',
         'django-click',
         'django-configurations[database,email]',
@@ -50,12 +51,13 @@ setup(
         'django-ninja',
         'django-oauth-toolkit',
         'django-vite',
-        'django-widget-tweaks',
+        'django-widget-tweaks',  # required by django-allauth-ui
         'numpy',
         'psycopg[pool]',
         'pillow',
         'pydantic',
         'scipy',
+        'slippers',  # required by django-allauth-ui
         # Production-only
         'django-composed-configuration[prod]>=0.25',
         'django-s3-file-field[s3]>=1.0.0',

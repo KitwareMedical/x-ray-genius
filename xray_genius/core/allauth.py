@@ -22,9 +22,33 @@ class XrayGeniusSocialAccountAdapter(DefaultSocialAccountAdapter):
         return user
 
 
+class XrayGeniusTOSCheckboxWidget(forms.CheckboxInput):
+    template_name = 'widgets/tos_checkbox.html'
+
+
 class XrayGeniusAccountSignupForm(AccountSignupForm):
-    accepted_tos = forms.BooleanField(required=True)
+    accepted_tos = forms.BooleanField(
+        required=True,
+        widget=XrayGeniusTOSCheckboxWidget(),
+    )
+
+    @property
+    def field_order(self) -> list[str]:
+        fields: list[str] = list(self.fields.keys())
+        fields.remove('accepted_tos')
+        fields.append('accepted_tos')
+        return fields
 
 
 class XrayGeniusSocialAccountSignupForm(SocialAccountSignupForm):
-    accepted_tos = forms.BooleanField(required=True)
+    accepted_tos = forms.BooleanField(
+        required=True,
+        widget=XrayGeniusTOSCheckboxWidget(),
+    )
+
+    @property
+    def field_order(self) -> list[str]:
+        fields: list[str] = list(self.fields.keys())
+        fields.remove('accepted_tos')
+        fields.append('accepted_tos')
+        return fields

@@ -1,0 +1,9 @@
+<div class="form-control inline-block">
+  <input type="checkbox" id="{{ widget.name }}" name="{{ widget.name }}" class="checkbox" {% if widget.required %}required{% endif %}>
+  <span class="ml-2">
+    <span class="text-lg font-semibold">I agree to the</span>
+    <label for="terms-modal" class="text-lg font-bold text-info cursor-pointer underline">Terms of Service</label>
+  </span>
+</div>
+
+{% include "terms_of_service.html" %}
