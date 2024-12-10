@@ -7,8 +7,8 @@ attrs==24.2.0
 autobahn==24.4.2
 Automat==24.8.1
 billiard==4.2.1
-boto3==1.35.76
-botocore==1.35.76
+boto3==1.35.77
+botocore==1.35.77
 Brotli==1.1.0
 celery==5.4.0
 certifi==2024.8.30
@@ -56,7 +56,7 @@ kombu==5.4.2
 markdown-it-py==3.0.0
 mdurl==0.1.2
 msgpack==1.1.0
-numpy==2.2.0
+numpy==2.1.3
 oauthlib==3.2.2
 packaging==24.2
 pillow==11.0.0
