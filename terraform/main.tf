@@ -24,5 +24,5 @@ provider "aws" {
   # Must set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY envvars
 }
 provider "heroku" {
-  # Must set HEROKU_EMAIL, HEROKU_API_KEY envvars
+  api_key = var.heroku_api_key
 }

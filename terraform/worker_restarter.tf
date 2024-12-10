@@ -62,6 +62,7 @@ data "archive_file" "restart_worker_lambda_code" {
 
 resource "null_resource" "restart_worker_lambda_pip_install" {
   triggers = {
+    # Ensure this resource is recreated if the requirements.txt or restart.py files change
     shell_hash = "${sha256(file("${path.module}/worker_restarter/requirements.txt"))}/${sha256(file("${path.module}/worker_restarter/restart.py"))}"
   }
 
@@ -87,6 +88,9 @@ resource "aws_lambda_function" "restart_worker_lambda" {
   }
 
   reserved_concurrent_executions = 1
+
+  # Ensure the Lambda function is recreated if the code or dependencies change
+  depends_on = [null_resource.restart_worker_lambda_pip_install]
 }
 
 resource "aws_lambda_function_url" "restart_worker_lambda" {
