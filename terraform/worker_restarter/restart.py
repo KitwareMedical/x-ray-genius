@@ -1,3 +1,4 @@
+# ruff: noqa: T201
 from __future__ import annotations
 
 import logging
@@ -23,7 +24,10 @@ def handler(event: APIGatewayProxyEventV2, context: Context):
     ec2 = boto3.client('ec2')
 
     # Request must be a POST request with the proper credentials
-    if event['requestContext']['http']['method'] != 'POST' or event['headers']['authorization'] != 'Bearer ' + os.environ['WEBHOOK_TOKEN']:
+    if (
+        event['requestContext']['http']['method'] != 'POST'
+        or event['headers']['authorization'] != 'Bearer ' + os.environ['WEBHOOK_TOKEN']
+    ):
         return {
             'statusCode': 404,
         }
