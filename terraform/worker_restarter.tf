@@ -52,6 +52,11 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_ec2" {
   policy_arn = aws_iam_policy.lambda_policy_ec2.arn
 }
 
+resource "random_password" "lambda_secret" {
+  length  = 64
+  special = true
+}
+
 data "archive_file" "restart_worker_lambda_code" {
   type        = "zip"
   source_dir  = "${path.module}/worker_restarter/"
@@ -83,7 +88,8 @@ resource "aws_lambda_function" "restart_worker_lambda" {
 
   environment {
     variables = {
-      SENTRY_DSN = var.django_sentry_dsn
+      SENTRY_DSN    = var.django_sentry_dsn
+      WEBHOOK_TOKEN = random_password.lambda_secret.result
     }
   }
 
@@ -99,9 +105,10 @@ resource "aws_lambda_function_url" "restart_worker_lambda" {
 }
 
 resource "heroku_app_webhook" "restart_worker_lambda" {
-  app_id = module.django.heroku_app_id
-  level  = "sync"
-  url    = aws_lambda_function_url.restart_worker_lambda.function_url
+  app_id        = module.django.heroku_app_id
+  level         = "sync"
+  url           = aws_lambda_function_url.restart_worker_lambda.function_url
+  authorization = "Bearer ${random_password.lambda_secret.result}"
 
   # See https://devcenter.heroku.com/articles/app-webhooks#step-2-determine-which-events-to-subscribe-to
   include = [
