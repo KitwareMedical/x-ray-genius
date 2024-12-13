@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from xray_genius.core.models import (
+    ContactFormSubmission,
     CTInputFile,
     InputParameters,
     OutputImage,
@@ -47,3 +48,8 @@ class SampleDatasetFileInline(admin.TabularInline):
 @admin.register(SampleDataset)
 class SampleDatasetAdmin(admin.ModelAdmin):
     inlines = (SampleDatasetFileInline,)
+
+
+@admin.register(ContactFormSubmission)
+class ContactFormSubmissionAdmin(admin.ModelAdmin):
+    pass
