@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import timedelta
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -66,6 +67,10 @@ class XrayGeniusMixin(ConfigMixin):
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)
 
+    # The number of seconds after which a session is considered "stuck".
+    # A beat task will check for stuck sessions and send a Sentry alert if any are found.
+    SESSION_TIMEOUT = values.IntegerValue(timedelta(minutes=20).total_seconds())
+
     REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(default=True)
 
     @staticmethod
@@ -111,6 +116,13 @@ class XrayGeniusMixin(ConfigMixin):
         )
 
         configuration.STATICFILES_DIRS.append(configuration.BASE_DIR / 'viewer' / 'dist')
+
+        configuration.CELERY_BEAT_SCHEDULE = {
+            'detect-stuck-sessions': {
+                'task': 'xray_genius.core.tasks.check_for_stuck_sessions_beat',
+                'schedule': configuration.SESSION_TIMEOUT,
+            }
+        }
 
 
 class DevelopmentConfiguration(XrayGeniusMixin, DevelopmentBaseConfiguration):

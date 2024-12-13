@@ -7,13 +7,17 @@ data "heroku_team" "this" {
   name = "kitware"
 }
 
+locals {
+  heroku_app_name = "otm-xray-genius"
+}
+
 module "django" {
   source  = "kitware-resonant/resonant/heroku"
   version = "1.1.1"
 
   project_slug     = "xray-genius"
   route53_zone_id  = data.aws_route53_zone.this.zone_id
-  heroku_app_name  = "otm-xray-genius"
+  heroku_app_name  = local.heroku_app_name
   heroku_team_name = data.heroku_team.this.name
   subdomain_name   = "app"
 

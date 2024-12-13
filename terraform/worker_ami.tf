@@ -1,8 +1,12 @@
 locals {
   celery_service_location  = "/etc/systemd/system/celery.service"
-  celery_conf_location     = "/etc/conf.d/celery"
   celery_logfile_directory = "/var/log/celery"
   celery_logfile_filename  = "celery.log"
+  django_project_location  = "/home/celery/xray-genius"
+}
+
+locals {
+  environment_file_location = "${local.django_project_location}/.env"
 }
 
 resource "aws_iam_instance_profile" "image_builder" {
@@ -80,10 +84,6 @@ resource "aws_imagebuilder_component" "image_builder" {
             {
               source      = "s3://${aws_s3_bucket.image_builder.id}/${aws_s3_object.celery_service.key}"
               destination = local.celery_service_location
-            },
-            {
-              source      = "s3://${aws_s3_bucket.image_builder.id}/${aws_s3_object.celery_conf.key}"
-              destination = local.celery_conf_location
             }
           ]
         },
@@ -105,6 +105,8 @@ resource "aws_imagebuilder_component" "image_builder" {
               "sudo apt-get --yes install python3.11 python3.11-dev python3.11-venv",
               # Install Git
               "sudo apt-get --yes install git",
+              # Install Heroku CLI
+              "sudo curl https://cli-assets.heroku.com/install.sh | sh",
               # Install psycopg2 dependencies
               "sudo apt-get --yes install gcc g++ libpq-dev",
               "export PATH=/usr/lib/postgresql/X.Y/bin/:$PATH",
@@ -118,8 +120,8 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Go to home directory
               "pushd /home/celery",
               # Clone the xray-genius repository
-              "git clone ${var.git_repository} xray-genius",
-              "pushd xray-genius",
+              "git clone ${var.git_repository} ${local.django_project_location}",
+              "pushd ${local.django_project_location}",
               # Create and activate a virtual environment
               "python3.11 -m venv venv",
               "source venv/bin/activate",
@@ -199,14 +201,18 @@ Environment=LC_ALL=C.UTF-8
 Environment=LANG=C.UTF-8
 
 # Application config environment
-EnvironmentFile=${local.celery_conf_location}
+# Note, the '-' prefix in the EnvironmentFile directive indicates that the
+# file may not exist at the time the service is started. This is needed
+# because we create the EnvironmentFile in the ExecStartPre script.
+EnvironmentFile=-${local.environment_file_location}
 
-ExecStartPre=bash -c "git pull origin main && source /home/celery/xray-genius/venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt"
+ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' git pull origin main && source ${local.django_project_location}/venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt && heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location}"
 ExecStart=/home/celery/xray-genius/venv/bin/celery \
     --app xray_genius.celery \
     worker \
     --logfile ${local.celery_logfile_directory}/${local.celery_logfile_filename} \
-    --loglevel INFO
+    --loglevel INFO \
+    --beat
 
 TimeoutStopSec=90s
 # Only SIGTERM the main process, since Celery is pre-fork by default
@@ -216,16 +222,5 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-EOF
-}
-
-resource "aws_s3_object" "celery_conf" {
-  bucket = aws_s3_bucket.image_builder.id
-  key    = "celery.conf"
-  content = <<EOF
-# Django environment variables
-${join("\n", [
-  for k, v in module.django.all_django_vars : "${k}=\"${v}\""
-])}
 EOF
 }

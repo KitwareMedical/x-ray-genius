@@ -11,6 +11,7 @@ from celery.utils.log import get_task_logger
 from django.core.files.base import ContentFile, File
 from django.db import transaction
 from django.db.models import QuerySet
+import sentry_sdk
 
 from .models import OutputImage, Session
 from .models.input_parameters import DEFAULT_SENSOR_SIZE
@@ -237,3 +238,23 @@ def delete_session_task(session_pk: str) -> None:
     # that make DELETE calls to S3, so we do this in an async task.
     Session.objects.filter(pk=session_pk).delete()
     logger.info('Deleted session %s', session_pk)
+
+
+@shared_task
+def check_for_stuck_sessions_beat() -> None:
+    """
+    Check for stuck sessions and send a Sentry alert if any are found.
+
+    A "stuck" session is defined as a session that has been either sitting in the
+    queue, or in the running state, for longer than the session timeout. This can
+    happen if the Celery worker that was processing the session died, or if there
+    is a bug in the code that causes the session to exit before it can update its
+    status.
+    """
+    stuck_sessions = Session.stuck_objects.all().count()
+
+    if stuck_sessions > 0:
+        logger.info('Found %s stuck sessions', stuck_sessions)
+        sentry_sdk.capture_message(
+            f'Found {stuck_sessions} stuck sessions!! Manual intervention required.'
+        )
