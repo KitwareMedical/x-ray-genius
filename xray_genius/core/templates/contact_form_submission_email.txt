@@ -1,0 +1,5 @@
+A new contact form submission has been received.
+
+Name: {{ form_submission.name }}
+Email: {{ form_submission.email }}
+Message: {{ form_submission.message }}
