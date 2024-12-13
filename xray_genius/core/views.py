@@ -13,7 +13,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django_celery_results.models import TaskResult
-from login_required import login_not_required
 
 from .forms import ContactForm, CTInputFileUploadForm
 from .models import CTInputFile, SampleDataset, SampleDatasetFile, Session
@@ -214,7 +213,9 @@ def get_task_trace(request: HttpRequest, session_pk: str):
     )
 
 
-@login_not_required
+# TODO: make this view not require login once security issues
+# have been dealt with
+# @login_not_required
 @require_http_methods(['GET', 'POST'])
 def contact_form(request: HttpRequest):
     if request.method == 'POST':
