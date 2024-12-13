@@ -13,10 +13,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django_celery_results.models import TaskResult
+from login_required import login_not_required
 
-from .forms import CTInputFileUploadForm
+from .forms import ContactForm, CTInputFileUploadForm
 from .models import CTInputFile, SampleDataset, SampleDatasetFile, Session
-from .tasks import delete_session_task, run_deepdrr_task
+from .tasks import (
+    delete_session_task,
+    run_deepdrr_task,
+    send_contact_form_submission_to_admins_task,
+)
 
 T = TypeVar('T')
 P = ParamSpec('P')
@@ -207,3 +212,18 @@ def get_task_trace(request: HttpRequest, session_pk: str):
             'task_result': task_result,
         },
     )
+
+
+@login_not_required
+@require_http_methods(['GET', 'POST'])
+def contact_form(request: HttpRequest):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            send_contact_form_submission_to_admins_task.delay(form.instance.pk)
+            return redirect('contact')
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact_form.html', {'form': form})
