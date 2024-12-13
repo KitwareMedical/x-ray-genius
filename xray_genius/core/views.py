@@ -17,7 +17,11 @@ from login_required import login_not_required
 
 from .forms import ContactForm, CTInputFileUploadForm
 from .models import CTInputFile, SampleDataset, SampleDatasetFile, Session
-from .tasks import delete_session_task, run_deepdrr_task
+from .tasks import (
+    delete_session_task,
+    run_deepdrr_task,
+    send_contact_form_submission_to_admins_task,
+)
 
 T = TypeVar('T')
 P = ParamSpec('P')
@@ -217,6 +221,7 @@ def contact_form(request: HttpRequest):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
+            send_contact_form_submission_to_admins_task.delay(form.instance.pk)
             return redirect('contact')
     else:
         form = ContactForm()
