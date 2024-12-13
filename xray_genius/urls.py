@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/v1/s3-upload/', include('s3_file_field.urls')),
     path('api/v1/', api.urls),
     path('', views.dashboard, name='dashboard'),
+    path('contact/', views.contact_form, name='contact'),
     path('session/', views.upload_ct_input_file, name='create-session'),
     path(
         'session/from-sample-data/<int:sample_dataset_file_pk>/',
