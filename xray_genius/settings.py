@@ -64,6 +64,8 @@ class XrayGeniusMixin(ConfigMixin):
         },
     }
 
+    AXES_FAILURE_LIMIT = 10
+
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)
 
@@ -96,6 +98,7 @@ class XrayGeniusMixin(ConfigMixin):
             'django_vite',
             'django_celery_results',
             'captcha',
+            'axes',
         ]
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware
