@@ -42,7 +42,7 @@ setup(
         'django>=5.1,<5.2',
         'django-allauth[socialaccount]',
         'django-allauth-ui',
-        'django-axes',
+        'django-axes[ipware]',
         'django-celery-results',
         'django-click',
         'django-configurations[database,email]',

@@ -175,6 +175,13 @@ class ProductionConfiguration(XrayGeniusMixin, ProductionBaseConfiguration):
 
 
 class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfiguration):
+    # Heroku's uses a reverse proxy, so we need to use the X-FORWARDED-FOR header
+    # to get the real IP address of the client
+    AXES_IPWARE_META_PRECEDENCE_ORDER = [
+        'HTTP_X_FORWARDED_FOR',
+        'REMOTE_ADDR',
+    ]
+
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
         configuration.DJANGO_VITE['default']['dev_mode'] = False
