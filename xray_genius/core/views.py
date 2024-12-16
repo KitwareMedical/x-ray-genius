@@ -223,8 +223,14 @@ def contact_form(request: HttpRequest):
         if form.is_valid():
             form.save()
             send_contact_form_submission_to_admins_task.delay(form.instance.pk)
-            return redirect('contact')
+            return redirect('contact-submitted')
     else:
         form = ContactForm(user=user)
 
     return render(request, 'contact_form.html', {'form': form})
+
+
+@login_not_required
+@require_GET
+def contact_form_submitted(request: HttpRequest):
+    return render(request, 'contact_form_submitted.html')
