@@ -27,7 +27,7 @@ class XrayGeniusMixin(ConfigMixin):
 
     BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-    LOGIN_REQUIRED_IGNORE_PATHS = [r'/accounts/']
+    LOGIN_REQUIRED_IGNORE_PATHS = [r'/accounts/', r'/captcha/']
 
     ACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusAccountAdapter'
     SOCIALACCOUNT_ADAPTER = 'xray_genius.core.allauth.XrayGeniusSocialAccountAdapter'
@@ -95,6 +95,7 @@ class XrayGeniusMixin(ConfigMixin):
             'slippers',  # required by django-allauth-ui
             'django_vite',
             'django_celery_results',
+            'captcha',
         ]
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware

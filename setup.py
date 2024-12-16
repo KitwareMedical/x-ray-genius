@@ -50,6 +50,7 @@ setup(
         'django-login-required-middleware',
         'django-ninja',
         'django-oauth-toolkit',
+        'django-simple-captcha',
         'django-vite',
         'django-widget-tweaks',  # required by django-allauth-ui
         'numpy~=1.26.4',  # deepdrr doesn't work with numpy >= 2, but it doesn't specify this
