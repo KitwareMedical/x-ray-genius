@@ -29,6 +29,7 @@ Django==5.1.4
 django-allauth==65.3.0
 django-allauth-ui==1.5.3
 django-auth-style==0.8.1
+django-axes==7.0.1
 django-celery-results==2.5.1
 django-click==2.4.0
 django-composed-configuration==0.25.0
