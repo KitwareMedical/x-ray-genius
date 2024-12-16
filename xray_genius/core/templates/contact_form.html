@@ -16,6 +16,9 @@
         <label for="id_name" class="label">
           <span class="label-text">Your Name</span>
         </label>
+        {% if form.name.errors %}
+          <div class="text-md text-error mb-4">{{ form.name.errors|join:", " }}</div>
+        {% endif %}
         {% render_field form.name class="input input-bordered w-full" placeholder="Enter your name" %}
       </div>
 
@@ -23,6 +26,9 @@
         <label for="id_email" class="label">
           <span class="label-text">Your Email</span>
         </label>
+        {% if form.email.errors %}
+          <div class="text-md text-error mb-4">{{ form.email.errors|join:", " }}</div>
+        {% endif %}
         {% render_field form.email class="input input-bordered w-full" placeholder="Enter your email" %}
       </div>
 
@@ -30,6 +36,9 @@
         <label for="id_message" class="label">
           <span class="label-text">Your Message</span>
         </label>
+        {% if form.message.errors %}
+          <div class="text-md text-error mb-4">{{ form.message.errors|join:", " }}</div>
+        {% endif %}
         {% render_field form.message class="textarea textarea-bordered w-full" placeholder="Write your message" rows="4" %}
       </div>
 
@@ -38,6 +47,9 @@
           <label for="id_captcha" class="label">
             <span class="label-text">Enter the characters in the image below:</span>
           </label>
+          {% if form.captcha.errors %}
+            <div class="text-md text-error mb-4">{{ form.captcha.errors|join:", " }}</div>
+          {% endif %}
           {% render_field form.captcha class="m-4" %}
         </div>
       {% endif %}
