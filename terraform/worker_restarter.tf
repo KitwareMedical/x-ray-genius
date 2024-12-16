@@ -74,15 +74,15 @@ resource "null_resource" "restart_worker_lambda_pip_install" {
   provisioner "local-exec" {
     command = <<EOT
       set -e
-      mkdir -p ${path.module}/worker_restarter_packages/python/
-      python3 -m pip install -r ${path.module}/worker_restarter/requirements.txt -t ${path.module}/worker_restarter_packages/python/
+      mkdir -p ${path.module}/worker_restarter/packages/python/
+      python3 -m pip install -r ${path.module}/worker_restarter/requirements.txt -t ${path.module}/worker_restarter/packages/python/
     EOT
   }
 }
 
 data "archive_file" "restart_worker_lambda_dependencies" {
   type        = "zip"
-  source_dir  = "${path.module}/worker_restarter_packages"
+  source_dir  = "${path.module}/worker_restarter/packages/"
   output_path = "${path.module}/layer.zip"
 
   depends_on = [null_resource.restart_worker_lambda_pip_install]
