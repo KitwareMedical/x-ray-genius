@@ -2,4 +2,7 @@
 
 <div class="form-control">
   {{ field|add_class:"input input-bordered w-full my-3" }}
+  {% if field.errors %}
+    <div class="text-xs text-error">{{ field.errors|join:", " }}</div>
+  {% endif %}
 </div>
