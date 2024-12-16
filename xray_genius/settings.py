@@ -48,6 +48,10 @@ class XrayGeniusMixin(ConfigMixin):
     CELERY_RESULT_BACKEND = 'django-db'
     CELERY_RESULT_EXTENDED = True
 
+    # TODO: remove once this is resolved upstream
+    # https://github.com/kitware-resonant/django-composed-configuration/pull/215
+    CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
     CHANNEL_LAYERS = {
         'default': {
             # TODO: switch to channels_redis.pubsub.RedisPubSubChannelLayer when it's out of beta
