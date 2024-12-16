@@ -206,7 +206,7 @@ Environment=LANG=C.UTF-8
 # because we create the EnvironmentFile in the ExecStartPre script.
 EnvironmentFile=-${local.environment_file_location}
 
-ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' git pull origin main && source ${local.django_project_location}/venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt && heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location}"
+ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' && git pull origin main && source ${local.django_project_location}/venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt && heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location}"
 ExecStart=/home/celery/xray-genius/venv/bin/celery \
     --app xray_genius.celery \
     worker \
