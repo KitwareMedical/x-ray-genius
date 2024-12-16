@@ -37,18 +37,20 @@ def handler(event: APIGatewayProxyEventV2, context: Context):
     )
 
     print(instances)
+    instances_to_reboot = []
     for reservation in instances['Reservations']:
         for instance in reservation['Instances']:
             state: InstanceStateNameType = instance['State']['Name']
-            if state != 'running':
-                err_msg = f'Instance {instance["InstanceId"]} is in unexpected state "{state}"'
-                print(err_msg)
-                sentry_sdk.capture_message(err_msg, level='critical')
-                continue
+            if state == 'running':
+                print(f'Rebooting instance {instance["InstanceId"]}')
+                instances_to_reboot.append(instance['InstanceId'])
 
-            print(f'Rebooting instance {instance['InstanceId']}')
-            resp = ec2.reboot_instances(InstanceIds=[instance['InstanceId']])
-            print(resp)
+    if len(instances_to_reboot) > 0:
+        resp = ec2.reboot_instances(InstanceIds=instances_to_reboot)
+        print(resp)
+    else:
+        logger.critical('No running instances found!')
+        sentry_sdk.capture_message('No running instances found!')
 
     return {
         'statusCode': 200,
