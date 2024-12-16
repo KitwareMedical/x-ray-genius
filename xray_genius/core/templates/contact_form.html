@@ -33,6 +33,15 @@
         {% render_field form.message class="textarea textarea-bordered w-full" placeholder="Write your message" rows="4" %}
       </div>
 
+      {% if form.captcha %}
+        <div class="form-control mb-4">
+          <label for="id_captcha" class="label">
+            <span class="label-text">Enter the characters in the image below:</span>
+          </label>
+          {% render_field form.captcha class="m-4" %}
+        </div>
+      {% endif %}
+
       <div class="form-control mt-6">
         <button
           type="submit"
