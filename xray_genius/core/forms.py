@@ -18,9 +18,9 @@ class ContactForm(ModelForm):
         model = ContactFormSubmission
         fields = ['name', 'email', 'message']
 
-    def __init__(self, *args, user: User | None, **kwargs):
+    def __init__(self, *args, user: User, **kwargs):
         super().__init__(*args, **kwargs)
 
         # If the user is logged in, don't show the captcha
-        if user is not None:
+        if user.is_authenticated:
             del self.fields['captcha']

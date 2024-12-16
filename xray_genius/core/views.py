@@ -217,7 +217,7 @@ def get_task_trace(request: HttpRequest, session_pk: str):
 @login_not_required
 @require_http_methods(['GET', 'POST'])
 def contact_form(request: HttpRequest):
-    user: User | None = request.user if request.user.is_authenticated else None
+    user: User = request.user
     if request.method == 'POST':
         form = ContactForm(request.POST, user=user)
         if form.is_valid():
