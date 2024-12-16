@@ -68,17 +68,45 @@ data "archive_file" "restart_worker_lambda_code" {
 resource "null_resource" "restart_worker_lambda_pip_install" {
   triggers = {
     # Ensure this resource is recreated if the requirements.txt or restart.py files change
-    shell_hash = "${sha256(file("${path.module}/worker_restarter/requirements.txt"))}/${sha256(file("${path.module}/worker_restarter/restart.py"))}"
+    shell_hash = filesha1("${path.module}/worker_restarter/requirements.txt")
   }
 
   provisioner "local-exec" {
-    command = "python3 -m pip install -r worker_restarter/requirements.txt -t ${path.module}/worker_restarter"
+    command = <<EOT
+      set -e
+      mkdir -p ${path.module}/worker_restarter_packages/python/
+      python3 -m pip install -r ${path.module}/worker_restarter/requirements.txt -t ${path.module}/worker_restarter_packages/python/
+    EOT
   }
+}
+
+data "archive_file" "restart_worker_lambda_dependencies" {
+  type        = "zip"
+  source_dir  = "${path.module}/worker_restarter_packages"
+  output_path = "${path.module}/layer.zip"
+
+  depends_on = [null_resource.restart_worker_lambda_pip_install]
+}
+
+resource "aws_s3_object" "lambda_layer_zip" {
+  bucket     = aws_s3_bucket.image_builder.id
+  key        = "lambda_layers/worker_restarter.zip"
+  source     = data.archive_file.restart_worker_lambda_dependencies.output_path
+  depends_on = [null_resource.restart_worker_lambda_pip_install]
+}
+
+resource "aws_lambda_layer_version" "restart_worker_lambda" {
+  layer_name          = "worker_restarter_dependencies"
+  s3_bucket           = aws_s3_bucket.image_builder.bucket
+  s3_key              = aws_s3_object.lambda_layer_zip.key
+  compatible_runtimes = [local.lambda_runtime]
+  depends_on          = [aws_s3_object.lambda_layer_zip]
 }
 
 resource "aws_lambda_function" "restart_worker_lambda" {
   filename         = data.archive_file.restart_worker_lambda_code.output_path
   source_code_hash = data.archive_file.restart_worker_lambda_code.output_base64sha256
+  layers           = [aws_lambda_layer_version.restart_worker_lambda.arn]
 
   function_name = "restart_worker"
   handler       = "restart.handler"
@@ -112,6 +140,6 @@ resource "heroku_app_webhook" "restart_worker_lambda" {
 
   # See https://devcenter.heroku.com/articles/app-webhooks#step-2-determine-which-events-to-subscribe-to
   include = [
-    "api:release",          # A new release for the app has been initiated or the release’s status has changed since the last notification.
+    "api:release", # A new release for the app has been initiated or the release’s status has changed since the last notification.
   ]
 }
