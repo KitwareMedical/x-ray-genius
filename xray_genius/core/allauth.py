@@ -13,12 +13,30 @@ class XrayGeniusAccountAdapter(EmailAsUsernameAccountAdapter):
             user.is_active = False
         return user
 
+    def save_user(self, *args, **kwargs):
+        user = super().save_user(*args, **kwargs)
+
+        # Kitware emails are always approved
+        if user.email.endswith('@kitware.com') and not user.is_active:
+            user.is_active = True
+            user.save()
+        return user
+
 
 class XrayGeniusSocialAccountAdapter(DefaultSocialAccountAdapter):
     def new_user(self, request, sociallogin):
         user = super().new_user(request, sociallogin)
         if settings.REQUIRE_APPROVAL_FOR_NEW_USERS:
             user.is_active = False
+        return user
+
+    def save_user(self, *args, **kwargs):
+        user = super().save_user(*args, **kwargs)
+
+        # Kitware emails are always approved
+        if user.email.endswith('@kitware.com') and not user.is_active:
+            user.is_active = True
+            user.save()
         return user
 
 
