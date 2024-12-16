@@ -8,6 +8,7 @@ from zipfile import ZipFile
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile, File
 from django.core.mail import EmailMessage
@@ -247,9 +248,10 @@ def delete_session_task(session_pk: str) -> None:
 def send_contact_form_submission_to_admins_task(contact_form_submission_pk: int) -> None:
     form_submission = ContactFormSubmission.objects.get(pk=contact_form_submission_pk)
 
-    admin_emails = User.objects.filter(is_superuser=True, is_active=True).values_list(
-        'email', flat=True
-    )  # TODO: add kitware@kitware.com once this is tested
+    admin_emails: list[str] = (
+        list(User.objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True))
+        + settings.ADDITIONAL_ADMIN_EMAILS
+    )
 
     subject = '[xray-genius] New contact form submission'
     message = render_to_string(
