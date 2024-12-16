@@ -247,6 +247,22 @@
 
   {% if should_refresh %}
     <script>
+      let sessionQueued = false;
+
+      {% for session in sessions %}
+        {% if session.status == SessionStatus.QUEUED %}
+          sessionQueued = true;
+        {% endif %}
+      {% endfor %}
+
+      // If there is a session that is queued, reload the page every 5 seconds
+      // until it's Running. In practice, it should only take a few seconds for
+      // the session to transition from Queued to Running.
+      // TODO: make this more dynamic using htmx or something similar.
+      if (sessionQueued) {
+        setTimeout(() => location.reload(), 5000);
+      }
+
       const wsUrl = document.getElementById('ws-url').dataset.url;
 
       const ws = new WebSocket(wsUrl);
