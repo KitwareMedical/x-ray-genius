@@ -79,6 +79,7 @@ class XrayGeniusMixin(ConfigMixin):
     SESSION_TIMEOUT = values.IntegerValue(timedelta(minutes=20).total_seconds())
 
     REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(default=True)
+    ADDITIONAL_ADMIN_EMAILS = values.ListValue()
 
     @staticmethod
     def mutate_configuration(configuration: ComposedConfiguration) -> None:
