@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-{% load honeypot %}
 {% load widget_tweaks %}
 
 {% block body %}
@@ -42,8 +41,6 @@
           {% render_field form.captcha class="m-4" %}
         </div>
       {% endif %}
-
-      {% render_honeypot_field  %}
 
       <div class="form-control mt-6">
         <button

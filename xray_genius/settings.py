@@ -64,6 +64,7 @@ class XrayGeniusMixin(ConfigMixin):
         },
     }
 
+    # The maximum number of failed login attempts before a user is locked out
     AXES_FAILURE_LIMIT = 10
 
     # The maximum number of sessions a user can start
@@ -103,6 +104,14 @@ class XrayGeniusMixin(ConfigMixin):
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware
         configuration.MIDDLEWARE.append('login_required.middleware.LoginRequiredMiddleware')
+
+        configuration.MIDDLEWARE.append('axes.middleware.AxesMiddleware')
+
+        # Has to come first in AUTHENTICATION_BACKENDS
+        configuration.AUTHENTICATION_BACKENDS = [
+            'axes.backends.AxesStandaloneBackend',
+            *configuration.AUTHENTICATION_BACKENDS,
+        ]
 
         # Configure Google OAuth provider
         configuration.SOCIALACCOUNT_PROVIDERS = {
