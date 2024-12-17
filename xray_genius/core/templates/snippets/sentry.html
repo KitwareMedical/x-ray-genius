@@ -1,0 +1,19 @@
+{% load sentry_dsn %}
+
+<script
+  src="https://browser.sentry-cdn.com/8.46.0/bundle.tracing.min.js"
+  integrity="sha384-EW6J0RR/4YFJOWX5jmk+Ksedp3QpHS0L5cMN9GwHfALVgfQkhrMcwU98dFMMaXwe"
+  crossorigin="anonymous"
+></script>
+<script>
+  Sentry.init({
+    dsn: '{% sentry_dsn %}',
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+</script>

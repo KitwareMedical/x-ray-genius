@@ -1,5 +1,4 @@
 {% load static %}
-{% load sentry_dsn %}
 
 <!DOCTYPE html>
 <html data-theme="dark">
@@ -19,15 +18,7 @@
     {% block head_extra %}{% endblock %}
   </head>
   <body>
-    <script
-      src="https://js.sentry-cdn.com/dbe5868e9bff109ca923a15412cc7dbe.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      Sentry.init({
-        dsn: '{% sentry_dsn %}',
-      });
-    </script>
+    {% include 'snippets/sentry.html' %}
 
     {% include 'snippets/navbar.html' %}
 
