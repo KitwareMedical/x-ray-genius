@@ -255,7 +255,7 @@ def send_contact_form_submission_to_admins_task(contact_form_submission_pk: int)
 
     subject = '[xray-genius] New contact form submission'
     message = render_to_string(
-        template_name='contact_form_submission_email.txt',
+        template_name='emails/contact_form_submission.txt',
         context={'form_submission': form_submission},
     )
 
