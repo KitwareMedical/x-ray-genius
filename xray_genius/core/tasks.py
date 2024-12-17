@@ -263,6 +263,21 @@ def send_contact_form_submission_to_admins_task(contact_form_submission_pk: int)
 
 
 @shared_task
+def send_new_user_signup_email_to_admins_task(user_pk: int) -> None:
+    admin_emails: list[str] = list(
+        User.objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True)
+    )
+
+    subject = '[xray-genius] New user sign up'
+    message = render_to_string(
+        template_name='emails/admin_new_user_message.txt',
+        context={'user': User.objects.get(pk=user_pk)},
+    )
+
+    EmailMessage(subject=subject, body=message, to=admin_emails).send(fail_silently=False)
+
+
+@shared_task
 def check_for_stuck_sessions_beat() -> None:
     """
     Check for stuck sessions and send a Sentry alert if any are found.
