@@ -76,7 +76,7 @@ class XrayGeniusMixin(ConfigMixin):
 
     # The number of seconds after which a session is considered "stuck".
     # A beat task will check for stuck sessions and send a Sentry alert if any are found.
-    SESSION_TIMEOUT = values.IntegerValue(timedelta(minutes=20).total_seconds())
+    SESSION_TIMEOUT = values.IntegerValue(timedelta(minutes=5).total_seconds())
 
     REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(default=True)
     ADDITIONAL_ADMIN_EMAILS = values.ListValue()
@@ -138,7 +138,7 @@ class XrayGeniusMixin(ConfigMixin):
         configuration.CELERY_BEAT_SCHEDULE = {
             'detect-stuck-sessions': {
                 'task': 'xray_genius.core.tasks.check_for_stuck_sessions_beat',
-                'schedule': configuration.SESSION_TIMEOUT,
+                'schedule': timedelta(minutes=1).total_seconds(),
             }
         }
 
