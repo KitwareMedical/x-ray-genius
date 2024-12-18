@@ -195,6 +195,9 @@ class HerokuProductionConfiguration(XrayGeniusMixin, HerokuProductionBaseConfigu
         # Redis providers on Heroku use self-signed certs, so we need to disable verification
         configuration.CHANNEL_LAYERS['default']['CONFIG']['hosts'][0]['ssl_cert_reqs'] = None
 
+        # We're configuring sentry by hand since we need to pass custom options (sentry cron).
+        configuration.INSTALLED_APPS.remove('composed_configuration.sentry.apps.SentryConfig')
+
     @property
     def CELERY_BROKER_URL(self) -> str:  # noqa: N802
         # Redis providers on Heroku use self-signed certs, so we need to disable verification
