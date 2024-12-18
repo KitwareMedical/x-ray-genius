@@ -15,25 +15,26 @@ class CoreConfig(AppConfig):
     def ready(self):
         import xray_genius.core.signals  # noqa: F401
 
-        sentry_sdk.init(
-            # If a "dsn" is not explicitly passed, sentry_sdk will attempt to find the DSN in
-            # the SENTRY_DSN environment variable; however, by pulling it from an explicit setting,
-            # it can be overridden by downstream project settings.
-            dsn=settings.SENTRY_DSN,
-            environment=settings.SENTRY_ENVIRONMENT,
-            release=settings.SENTRY_RELEASE,
-            integrations=[
-                LoggingIntegration(level=logging.INFO, event_level=logging.WARNING),
-                DjangoIntegration(),
-                CeleryIntegration(monitor_beat_tasks=True),
-            ],
-            # Send traces for non-exception events too
-            attach_stacktrace=True,
-            # Submit request User info from Django
-            send_default_pii=True,
-            # These are None by default, so performance monitoring/profiling is opt-in
-            traces_sample_rate=settings.SENTRY_TRACES_SAMPLE_RATE,
-            profiles_sample_rate=settings.SENTRY_PROFILES_SAMPLE_RATE,
-        )
+        if hasattr(settings, 'SENTRY_DSN'):
+            sentry_sdk.init(
+                # If a "dsn" is not explicitly passed, sentry_sdk will attempt to find the DSN in
+                # the SENTRY_DSN environment variable; however, by pulling it from an explicit setting,
+                # it can be overridden by downstream project settings.
+                dsn=settings.SENTRY_DSN,
+                environment=settings.SENTRY_ENVIRONMENT,
+                release=settings.SENTRY_RELEASE,
+                integrations=[
+                    LoggingIntegration(level=logging.INFO, event_level=logging.WARNING),
+                    DjangoIntegration(),
+                    CeleryIntegration(monitor_beat_tasks=True),
+                ],
+                # Send traces for non-exception events too
+                attach_stacktrace=True,
+                # Submit request User info from Django
+                send_default_pii=True,
+                # These are None by default, so performance monitoring/profiling is opt-in
+                traces_sample_rate=settings.SENTRY_TRACES_SAMPLE_RATE,
+                profiles_sample_rate=settings.SENTRY_PROFILES_SAMPLE_RATE,
+            )
 
         return super().ready()
