@@ -56,7 +56,7 @@ class SessionAdmin(admin.ModelAdmin):
         # most recent OutputImage and the Session's creation time.
         most_recent_image_created: datetime | None = getattr(obj, 'latest_image_created', None)
         if most_recent_image_created:
-            duration: timedelta = most_recent_image_created - obj.created
+            duration: timedelta = most_recent_image_created - obj.started
             return humanize.precisedelta(duration)
         return 'N/A'
 

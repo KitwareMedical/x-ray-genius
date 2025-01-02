@@ -26,7 +26,7 @@ class StuckSessionsManager(models.Manager):
             .get_queryset()
             .filter(
                 status__in=[Session.Status.QUEUED, Session.Status.RUNNING],
-                created__lt=timezone.now() - timedelta(seconds=settings.SESSION_TIMEOUT),
+                started__lt=timezone.now() - timedelta(seconds=settings.SESSION_TIMEOUT),
             )
         )
 
@@ -42,6 +42,11 @@ class Session(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = CreationDateTimeField()
+    started = models.DateTimeField(
+        help_text='When the session started processing (i.e. when it went into the QUEUED state)',
+        null=True,
+        blank=True,
+    )
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
     input_scan = models.ForeignKey(CTInputFile, on_delete=models.CASCADE, related_name='sessions')
     status = models.CharField(max_length=32, choices=Status.choices, default=Status.NOT_STARTED)

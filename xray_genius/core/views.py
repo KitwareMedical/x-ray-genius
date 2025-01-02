@@ -11,6 +11,7 @@ from django.http import HttpRequest, HttpResponseBadRequest
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django_celery_results.models import TaskResult
 from login_required import login_not_required
@@ -181,6 +182,7 @@ def initiate_batch_run(request: HttpRequest, session_pk: str):
         if session.status != Session.Status.NOT_STARTED:
             return HttpResponseBadRequest('Invalid start state.')
         session.status = Session.Status.QUEUED
+        session.started = timezone.now()
         session.save()
     task = run_deepdrr_task.delay(session_pk)
     Session.objects.filter(pk=session_pk).update(celery_task_id=task.id)
@@ -193,6 +195,7 @@ def cancel_batch_run(request: HttpRequest, session_pk: str):
     with transaction.atomic():
         session = get_object_or_404(Session.objects.select_for_update(), pk=session_pk)
         session.status = Session.Status.CANCELLED
+        session.started = None
         session.save()
     return redirect('dashboard')
 
