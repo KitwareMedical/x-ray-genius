@@ -55,7 +55,7 @@ class SessionAdmin(admin.ModelAdmin):
         # The duration of the Session can be calculated as the difference between the
         # most recent OutputImage and the Session's creation time.
         most_recent_image_created: datetime | None = getattr(obj, 'latest_image_created', None)
-        if most_recent_image_created:
+        if most_recent_image_created and obj.started:
             duration: timedelta = most_recent_image_created - obj.started
             return humanize.precisedelta(duration)
         return 'N/A'
