@@ -67,6 +67,7 @@ drf-yasg==1.21.8
 executing==2.1.0
 filelock==3.16.1
 girder-client==3.2.6
+humanize==4.11.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2

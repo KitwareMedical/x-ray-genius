@@ -57,6 +57,7 @@ drf-yasg==1.21.8
 filelock==3.16.1
 fonttools==4.55.3
 fsspec==2024.10.0
+humanize==4.11.0
 hyperlink==21.0.0
 idna==3.10
 imageio==2.36.1
