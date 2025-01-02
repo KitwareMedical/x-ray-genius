@@ -54,6 +54,7 @@ setup(
         'django-simple-captcha',
         'django-vite',
         'django-widget-tweaks',  # required by django-allauth-ui
+        'humanize',
         'numpy~=1.26.4',  # deepdrr doesn't work with numpy >= 2, but it doesn't specify this
         'psycopg[pool]',
         'pillow',
