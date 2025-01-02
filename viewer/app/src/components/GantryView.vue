@@ -9,6 +9,9 @@ import VtkBaseVolumeRepresentation from '@/src/components/vtk/VtkBaseVolumeRepre
 import useVolumeColoringStore from '@/src/store/view-configs/volume-coloring';
 import CArmModel from './CArmModel.vue';
 import { useViewAnimationListener } from '@/src/composables/useViewAnimationListener';
+import vtkBoundingBox from '@kitware/vtk.js/Common/DataModel/BoundingBox';
+import vtkMath from '@kitware/vtk.js/Common/Core/Math';
+import type { Bounds } from '@kitware/vtk.js/types';
 
 interface Props {
   id: string;
@@ -22,7 +25,7 @@ const { id: viewId, type: viewType, viewDirection, viewUp } = toRefs(props);
 
 const vtkView = ref<VtkViewApi>();
 const volumeColoringStore = useVolumeColoringStore();
-const { currentImageID } = useCurrentImage();
+const { currentImageID, currentImageMetadata } = useCurrentImage();
 
 useViewAnimationListener(vtkView, viewId, viewType);
 
@@ -39,10 +42,26 @@ watchPostEffect(() => {
 
 function resetCamera() {
   if (!vtkView.value) return;
-  // reset to face image
+  // orients the camera to be aligned with the volume
   vtkView.value.resetCamera();
-  // reset to include gantry
-  vtkView.value.renderer.resetCamera();
+
+  // center the camera on the volume
+  const sceneBounds = vtkView.value.renderer.computeVisiblePropBounds();
+  const sceneCenter = vtkBoundingBox.getCenter(sceneBounds);
+  const volumeCenter = vtkBoundingBox.getCenter(
+    currentImageMetadata.value.worldBounds
+  );
+  const translation = vtkMath.subtract(volumeCenter, sceneCenter, [0, 0, 0]);
+  const newBounds = [
+    sceneBounds[0] + translation[0],
+    sceneBounds[1] + translation[0],
+    sceneBounds[2] + translation[1],
+    sceneBounds[3] + translation[1],
+    sceneBounds[4] + translation[2],
+    sceneBounds[5] + translation[2],
+  ] as Bounds;
+  vtkView.value.renderer.resetCamera(newBounds);
+
   vtkView.value.requestRender();
 }
 

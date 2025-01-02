@@ -54,6 +54,7 @@ onImageAdded((id) => {
   image.setDirection(orientation);
 
   image.computeTransforms();
+  store.updateData(id, image);
 });
 </script>
 
