@@ -52,8 +52,9 @@ const rotationKappaStdDev = computed({
     store.setRotationKappaStdDev(v);
   },
 });
+const randomizationEnabled = computed(() => store.randomizeRotation || store.randomizeTilt);
 const numberOfSamples = computed({
-  get: () => store.numberOfSamples,
+  get: () => randomizationEnabled.value ? store.numberOfSamples : 1,
   set: (v) => {
     store.setNumberOfSamples(v);
   },
@@ -318,12 +319,13 @@ async function submit() {
         </div>
       </v-alert>
       <v-text-field
-        label="Number of Samples"
+        label="Number of Samples (only if randomization is enabled)"
         v-model="numberOfSamples"
         outlined
         type="number"
         min="1"
         max="100"
+        :disabled="!randomizationEnabled"
       ></v-text-field>
       <v-row>
         <v-col cols="6">

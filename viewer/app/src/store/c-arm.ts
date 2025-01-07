@@ -10,7 +10,7 @@ const DEFAULT_STANDARD_DEVIATION = 20; // mm
 // 9" I.I. Standard C-arm from the OEC Elite doc
 const DEFAULT_SOURCE_TO_DETECTOR_DISTANCE = 1000; // mm
 const DEFAULT_DETECTOR_DIAMETER = 9 /* in */ * INCHES_TO_MM; // mm
-const DEFAULT_NUMBER_OF_SAMPLES = 10;
+const DEFAULT_NUMBER_OF_SAMPLES = 1;
 const DEFAULT_KAPPA_STD_DEV = 5; // deg
 
 const useCArmStore = defineStore('cArm', () => {
