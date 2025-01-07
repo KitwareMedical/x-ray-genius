@@ -253,7 +253,7 @@ def send_contact_form_submission_to_admins_task(contact_form_submission_pk: int)
         + settings.ADDITIONAL_ADMIN_EMAILS
     )
 
-    subject = '[xray-genius] New contact form submission'
+    subject = '[X-ray Genius] New contact form submission'
     message = render_to_string(
         template_name='emails/contact_form_submission.txt',
         context={'form_submission': form_submission},
@@ -268,7 +268,7 @@ def send_new_user_signup_email_to_admins_task(user_pk: int) -> None:
         User.objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True)
     )
 
-    subject = '[xray-genius] New user sign up'
+    subject = '[X-ray Genius] New user sign up'
     message = render_to_string(
         template_name='emails/admin_new_user_message.txt',
         context={'user': User.objects.get(pk=user_pk)},
