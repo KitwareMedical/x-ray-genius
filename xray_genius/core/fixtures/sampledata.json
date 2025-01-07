@@ -41,27 +41,5 @@
             "description": "The CT volume",
             "file": "sample_data/lumbar_spine_ct/ct.nii.gz"
         }
-    },
-
-    {
-        "model": "core.sampledataset",
-        "pk": 3,
-        "fields": {
-            "name": "VerSe Spine CT",
-            "description": "This is a CT volume that includes the spine vertebrae.  It comes from the VerSe image collection.  This is an example of a CT that might be acquired for diagnostic or spinal surgery planning purposes.  These data are released under the Creative Commons Attribution-ShareAlike 4.0 International license, which is described here for the VerSe data: https://osf.io/amh4f",
-            "license": "Creative Commons Attribution 4.0 International",
-            "source_name": "VerSe 2020 dataset",
-            "source_url": "https://osf.io/t98fz/"
-        }
-    },
-    {
-        "model": "core.sampledatasetfile",
-        "pk": 3,
-        "fields": {
-            "sample_dataset": 3,
-            "name": "sub-verse536_dir-ax_ct.nii.gz",
-            "description": "The CT volume",
-            "file": "sample_data/verse_spine_ct/sub-verse536_dir-ax_ct.nii.gz"
-        }
     }
 ]
