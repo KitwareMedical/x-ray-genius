@@ -345,6 +345,7 @@ async function submit() {
       </v-row>
       <v-btn
         variant="tonal"
+        class="mb-4"
         color="secondary"
         :loading="submissionLoading"
         @click="submit"
