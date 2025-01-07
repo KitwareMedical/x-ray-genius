@@ -147,6 +147,7 @@ async function submit() {
             step="0.1"
             label="Rotation Std Dev"
             suffix="deg"
+            :disabled="!currentImageID"
           ></v-text-field>
         </v-col>
         <v-col cols="6">
@@ -185,6 +186,7 @@ async function submit() {
             step="0.1"
             label="Tilt Std Dev"
             suffix="deg"
+            :disabled="!currentImageID"
           ></v-text-field>
         </v-col>
       </v-row>
