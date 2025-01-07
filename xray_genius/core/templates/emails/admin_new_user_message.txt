@@ -1,4 +1,4 @@
-A new user has signed up for xray-genius.
+A new user has signed up for X-ray Genius.
 
 {# User only has a name if they logged in through Google OAuth #}
 {% if user.name %}

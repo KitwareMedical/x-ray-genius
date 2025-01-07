@@ -1,4 +1,4 @@
-# xray_genius
+# X-ray Genius
 
 **Note: running the X-Ray simulation requires Cuda. The web application can still run without it, but the celery worker will
 fail if any batch simulations are kicked off.**

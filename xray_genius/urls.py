@@ -7,7 +7,7 @@ from ninja import NinjaAPI
 from .core import views
 from .core.rest.session import session_router
 
-api = NinjaAPI(title='X-Ray Genius', version='0.1.0')
+api = NinjaAPI(title='X-ray Genius', version='0.1.0')
 api.add_router('/session/', session_router)
 
 urlpatterns = [

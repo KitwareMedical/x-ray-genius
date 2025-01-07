@@ -14,8 +14,8 @@ from xray_genius.core.models import (
     Session,
 )
 
-admin.site.site_header = 'X-Ray Genius Admin'
-admin.site.site_title = 'X-Ray Genius Admin'
+admin.site.site_header = 'X-ray Genius Admin'
+admin.site.site_title = 'X-ray Genius Admin'
 
 
 @admin.register(CTInputFile)
