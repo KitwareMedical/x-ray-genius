@@ -55,6 +55,7 @@ setup(
         'django-vite',
         'django-widget-tweaks',  # required by django-allauth-ui
         'humanize',
+        'markdown',
         'numpy~=1.26.4',  # deepdrr doesn't work with numpy >= 2, but it doesn't specify this
         'psycopg[pool]',
         'pillow',
