@@ -4,20 +4,35 @@
   <div class="navbar-start">
     <img src="{% static 'core/img/logo.svg' %}" alt="X-ray Genius" style="width: 12rem; height: auto; margin-left: 1rem; margin-right: 1rem;" />
     <ul class="menu menu-horizontal bg-base-100 p-[4px] rounded-xl">
+      {% url 'dashboard' as dashboard_url %}
+      {% url 'faq' as faq_url %}
+
       {% if request.user.is_authenticated %}
         <li>
-          <a href="{% url 'dashboard' %}" class="active">
+          <a
+            href="{{ dashboard_url }}"
+            {% if request.path == dashboard_url %}
+              class="active"
+            {% endif %}
+          >
             <i class="ri-dashboard-fill"></i>
             Dashboard
           </a>
         </li>
       {% endif %}
+
       <li>
-        <a href="{% url 'faq' %}">
+        <a
+          href="{{ faq_url }}"
+          {% if request.path == faq_url %}
+            class="active"
+          {% endif %}
+        >
           <i class="ri-question-fill"></i>
           FAQ
         </a>
       </li>
+
       {% if request.user.is_staff %}
         <li>
           <a href="{% url 'admin:index' %}">
