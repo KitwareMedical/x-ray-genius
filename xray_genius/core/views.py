@@ -243,3 +243,9 @@ def contact_form_submitted(request: HttpRequest):
 @require_GET
 def terms_of_service(request: HttpRequest):
     return render(request, 'terms_of_service.html')
+
+
+@login_not_required
+@require_GET
+def faq(request: HttpRequest):
+    return render(request, 'faq.html')
