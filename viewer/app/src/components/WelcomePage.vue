@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, toRefs } from 'vue';
 import CloseableDialog from '@/src/components/CloseableDialog.vue';
 import DataSecurityBox from '@/src/components/DataSecurityBox.vue';
 import useRemoteSaveStateStore from '@/src/store/remote-save-state';
+import { watchImmediate } from '@vueuse/core';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     loading?: boolean;
   }>(),
@@ -13,10 +14,65 @@ withDefaults(
   }
 );
 
+const { loading } = toRefs(props);
+
+function useTimedMessages(
+  firstMessage: string,
+  nextMessages: Array<{ message: string; delayMs: number }>
+) {
+  const currentMessage = ref(firstMessage);
+  const running = ref(false);
+  let timer: number = 0;
+
+  const stop = () => {
+    if (!running.value) return;
+    running.value = false;
+    clearTimeout(timer);
+  };
+
+  const runTimer = (idx: number) => {
+    if (idx >= nextMessages.length) return;
+
+    const nextMsg = nextMessages[idx];
+    timer = setTimeout(() => {
+      currentMessage.value = nextMsg.message;
+      runTimer(idx + 1);
+    }, nextMsg.delayMs) as unknown as number;
+  };
+
+  const restart = () => {
+    stop();
+
+    running.value = true;
+    currentMessage.value = firstMessage;
+
+    runTimer(0);
+  };
+
+  return { contents: currentMessage, restart, stop };
+}
+
 const isRemoteSaveDisabled = computed(
   () => useRemoteSaveStateStore().saveUrl === ''
 );
 const dataSecurityDialog = ref(false);
+
+const timedMessage = useTimedMessages('Loading data...', [
+  { message: 'Still loading your data...', delayMs: 5 * 1000 },
+  { message: 'Just a little bit longer...', delayMs: 5 * 1000 },
+  { message: 'A few more moments (slow download?)...', delayMs: 5 * 1000 },
+  { message: 'Still working (likely a slow download)...', delayMs: 5 * 1000 },
+]);
+
+watchImmediate(loading, () => {
+  if (loading.value) {
+    timedMessage.restart();
+  } else {
+    timedMessage.stop();
+  }
+});
+
+const { contents: loadingMesage } = timedMessage;
 </script>
 
 <template>
@@ -58,7 +114,7 @@ const dataSecurityDialog = ref(false);
             </div>
           </template>
           <template v-else>
-            <div class="text-h6 my-4">Loading data...</div>
+            <div class="text-h6 my-4">{{ loadingMesage }}</div>
             <v-progress-linear indeterminate />
           </template>
         </v-card>
