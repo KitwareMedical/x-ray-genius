@@ -46,7 +46,6 @@ django-configurations==2.5.1
 django-cors-headers==4.6.0
 django-debug-toolbar==4.4.6
 django-extensions==3.2.3
-django-fastdev==1.13.0
 django-filter==24.3
 django-girder-utils==0.13.1
 django-ipware==7.0.1
