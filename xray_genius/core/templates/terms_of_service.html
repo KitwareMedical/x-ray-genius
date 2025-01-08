@@ -1,14 +1,21 @@
-<div>
-  <input type="checkbox" id="terms-modal" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box">
-      <h2 class="text-lg font-bold mb-4">Terms of Service</h2>
-      <p>
-        {% include "terms_of_service.txt" %}
-      </p>
-      <div class="modal-action">
-        <label for="terms-modal" class="btn btn-secondary">Close</label>
+{% extends "base.html" %}
+
+{% load render_terms_of_service %}
+
+{% block body %}
+  <div class="m-4">
+    <a href="{% url 'account_signup' %}">
+      <button class="btn btn-md btn-primary">
+        <i class="ri-arrow-go-back-fill"></i> Back to Sign Up
+      </button>
+    </a>
+  </div>
+  <div class="container mx-auto py-8">
+    <div style="all: initial;">
+      <div class="prose">
+        {% autoescape off %}
+          {% render_terms_of_service %}
+        {% endautoescape %}
       </div>
     </div>
-  </div>
-</div>
+{% endblock body %}
