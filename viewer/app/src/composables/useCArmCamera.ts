@@ -41,8 +41,9 @@ export function useCArmCamera(view: View, imageID: MaybeRef<Maybe<string>>) {
     cam.setViewUp(...emitterUpDir.value);
     cam.setFocalPoint(...centerPos.value);
     cam.setViewAngle(cameraViewAngle * RAD_TO_DEG * VIEW_ANGLE_BORDER_FACTOR);
+    // can't set to 0, so set close to 0
+    cam.setClippingRange(0.001, sourceToDetectorDistance.value);
 
-    view.renderer.resetCameraClippingRange();
     view.requestRender();
   });
 }
