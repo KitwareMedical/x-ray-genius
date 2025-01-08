@@ -52,7 +52,7 @@ const rotationKappaStdDev = computed({
     store.setRotationKappaStdDev(v);
   },
 });
-const randomizationEnabled = computed(() => store.randomizeRotation || store.randomizeTilt);
+const randomizationEnabled = computed(() => store.randomizeRotation || store.randomizeTilt || store.randomizeX || store.randomizeY || store.randomizeZ);
 const numberOfSamples = computed({
   get: () => randomizationEnabled.value ? store.numberOfSamples : 1,
   set: (v) => {
