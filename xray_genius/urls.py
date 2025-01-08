@@ -14,6 +14,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth2_provider.urls')),
     path('admin/', admin.site.urls),
+    path('terms-of-service/', views.terms_of_service, name='terms-of-service'),
     path('api/v1/s3-upload/', include('s3_file_field.urls')),
     path('api/v1/', api.urls),
     path('captcha/', include('captcha.urls')),
