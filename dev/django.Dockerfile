@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 # Install system libraries for Python packages:
 # * psycopg2
 RUN apt-get update && \

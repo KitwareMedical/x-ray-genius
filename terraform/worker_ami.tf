@@ -102,7 +102,7 @@ resource "aws_imagebuilder_component" "image_builder" {
               "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:${aws_ssm_parameter.celery_worker_cloudwatch_agent_config.name} -s",
               # Install Python
               "sudo add-apt-repository ppa:deadsnakes/ppa --yes",
-              "sudo apt-get --yes install python3.11 python3.11-dev python3.11-venv",
+              "sudo apt-get --yes install python3.12 python3.12-dev python3.12-venv",
               # Install Git
               "sudo apt-get --yes install git",
               # Install Heroku CLI
@@ -123,7 +123,7 @@ resource "aws_imagebuilder_component" "image_builder" {
               "git clone ${var.git_repository} ${local.django_project_location}",
               "pushd ${local.django_project_location}",
               # Create and activate a virtual environment
-              "python3.11 -m venv venv",
+              "python3.12 -m venv venv",
               "source venv/bin/activate",
               # Install python dependencies
               "venv/bin/pip install --upgrade pip",
