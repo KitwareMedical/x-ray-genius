@@ -167,6 +167,11 @@
                               Run <i class="ri-play-line"></i>
                             </button>
                           </form>
+                          <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
+                            <button class="btn btn-sm btn-info">
+                              Update Parameters <i class="ri-dropdown-list"></i>
+                            </button>
+                          </a>
                         {% else %}
                           <a href="{% url 'viewer' session.pk %}?urls={{ session.input_scan.file.url|urlencode }}">
                             <button class="btn btn-sm btn-error">
