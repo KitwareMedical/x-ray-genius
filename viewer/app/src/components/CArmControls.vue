@@ -143,6 +143,7 @@ async function submit() {
           </v-checkbox>
           <v-text-field
             v-model="rotationKappaStdDev"
+            v-if="store.randomizeRotation"
             outlined
             type="number"
             step="0.1"
@@ -182,6 +183,7 @@ async function submit() {
           </v-checkbox>
           <v-text-field
             v-model="tiltKappaStdDev"
+            v-if="store.randomizeTilt"
             outlined
             type="number"
             step="0.1"
