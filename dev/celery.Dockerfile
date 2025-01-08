@@ -2,11 +2,11 @@ FROM nvidia/cuda:11.6.1-cudnn8-devel-ubuntu20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install Python 3.11
+# Install Python 3.12
 RUN apt-get update && \
     apt-get --yes install software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa --yes && \
-    apt-get --yes install python3.11 python3.11-dev python3.11-venv
+    apt-get --yes install python3.12 python3.12-dev python3.12-venv
 
 # Install system libraries for Python packages:
 # * psycopg2
@@ -24,7 +24,7 @@ ENV PYTHONUNBUFFERED 1
 # and all package modules are importable.
 COPY ./setup.py /opt/django-project/setup.py
 
-RUN python3.11 -m venv /opt/venv
+RUN python3.12 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --editable /opt/django-project[dev,worker]
 
 ENV PATH="/opt/venv/bin:$PATH"

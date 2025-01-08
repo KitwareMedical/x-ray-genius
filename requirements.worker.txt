@@ -7,8 +7,8 @@ attrs==24.3.0
 autobahn==24.4.2
 Automat==24.8.1
 billiard==4.2.1
-boto3==1.35.94
-botocore==1.35.94
+boto3==1.35.95
+botocore==1.35.95
 Brotli==1.1.0
 celery==5.4.0
 certifi==2024.12.14
@@ -61,7 +61,6 @@ humanize==4.11.0
 hyperlink==21.0.0
 idna==3.10
 imageio==2.36.1
-importlib_resources==6.5.2
 incremental==24.7.2
 inflection==0.5.1
 Jinja2==3.1.5
@@ -134,6 +133,7 @@ scooby==0.10.0
 seaborn==0.13.2
 sentry-sdk==2.19.2
 service-identity==24.2.0
+setuptools==75.8.0
 six==1.17.0
 slippers==0.6.2
 sqlparse==0.5.3
