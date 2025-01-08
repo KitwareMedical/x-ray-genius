@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load render_terms_of_service %}
+{% load render_markdown_file %}
 
 {% block body %}
   <div class="m-4">
@@ -14,7 +14,7 @@
     <div style="all: initial;">
       <div class="prose">
         {% autoescape off %}
-          {% render_terms_of_service %}
+          {{ "terms_of_service.md"|render_markdown_file }}
         {% endautoescape %}
       </div>
     </div>
