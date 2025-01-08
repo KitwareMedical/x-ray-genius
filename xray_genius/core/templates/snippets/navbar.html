@@ -12,6 +12,12 @@
           </a>
         </li>
       {% endif %}
+      <li>
+        <a href="{% url 'faq' %}">
+          <i class="ri-question-fill"></i>
+          FAQ
+        </a>
+      </li>
       {% if request.user.is_staff %}
         <li>
           <a href="{% url 'admin:index' %}">
