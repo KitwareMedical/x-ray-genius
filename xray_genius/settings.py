@@ -74,10 +74,6 @@ class XrayGeniusMixin(ConfigMixin):
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)
 
-    # The number of seconds after which a session is considered "stuck".
-    # A beat task will check for stuck sessions and send a Sentry alert if any are found.
-    SESSION_TIMEOUT = values.IntegerValue(timedelta(minutes=5).total_seconds())
-
     REQUIRE_APPROVAL_FOR_NEW_USERS = values.BooleanValue(default=True)
     ADDITIONAL_ADMIN_EMAILS = values.ListValue()
 

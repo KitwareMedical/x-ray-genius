@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from datetime import timedelta
 import uuid
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
+from django.db.models.functions import Extract, Now
 from django_extensions.db.fields import CreationDateTimeField
 
 from .ct_input_file import CTInputFile
@@ -24,9 +22,14 @@ class StuckSessionsManager(models.Manager):
         return (
             super()
             .get_queryset()
+            .alias(
+                seconds_running=Extract(Now(), 'epoch') - Extract(models.F('started'), 'epoch'),
+                # Assume each generation takes 15 seconds at the most
+                seconds_expected=models.F('parameters__num_samples') * 15,
+            )
             .filter(
                 status__in=[Session.Status.QUEUED, Session.Status.RUNNING],
-                started__lt=timezone.now() - timedelta(seconds=settings.SESSION_TIMEOUT),
+                seconds_running__gt=models.F('seconds_expected'),
             )
         )
 
