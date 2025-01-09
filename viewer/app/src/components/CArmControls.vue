@@ -219,8 +219,22 @@ async function submit() {
             <v-checkbox
               v-model="store.randomizeX"
               hide-details
-              label="Randomize"
-            ></v-checkbox>
+            >
+              <template v-slot:label>
+                <span class="mr-2">Randomize</span>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" class="help-icon">
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <p>
+                    Checking this box will randomize the position of the C-Arm in the x-axis<br />
+                    on each batch generation instead of fixing it to a constant value.
+                  </p>
+                </v-tooltip>
+              </template>
+            </v-checkbox>
             <scaled-number-field
               v-if="store.randomizeX"
               v-model="store.randStdDevX"
@@ -257,8 +271,22 @@ async function submit() {
             <v-checkbox
               v-model="store.randomizeY"
               hide-details
-              label="Randomize"
-            ></v-checkbox>
+            >
+              <template v-slot:label>
+                <span class="mr-2">Randomize</span>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" class="help-icon">
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <p>
+                    Checking this box will randomize the position of the C-Arm in the y-axis<br />
+                    on each batch generation instead of fixing it to a constant value.
+                  </p>
+                </v-tooltip>
+              </template>
+            </v-checkbox>
             <scaled-number-field
               v-if="store.randomizeY"
               v-model="store.randStdDevY"
@@ -296,7 +324,22 @@ async function submit() {
               v-model="store.randomizeZ"
               hide-details
               label="Randomize"
-            ></v-checkbox>
+            >
+              <template v-slot:label>
+                <span class="mr-2">Randomize</span>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" class="help-icon">
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <p>
+                    Checking this box will randomize the position of the C-Arm in the z-axis<br />
+                    on each batch generation instead of fixing it to a constant value.
+                  </p>
+                </v-tooltip>
+              </template>
+            </v-checkbox>
             <scaled-number-field
               v-if="store.randomizeZ"
               v-model="store.randStdDevZ"
