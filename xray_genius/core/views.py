@@ -7,9 +7,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.db import transaction
 from django.db.models import Exists, OuterRef, Subquery
-from django.http import HttpRequest, HttpResponseBadRequest
-from django.http.response import Http404
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template import Context, Template
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
@@ -242,7 +243,11 @@ def contact_form_submitted(request: HttpRequest):
 @login_not_required
 @require_GET
 def terms_of_service(request: HttpRequest):
-    return render(request, 'terms_of_service.html')
+    return HttpResponse(
+        content=Template(template_string=render_to_string('terms_of_service.html')).render(
+            context=Context({'request': request})
+        )
+    )
 
 
 @login_not_required
