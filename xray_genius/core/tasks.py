@@ -26,7 +26,7 @@ logger = get_task_logger(__name__)
 
 
 @shared_task(
-    soft_time_limit=timedelta(minutes=10).total_seconds(),
+    soft_time_limit=timedelta(minutes=30).total_seconds(),
 )
 def run_deepdrr_task(session_pk: str) -> None:
     try:
@@ -212,7 +212,7 @@ def run_deepdrr_task(session_pk: str) -> None:
     zip_images_task.delay(session_pk)
 
 
-@shared_task(soft_time_limit=30)
+@shared_task(soft_time_limit=120)
 def zip_images_task(session_pk: str) -> None:
     session = Session.objects.get(pk=session_pk)
 
@@ -244,7 +244,7 @@ def delete_session_task(session_pk: str) -> None:
     logger.info('Deleted session %s', session_pk)
 
 
-@shared_task
+@shared_task(soft_time_limit=60)
 def send_contact_form_submission_to_admins_task(contact_form_submission_pk: int) -> None:
     form_submission = ContactFormSubmission.objects.get(pk=contact_form_submission_pk)
 
@@ -262,7 +262,7 @@ def send_contact_form_submission_to_admins_task(contact_form_submission_pk: int)
     EmailMessage(subject=subject, body=message, to=admin_emails).send(fail_silently=False)
 
 
-@shared_task
+@shared_task(soft_time_limit=60)
 def send_new_user_signup_email_to_admins_task(user_pk: int) -> None:
     admin_emails: list[str] = list(
         User.objects.filter(is_superuser=True, is_active=True).values_list('email', flat=True)
@@ -277,7 +277,7 @@ def send_new_user_signup_email_to_admins_task(user_pk: int) -> None:
     EmailMessage(subject=subject, body=message, to=admin_emails).send(fail_silently=False)
 
 
-@shared_task
+@shared_task(soft_time_limit=20)
 def check_for_stuck_sessions_beat() -> None:
     """
     Check for stuck sessions and send a Sentry alert if any are found.
