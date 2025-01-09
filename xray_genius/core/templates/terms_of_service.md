@@ -9,7 +9,7 @@ Any unpaid use of X-ray Genius Demonstration Services (“Services”) from Kitw
 
 2. Limited Demonstration License. Upon User Account creation, Kitware grants User a limited, non-exclusive, non-transferable license to use the Services for evaluation purposes in accordance with this Agreement. This Agreement covers User Accounts without a paid subscription, and the Services represent only a subset of the full features of X-ray Genius available to paid subscribers.
 
-3. Demonstration Data. The Services may come bundled with sample data (“Sample Data”). Any Sample Data is provided solely for demonstration purposes and may not represent real-world data. The Sample Data is described at \<url\>, including the license under which the Sample Data is provided. User is responsible for meeting all obligations indicated in the license terms for each Sample Data.
+3. Demonstration Data. The Services may come bundled with sample data (“Sample Data”). Any Sample Data is provided solely for demonstration purposes and may not represent real-world data. The Sample Data is described at <a href="{% url 'create-session' %}">{{ request.scheme }}://{{ request.get_host }}{% url 'create-session' %}</a>, including the license under which the Sample Data is provided. User is responsible for meeting all obligations indicated in the license terms for each Sample Data.
 
 4. Acceptable Use. Users must not:
     1. Engage in any activity that disrupts or harms the functionality of the Service.
