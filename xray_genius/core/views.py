@@ -252,5 +252,11 @@ def terms_of_service(request: HttpRequest):
 
 @login_not_required
 @require_GET
+def guide(request: HttpRequest):
+    return render(request, 'guide.html')
+
+
+@login_not_required
+@require_GET
 def faq(request: HttpRequest):
     return render(request, 'faq.html')

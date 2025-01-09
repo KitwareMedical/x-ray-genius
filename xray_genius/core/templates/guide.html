@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load render_markdown_file %}
+
+{% block body %}
+  <div class="container mx-auto py-8">
+    <div class="prose">
+      {% autoescape off %}
+        {{ "guide.md"|render_markdown_file }}
+      {% endautoescape %}
+    </div>
+  </div>
+{% endblock body %}

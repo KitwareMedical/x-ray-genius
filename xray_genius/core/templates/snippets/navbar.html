@@ -5,6 +5,7 @@
     <img src="{% static 'core/img/logo.svg' %}" alt="X-ray Genius" style="width: 12rem; height: auto; margin-left: 1rem; margin-right: 1rem;" />
     <ul class="menu menu-horizontal bg-base-100 p-[4px] rounded-xl">
       {% url 'dashboard' as dashboard_url %}
+      {% url 'guide' as guide_url %}
       {% url 'faq' as faq_url %}
 
       {% if request.user.is_authenticated %}
@@ -20,6 +21,18 @@
           </a>
         </li>
       {% endif %}
+
+      <li>
+        <a
+          href="{{ guide_url }}"
+          {% if request.path == guide_url %}
+            class="active"
+          {% endif %}
+        >
+          <i class="ri-book-2-fill"></i>
+          Guide
+        </a>
+      </li>
 
       <li>
         <a
