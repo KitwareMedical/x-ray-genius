@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 
 from django.contrib import admin
-from django.db.models import Max
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+from django.db.models import Max, QuerySet
 import humanize
 
 from xray_genius.core.models import (
@@ -16,6 +18,24 @@ from xray_genius.core.models import (
 
 admin.site.site_header = 'X-ray Genius Admin'
 admin.site.site_title = 'X-ray Genius Admin'
+
+# Unregister the default User model so we can register our own
+admin.site.unregister(User)
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
+
+    actions = ['approve_users', 'unapprove_users']
+
+    @admin.action(description='Approve selected users')
+    def approve_users(self, request, queryset: QuerySet[User]) -> None:
+        queryset.update(is_active=True)
+
+    @admin.action(description='Unapprove selected users')
+    def unapprove_users(self, request, queryset: QuerySet[User]) -> None:
+        queryset.update(is_active=False)
 
 
 @admin.register(CTInputFile)
