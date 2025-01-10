@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Max
+from django.db.models import Max, QuerySet
 import humanize
 
 from xray_genius.core.models import (
@@ -25,7 +25,7 @@ admin.site.unregister(User)
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    pass
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
 
 
 @admin.register(CTInputFile)
