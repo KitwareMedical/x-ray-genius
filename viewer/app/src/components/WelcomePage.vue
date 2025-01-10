@@ -50,10 +50,10 @@ function useTimedMessages(
 }
 
 const timedMessage = useTimedMessages('Loading data...', [
-  { message: 'Still loading your data...', delayMs: 5 * 1000 },
-  { message: 'Just a little bit longer...', delayMs: 5 * 1000 },
-  { message: 'A few more moments (slow download?)...', delayMs: 5 * 1000 },
-  { message: 'Still working (likely a slow download)...', delayMs: 5 * 1000 },
+  { message: 'Still loading your data...', delayMs: 10 * 1000 },
+  { message: 'Just a little bit longer...', delayMs: 10 * 1000 },
+  { message: 'A few more moments (slow download?)...', delayMs: 10 * 1000 },
+  { message: 'Still working (likely a slow download)...', delayMs: 10 * 1000 },
 ]);
 
 watchImmediate(loading, () => {

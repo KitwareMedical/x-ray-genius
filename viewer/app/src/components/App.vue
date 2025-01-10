@@ -47,7 +47,6 @@ import vtkURLExtract from '@kitware/vtk.js/Common/Core/URLExtract';
 import { useDisplay } from 'vuetify';
 import { useViewStore } from '@/src/store/views';
 import useRemoteSaveStateStore from '@/src/store/remote-save-state';
-import AppBar from '@/src/components/AppBar.vue';
 import {
   loadFiles,
   loadUserPromptedFiles,
@@ -69,6 +68,7 @@ import { mat3, vec3 } from 'gl-matrix';
 import { Vector3 } from '@kitware/vtk.js/types';
 import { onImageAdded } from '../composables/onImageAdded';
 
+import AppBar from './AppBar.vue';
 import useLoadDataStore from '../store/load-data';
 import WelcomePage from './WelcomePage.vue';
 import ModulePanel from './ModulePanel.vue';
@@ -120,9 +120,10 @@ export default defineComponent({
 
       loadUrls(urlParams).then(([succeeded, errored]) => {
         if (!succeeded.length && errored.length) {
-          showError.value = errored[0].errors[0].message;
+          const { cause, message } = errored[0].errors[0];
+          showError.value = message;
+          throw cause;
         }
-        console.log(showError.value);
       });
     });
 
