@@ -27,6 +27,16 @@ admin.site.unregister(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
 
+    actions = ['approve_users', 'unapprove_users']
+
+    @admin.action(description='Approve selected users')
+    def approve_users(self, request, queryset: QuerySet[User]) -> None:
+        queryset.update(is_active=True)
+
+    @admin.action(description='Unapprove selected users')
+    def unapprove_users(self, request, queryset: QuerySet[User]) -> None:
+        queryset.update(is_active=False)
+
 
 @admin.register(CTInputFile)
 class CTInputFileAdmin(admin.ModelAdmin):
