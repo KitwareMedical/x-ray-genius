@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useDisplay } from 'vuetify';
-import VolViewFullLogo from '@/src/components/icons/VolViewFullLogo.vue';
+import VolViewFullLogo from './icons/VolViewFullLogo.vue';
 import VolViewLogo from '@/src/components/icons/VolViewLogo.vue';
 
 const emit = defineEmits(['click:left-menu']);
