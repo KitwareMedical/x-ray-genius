@@ -260,9 +260,3 @@ def guide(request: HttpRequest):
 @require_GET
 def faq(request: HttpRequest):
     return render(request, 'faq.html')
-
-
-@login_not_required
-@require_GET
-def faq_embed(request: HttpRequest):
-    return render(request, 'faq-embed.html')

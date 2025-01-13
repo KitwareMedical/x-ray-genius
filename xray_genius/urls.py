@@ -17,7 +17,6 @@ urlpatterns = [
     path('terms-of-service/', views.terms_of_service, name='terms-of-service'),
     path('guide/', views.guide, name='guide'),
     path('faq/', views.faq, name='faq'),
-    path('faq-embedded/', views.faq_embed, name='faq_embed'),
     path('api/v1/s3-upload/', include('s3_file_field.urls')),
     path('api/v1/', api.urls),
     path('captcha/', include('captcha.urls')),

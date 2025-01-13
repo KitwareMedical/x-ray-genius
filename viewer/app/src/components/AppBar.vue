@@ -1,11 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useDisplay } from 'vuetify';
-import CloseableDialog from '@/src/components/CloseableDialog.vue';
 import VolViewFullLogo from '@/src/components/icons/VolViewFullLogo.vue';
 import VolViewLogo from '@/src/components/icons/VolViewLogo.vue';
-
-import AboutBox from './AboutBox.vue';
 
 const emit = defineEmits(['click:left-menu']);
 
@@ -28,23 +25,21 @@ const aboutBoxDialog = ref(false);
       href="https://app.xray-genius.com/contact/"
       target="_blank"
     >
-      <v-icon icon="mdi-comment-question-outline"></v-icon>
-      <v-tooltip activator="parent" location="bottom">Help</v-tooltip>
+      <v-icon icon="mdi-forum"></v-icon>
+      <v-tooltip activator="parent" location="bottom">Contact Us</v-tooltip>
     </v-btn>
     <v-btn
       variant="text"
       icon
       :rounded="0"
       class="toolbar-button"
-      @click="aboutBoxDialog = !aboutBoxDialog"
+      href="/faq"
+      target="_blank"
     >
-      <v-icon icon="mdi-information-outline"></v-icon>
+      <v-icon icon="mdi-help-circle-outline"></v-icon>
       <v-tooltip activator="parent" location="bottom">FAQ</v-tooltip>
     </v-btn>
   </v-app-bar>
-  <closeable-dialog v-model="aboutBoxDialog" eager>
-    <about-box />
-  </closeable-dialog>
 </template>
 
 <style src="@/src/components/styles/utils.css"></style>
