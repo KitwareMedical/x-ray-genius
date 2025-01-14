@@ -22,7 +22,7 @@ const aboutBoxDialog = ref(false);
       icon
       :rounded="0"
       class="toolbar-button"
-      href="https://app.xray-genius.com/contact/"
+      href="/contact/"
       target="_blank"
     >
       <v-icon icon="mdi-forum"></v-icon>
@@ -33,7 +33,7 @@ const aboutBoxDialog = ref(false);
       icon
       :rounded="0"
       class="toolbar-button"
-      href="/faq"
+      href="/faq/"
       target="_blank"
     >
       <v-icon icon="mdi-help-circle-outline"></v-icon>
