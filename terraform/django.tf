@@ -33,11 +33,12 @@ module "django" {
   ec2_worker_volume_size       = 100 # deepdrr requires more disk space than the default 30 GB.
 
   additional_django_vars = {
-    DJANGO_ADDITIONAL_ADMIN_EMAILS = "kitware@kitware.com"
-    DJANGO_GOOGLE_OAUTH_CLIENT_ID  = var.google_oauth_client_id
-    DJANGO_GOOGLE_OAUTH_SECRET     = var.google_oauth_secret
-    DJANGO_SENTRY_DSN              = var.django_sentry_dsn
-    VITE_SENTRY_DSN                = var.viewer_sentry_dsn
+    DJANGO_ADDITIONAL_ADMIN_EMAILS        = "kitware@kitware.com"
+    DJANGO_REQUIRE_APPROVAL_FOR_NEW_USERS = false # Allow new users to sign up without approval
+    DJANGO_GOOGLE_OAUTH_CLIENT_ID         = var.google_oauth_client_id
+    DJANGO_GOOGLE_OAUTH_SECRET            = var.google_oauth_secret
+    DJANGO_SENTRY_DSN                     = var.django_sentry_dsn
+    VITE_SENTRY_DSN                       = var.viewer_sentry_dsn
   }
 
   # This is needed in order to run the node build process for
