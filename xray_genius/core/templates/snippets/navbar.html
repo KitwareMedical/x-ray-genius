@@ -2,7 +2,9 @@
 
 <div class="navbar bg-base-200">
   <div class="navbar-start">
-    <img src="{% static 'core/img/logo.svg' %}" alt="X-ray Genius" style="width: 12rem; height: auto; margin-left: 1rem; margin-right: 1rem;" />
+    <a href="{% url 'dashboard' %}">
+      <img src="{% static 'core/img/logo.svg' %}" alt="X-ray Genius" style="width: 12rem; height: auto; margin-left: 1rem; margin-right: 1rem;" />
+    </a>
     <ul class="menu menu-horizontal bg-base-100 p-[4px] rounded-xl">
       {% url 'dashboard' as dashboard_url %}
       {% url 'guide' as guide_url %}
