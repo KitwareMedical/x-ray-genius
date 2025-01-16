@@ -14,6 +14,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth2_provider.urls')),
     path('admin/', admin.site.urls),
+    path('hijack/', include('hijack.urls')),
     path('terms-of-service/', views.terms_of_service, name='terms-of-service'),
     path('guide/', views.guide, name='guide'),
     path('faq/', views.faq, name='faq'),

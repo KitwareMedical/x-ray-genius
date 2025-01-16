@@ -48,6 +48,7 @@ setup(
         'django-configurations[database,email]',
         'django-extensions',
         'django-filter',
+        'django-hijack',
         'django-login-required-middleware',
         'django-ninja',
         'django-oauth-toolkit',
