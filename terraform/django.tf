@@ -57,28 +57,3 @@ resource "heroku_addon" "heroku_redis" {
   app_id = module.django.heroku_app_id
   plan   = "heroku-redis:mini"
 }
-
-resource "aws_iam_user_policy" "heroku_user_restart_instances" {
-  name = "${module.django.heroku_iam_user_id}-restart-instance-policy"
-  user = module.django.heroku_iam_user_id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ec2:DescribeInstances",
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-      {
-        Action = [
-          "ec2:RebootInstances",
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-    ]
-  })
-}
