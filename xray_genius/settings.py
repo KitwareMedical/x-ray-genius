@@ -101,12 +101,16 @@ class XrayGeniusMixin(ConfigMixin):
             'django_celery_results',
             'captcha',
             'axes',
+            'hijack',
+            'hijack.contrib.admin',
         ]
 
         # Has to be anywhere after django.contrib.auth.middleware.AuthenticationMiddleware
         configuration.MIDDLEWARE.append('login_required.middleware.LoginRequiredMiddleware')
 
         configuration.MIDDLEWARE.append('axes.middleware.AxesMiddleware')
+
+        configuration.MIDDLEWARE.append('hijack.middleware.HijackUserMiddleware')
 
         # Has to come first in AUTHENTICATION_BACKENDS
         configuration.AUTHENTICATION_BACKENDS = [
