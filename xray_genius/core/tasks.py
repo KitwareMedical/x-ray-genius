@@ -25,6 +25,19 @@ from .utils import ParameterSampler
 logger = get_task_logger(__name__)
 
 
+def _maybe_cancel_session(session: Session) -> bool:
+    """Check if the session has been cancelled, and abort and clean up if so."""
+    session.refresh_from_db(fields=['status'])
+    if session.status == Session.Status.CANCELLED:
+        logger.info('Session %s was cancelled', session.pk)
+        with transaction.atomic():
+            OutputImage.objects.filter(session=session).delete()
+            Session.objects.filter(pk=session.pk).update(status=Session.Status.NOT_STARTED)
+        return True
+
+    return False
+
+
 @shared_task(
     soft_time_limit=timedelta(minutes=30).total_seconds(),
 )
@@ -139,13 +152,6 @@ def run_deepdrr_task(session_pk: str) -> None:
                     strict=True,
                 )
             ):
-                session.refresh_from_db(fields=['status'])
-                if session.status == Session.Status.CANCELLED:
-                    logger.info('Session %s was cancelled', session_pk)
-                    OutputImage.objects.filter(session=session).delete()
-                    Session.objects.filter(pk=session_pk).update(status=Session.Status.NOT_STARTED)
-                    return
-
                 tracker.progress = i / param_sampler.samples
                 tracker.description = f'Generating image {i + 1} of {param_sampler.samples}'
                 tracker.flush(max_rate_seconds=0.5)
@@ -206,10 +212,24 @@ def run_deepdrr_task(session_pk: str) -> None:
                         carm_beta=beta,
                     )
 
-        Session.objects.filter(pk=session_pk).update(status=Session.Status.PROCESSED)
-        logger.info('Created output image %s for session %s', output_image.pk, session_pk)
+                if _maybe_cancel_session(session):
+                    return
 
-    zip_images_task.delay(session_pk)
+        # Update the session status to PROCESSED.
+        # Note, we include the status filter here to ensure that we only update the status
+        # to PROCESSED if the session has not been cancelled. If the query doesn't return 1,
+        # (i.e. it doesn't update any rows), then we know the session was cancelled between
+        # this line of code and the end of the loop just before this.
+        sessions_modified = Session.objects.filter(
+            pk=session_pk, status=Session.Status.RUNNING
+        ).update(status=Session.Status.PROCESSED)
+
+        if sessions_modified == 1:
+            logger.info('Created output image %s for session %s', output_image.pk, session_pk)
+            zip_images_task.delay(session_pk)
+        else:
+            _maybe_cancel_session(session)
+            logger.info('Session %s was cancelled, did not set status to PROCESSED', session_pk)
 
 
 @shared_task(soft_time_limit=120)
