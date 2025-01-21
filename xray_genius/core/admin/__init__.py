@@ -1,9 +1,12 @@
+import csv
 from datetime import datetime, timedelta
+from io import StringIO
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.db.models import Max, QuerySet
+from django.http import HttpResponse
 import humanize
 
 from xray_genius.core.models import (
@@ -27,7 +30,7 @@ admin.site.unregister(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
 
-    actions = ['approve_users', 'unapprove_users']
+    actions = ['approve_users', 'unapprove_users', 'export_users_to_csv']
 
     @admin.action(description='Approve selected users')
     def approve_users(self, request, queryset: QuerySet[User]) -> None:
@@ -36,6 +39,26 @@ class UserAdmin(BaseUserAdmin):
     @admin.action(description='Unapprove selected users')
     def unapprove_users(self, request, queryset: QuerySet[User]) -> None:
         queryset.update(is_active=False)
+
+    @admin.action(description='Export selected users to CSV')
+    def export_users_to_csv(self, request, queryset: QuerySet[User]) -> HttpResponse:
+        csv_buffer = self._users_to_csv(queryset)
+        response = HttpResponse(csv_buffer, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="users.csv"'
+        return response
+
+    @staticmethod
+    def _users_to_csv(queryset: QuerySet[User]) -> StringIO:
+        buffer = StringIO()
+        writer = csv.writer(buffer)
+
+        for obj in queryset:
+            writer.writerow(
+                [obj.email, f'{obj.first_name} {obj.last_name}'.strip(), str(obj.is_active)]
+            )
+
+        buffer.seek(0)
+        return buffer
 
 
 @admin.register(CTInputFile)
