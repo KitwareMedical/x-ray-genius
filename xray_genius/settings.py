@@ -70,6 +70,8 @@ class XrayGeniusMixin(ConfigMixin):
 
     # The maximum number of failed login attempts before a user is locked out
     AXES_FAILURE_LIMIT = 10
+    # Disable overly-verbose django-axes startup logs
+    AXES_VERBOSE = False
 
     # The maximum number of sessions a user can start
     USER_SESSION_LIMIT = values.IntegerValue(5)

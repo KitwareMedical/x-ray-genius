@@ -1,9 +1,11 @@
+import csv
 from datetime import datetime, timedelta
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.db.models import Max, QuerySet
+from django.http import StreamingHttpResponse
 import humanize
 
 from xray_genius.core.models import (
@@ -27,7 +29,7 @@ admin.site.unregister(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
 
-    actions = ['approve_users', 'unapprove_users']
+    actions = ['approve_users', 'unapprove_users', 'export_users_to_csv']
 
     @admin.action(description='Approve selected users')
     def approve_users(self, request, queryset: QuerySet[User]) -> None:
@@ -36,6 +38,22 @@ class UserAdmin(BaseUserAdmin):
     @admin.action(description='Unapprove selected users')
     def unapprove_users(self, request, queryset: QuerySet[User]) -> None:
         queryset.update(is_active=False)
+
+    @admin.action(description='Export selected users to CSV')
+    def export_users_to_csv(self, request, queryset: QuerySet[User]) -> StreamingHttpResponse:
+        # https://docs.djangoproject.com/en/5.1/howto/outputting-csv/#streaming-large-csv-files
+        pseudo_buffer = self._Echo()
+        writer = csv.writer(pseudo_buffer)
+        rows = User.objects.values_list('email', 'first_name', 'last_name', 'is_active')
+        return StreamingHttpResponse(
+            streaming_content=(writer.writerow(row) for row in rows),
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="users.csv"'},
+        )
+
+    class _Echo:
+        def write(self, value):
+            return value
 
 
 @admin.register(CTInputFile)
