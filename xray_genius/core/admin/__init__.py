@@ -1,12 +1,11 @@
 import csv
 from datetime import datetime, timedelta
-from io import StringIO
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.db.models import Max, QuerySet
-from django.http import HttpResponse
+from django.http import StreamingHttpResponse
 import humanize
 
 from xray_genius.core.models import (
@@ -41,24 +40,20 @@ class UserAdmin(BaseUserAdmin):
         queryset.update(is_active=False)
 
     @admin.action(description='Export selected users to CSV')
-    def export_users_to_csv(self, request, queryset: QuerySet[User]) -> HttpResponse:
-        csv_buffer = self._users_to_csv(queryset)
-        response = HttpResponse(csv_buffer, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="users.csv"'
-        return response
+    def export_users_to_csv(self, request, queryset: QuerySet[User]) -> StreamingHttpResponse:
+        # https://docs.djangoproject.com/en/5.1/howto/outputting-csv/#streaming-large-csv-files
+        pseudo_buffer = self._Echo()
+        writer = csv.writer(pseudo_buffer)
+        rows = User.objects.values_list('email', 'first_name', 'last_name', 'is_active')
+        return StreamingHttpResponse(
+            streaming_content=(writer.writerow(row) for row in rows),
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="users.csv"'},
+        )
 
-    @staticmethod
-    def _users_to_csv(queryset: QuerySet[User]) -> StringIO:
-        buffer = StringIO()
-        writer = csv.writer(buffer)
-
-        for obj in queryset:
-            writer.writerow(
-                [obj.email, f'{obj.first_name} {obj.last_name}'.strip(), str(obj.is_active)]
-            )
-
-        buffer.seek(0)
-        return buffer
+    class _Echo:
+        def write(self, value):
+            return value
 
 
 @admin.register(CTInputFile)
