@@ -1,0 +1,14 @@
+from django.contrib.auth.models import User
+import djclick as click
+
+from xray_genius.core.admin import UserAdmin
+
+
+@click.command()
+def dump_users_to_csv() -> None:
+    """
+    Dump all users to a CSV file.
+    """
+    users = User.objects.all()
+    csv_buffer = UserAdmin._users_to_csv(users)
+    print(csv_buffer.getvalue())
