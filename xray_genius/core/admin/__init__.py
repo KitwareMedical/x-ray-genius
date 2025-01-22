@@ -27,7 +27,15 @@ admin.site.unregister(User)
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
+    list_display = (
+        'username',
+        'first_name',
+        'last_name',
+        'is_superuser',
+        'is_active',
+        'date_joined',
+    )
+    ordering = ('-date_joined',)
 
     actions = ['approve_users', 'unapprove_users', 'export_users_to_csv']
 
@@ -44,7 +52,13 @@ class UserAdmin(BaseUserAdmin):
         # https://docs.djangoproject.com/en/5.1/howto/outputting-csv/#streaming-large-csv-files
         pseudo_buffer = self._Echo()
         writer = csv.writer(pseudo_buffer)
-        rows = User.objects.values_list('email', 'first_name', 'last_name', 'is_active')
+        rows = User.objects.values_list(
+            'email',
+            'first_name',
+            'last_name',
+            'date_joined',
+            'is_active',
+        )
         return StreamingHttpResponse(
             streaming_content=(writer.writerow(row) for row in rows),
             content_type='text/csv',
@@ -77,6 +91,7 @@ class SessionOutputImageInline(admin.TabularInline):
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     list_display = ('created', 'owner', 'status', 'get_duration')
+    ordering = ('-created',)
     inlines = (
         SessionInputParametersInline,
         SessionOutputImageInline,
