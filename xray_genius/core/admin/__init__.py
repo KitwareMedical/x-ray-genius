@@ -27,7 +27,15 @@ admin.site.unregister(User)
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_active')
+    list_display = (
+        'username',
+        'first_name',
+        'last_name',
+        'is_superuser',
+        'is_active',
+        'date_joined',
+    )
+    ordering = ('-date_joined',)
 
     actions = ['approve_users', 'unapprove_users', 'export_users_to_csv']
 
