@@ -52,7 +52,13 @@ class UserAdmin(BaseUserAdmin):
         # https://docs.djangoproject.com/en/5.1/howto/outputting-csv/#streaming-large-csv-files
         pseudo_buffer = self._Echo()
         writer = csv.writer(pseudo_buffer)
-        rows = User.objects.values_list('email', 'first_name', 'last_name', 'is_active')
+        rows = User.objects.values_list(
+            'email',
+            'first_name',
+            'last_name',
+            'date_joined',
+            'is_active',
+        )
         return StreamingHttpResponse(
             streaming_content=(writer.writerow(row) for row in rows),
             content_type='text/csv',
