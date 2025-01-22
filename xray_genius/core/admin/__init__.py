@@ -85,6 +85,7 @@ class SessionOutputImageInline(admin.TabularInline):
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     list_display = ('created', 'owner', 'status', 'get_duration')
+    ordering = ('-created',)
     inlines = (
         SessionInputParametersInline,
         SessionOutputImageInline,
