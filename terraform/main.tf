@@ -2,10 +2,10 @@ terraform {
   required_version = ">= 1.1"
 
   backend "remote" {
-    organization = "xray_genius"
+    organization = "kitware"
 
     workspaces {
-      name = "xray_genius"
+      name = "xray-genius"
     }
   }
 
