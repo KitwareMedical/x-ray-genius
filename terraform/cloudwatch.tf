@@ -1,5 +1,6 @@
 resource "aws_cloudwatch_log_group" "celery_worker_cloudwatch_agent_config" {
-  name = "xray-genius-worker-celery-logs"
+  name              = "xray-genius-worker-celery-logs"
+  retention_in_days = 90
 }
 
 resource "aws_iam_role_policy_attachment" "celery_worker_cloudwatch_agent_config" {
