@@ -13,7 +13,7 @@ locals {
 
 module "django" {
   source  = "kitware-resonant/resonant/heroku"
-  version = "1.1.1"
+  version = "1.1.3"
 
   project_slug     = "xray-genius"
   route53_zone_id  = data.aws_route53_zone.this.zone_id
