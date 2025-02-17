@@ -1,12 +1,7 @@
 {% extends "allauth/layouts/base.html" %}
-{% load static %}
 {% block extra_head %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'core/dist/styles.css' %}" />
-    <link
-        href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.min.css"
-        rel="stylesheet"
-    />
+    {% include 'snippets/base_head.html' %}
 {% endblock extra_head %}
 {% block body %}
     {% include 'snippets/sentry.html' %}
