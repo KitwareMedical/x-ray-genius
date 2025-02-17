@@ -1,0 +1,18 @@
+{% load static %}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="{% static 'core/img/favicon.svg' %}">
+
+<meta name="title" content="X-ray Genius - Kitware Inc.">
+{# Google cuts off meta descriptions at 155-160 characters #}
+<meta name="description" content="Cloud-based web application that uses CT images to create synthetic X-ray images known as Digitally Reconstructed Radiograph (DRRs).">
+
+<title>X-ray Genius</title>
+
+<link rel="stylesheet" href="{% static 'core/dist/styles.css' %}" />
+<link
+  href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.min.css"
+  rel="stylesheet"
+/>
+
+{% block head_extra %}{% endblock %}
