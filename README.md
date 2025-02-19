@@ -34,7 +34,7 @@ but allows developers to run Python code on their native system.
 
 ### Initial Setup
 1. Run `docker compose -f ./docker-compose.yml up -d`
-2. Install Python 3.12 and Node.js 18
+2. Install Python 3.13 and Node.js 18
 3. Install
    [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)
 4. Install Nvidia GPU drivers and cuda if they are not already installed.
@@ -61,26 +61,6 @@ but allows developers to run Python code on their native system.
       `GIRDER_API_KEY` environment variable to your DKC API key.
 5. When finished, run `docker compose stop`
 6. To destroy the stack and start fresh, run `docker compose down -v`
-
-## Remap Service Ports (optional)
-Attached services may be exposed to the host system via alternative ports. Developers who work
-on multiple software projects concurrently may find this helpful to avoid port conflicts.
-
-To do so, before running any `docker compose` commands, set any of the environment variables:
-* `DOCKER_POSTGRES_PORT`
-* `DOCKER_REDIS_PORT`
-* `DOCKER_MINIO_PORT`
-
-The Django server must be informed about the changes:
-* When running the "Develop with Docker" configuration, override the environment variables:
-  * `DJANGO_MINIO_STORAGE_MEDIA_URL`, using the port from `DOCKER_MINIO_PORT`.
-* When running the "Develop Natively" configuration, override the environment variables:
-  * `DJANGO_DATABASE_URL`, using the port from `DOCKER_POSTGRES_PORT`
-  * `DJANGO_CELERY_BROKER_URL`, using the port from `DOCKER_REDIS_PORT`
-  * `DJANGO_MINIO_STORAGE_ENDPOINT`, using the port from `DOCKER_MINIO_PORT`
-
-Since most of Django's environment variables contain additional content, use the values from
-the appropriate `dev/.env.docker-compose*` file as a baseline for overrides.
 
 ## Testing
 ### Initial Setup
