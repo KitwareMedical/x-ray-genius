@@ -7,12 +7,13 @@ fail if any batch simulations are kicked off.**
 This is the simplest configuration for developers to start with.
 
 ### Initial Setup
-1. Install Nvidia GPU drivers, cuda, and the `nvidia-container-toolkit` if they are not already installed.
+1. **Note**: Ensure that you clone the repository with submodules. If you've already cloned it without submodules, run `git submodule update --init --recursive`.
+2. Install Nvidia GPU drivers, cuda, and the `nvidia-container-toolkit` if they are not already installed.
    - You can verify that the `nvidia-container-toolkit` is installed by running `nvidia-ctk --version`.
-2. Run `docker compose run --rm django ./manage.py migrate`
-3. Run `docker compose run --rm django ./manage.py createsuperuser`
+3. Run `docker compose run --rm django ./manage.py migrate`
+4. Run `docker compose run --rm django ./manage.py createsuperuser`
    and follow the prompts to create your own user
-4. Optionally, run `docker compose run --rm django ./manage.py load_test_data <girder_api_key>`
+5. Optionally, run `docker compose run --rm django ./manage.py load_test_data <girder_api_key>`
    to load some sample data into your system.
    1. Make sure to replace `<girder_api_key>` with your DKC API key.
 
@@ -33,17 +34,18 @@ This configuration still uses Docker to run attached services in the background,
 but allows developers to run Python code on their native system.
 
 ### Initial Setup
-1. Run `docker compose -f ./docker-compose.yml up -d`
-2. Install Python 3.13 and Node.js 18
-3. Install
+1. **Note**: Ensure that you clone the repository with submodules. If you've already cloned it without submodules, run `git submodule update --init --recursive`.
+2. Run `docker compose -f ./docker-compose.yml up -d`
+3. Install Python 3.13 and Node.js 18
+4. Install
    [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)
-4. Install Nvidia GPU drivers and cuda if they are not already installed.
-5. Create and activate a new Python virtualenv
-6. Run `pip install -e .[dev]`
-7. Run `source ./dev/export-env.sh`
-8. Run `./manage.py migrate`
-9. Run `npm ci`
-10. Run `./manage.py createsuperuser` and follow the prompts to create your own user
+5. Install Nvidia GPU drivers and cuda if they are not already installed.
+6. Create and activate a new Python virtualenv
+7. Run `pip install -e .[dev]`
+8. Run `source ./dev/export-env.sh`
+9. Run `./manage.py migrate`
+10. Run `npm ci`
+11. Run `./manage.py createsuperuser` and follow the prompts to create your own user
 
 ### Run Application
 1.  Ensure `docker compose -f ./docker-compose.yml up -d` is still active
