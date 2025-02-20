@@ -3,9 +3,12 @@
 **Note: running the X-Ray simulation requires Cuda. The web application can still run without it, but the celery worker will
 fail if any batch simulations are kicked off.**
 
-## Check out the repository and initialize and update submodules
-`git clone <repo-url>`
-`git submodule update --init --recursive`
+## Prepare the repository 
+1. `git clone <repo-url>`
+
+2. `cd <repo-folder>`
+
+3. `git submodule update --init --recursive`
 
 ## Develop with Docker (recommended quickstart)
 This is the simplest configuration for developers to start with.
