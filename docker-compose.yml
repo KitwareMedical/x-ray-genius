@@ -8,6 +8,11 @@ services:
       - ${DOCKER_POSTGRES_PORT-5432}:5432
     volumes:
       - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:latest
@@ -15,6 +20,11 @@ services:
       - redis-data:/redis/data
     ports:
       - ${DOCKER_REDIS_PORT-6379}:6379
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   minio:
     image: minio/minio:latest
@@ -29,6 +39,11 @@ services:
       - ${DOCKER_MINIO_CONSOLE_PORT-9001}:9001
     volumes:
       - minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres:

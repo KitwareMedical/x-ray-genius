@@ -15,9 +15,12 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
 
   celery:
     build:
@@ -44,9 +47,12 @@ services:
               count: 1
               capabilities: [gpu]
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
 
   node:
     build:
