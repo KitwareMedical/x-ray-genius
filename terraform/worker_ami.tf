@@ -117,10 +117,20 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Create celery user/group for systemd service
               "sudo useradd celery",
               "sudo mkdir /home/celery",
+              # Install AWS CLI + jq
+              "sudo apt-get --yes install awscli jq",
+              # Add GitHub's ssh host key to avoid prompts on git clone
+              "ssh-keyscan -H github.com >> ~/.ssh/known_hosts",
+              # Grab the ssh github deploy key
+              "eval $(ssh-agent -s)",
+              "aws secretsmanager get-secret-value --region ${data.aws_region.current.name} --secret-id ${aws_secretsmanager_secret.private_deploy_key.arn} --query SecretString --output text | ssh-add -",
               # Go to home directory
               "pushd /home/celery",
               # Clone the xray-genius repository
               "git clone ${var.git_repository} ${local.django_project_location}",
+              # Remove the deploy key and stop the ssh agent
+              "ssh-add -D",
+              "ssh-agent -k",
               "pushd ${local.django_project_location}",
               # Create and activate a virtual environment
               "python3.13 -m venv venv",
@@ -206,7 +216,18 @@ Environment=LANG=C.UTF-8
 # because we create the EnvironmentFile in the ExecStartPre script.
 EnvironmentFile=-${local.environment_file_location}
 
-ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' && git pull origin main && source ${local.django_project_location}/venv/bin/activate && pip install --upgrade pip && pip install -r requirements.worker.txt && heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location}"
+ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' && \
+    heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location}" && \
+    ssh-keyscan -H github.com >> ~/.ssh/known_hosts && \
+    eval $(ssh-agent -s) && \
+    aws secretsmanager get-secret-value --region ${data.aws_region.current.name} --secret-id ${aws_secretsmanager_secret.private_deploy_key.arn} --query SecretString --output text | ssh-add - && \
+    git pull origin main && \
+    ssh-add -D && \
+    ssh-agent -k" && \
+    git pull origin main && source ${local.django_project_location}/venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install -r requirements.worker.txt
+
 ExecStart=/home/celery/xray-genius/venv/bin/celery \
     --app xray_genius.celery \
     worker \
@@ -223,4 +244,42 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOF
+}
+
+# AWS Secrets Manager access (for github deploy key)
+resource "aws_iam_role_policy" "deploy_key_builder" {
+  # This role is used by the "builder" instance that *creates* the AMI
+  name = "xray-genius-ami-builder-deploy-key-policy"
+  role = aws_iam_role.image_builder.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+        ]
+        Resource = aws_secretsmanager_secret.private_deploy_key.arn
+      },
+    ]
+  })
+}
+resource "aws_iam_user_policy" "deploy_key_worker" {
+  # This role is used by the worker instances deployed *from* the AMI
+  name = "xray-genius-worker-deploy-key-policy"
+  user = module.django.heroku_iam_user_id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+        ]
+        Resource = aws_secretsmanager_secret.private_deploy_key.arn
+      },
+    ]
+  })
 }

@@ -26,3 +26,5 @@ provider "aws" {
 provider "heroku" {
   api_key = var.heroku_api_key
 }
+
+data "aws_region" "current" {}

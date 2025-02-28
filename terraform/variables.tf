@@ -28,8 +28,7 @@ variable "ec2_worker_instance_type" {
 
 variable "git_repository" {
   type        = string
-  description = "The HTTP URL of the git repository to clone."
-  sensitive   = true
+  description = "The SSH URL of the git repository to clone."
 }
 
 variable "django_sentry_dsn" {
