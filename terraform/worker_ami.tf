@@ -225,7 +225,7 @@ ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' && \
     git pull origin main && \
     ssh-add -D && \
     ssh-agent -k && \
-    git pull origin main && source ${local.django_project_location}/venv/bin/activate && \
+    source ${local.django_project_location}/venv/bin/activate && \
     pip install --upgrade pip && \
     pip install -r requirements.worker.txt"
 
