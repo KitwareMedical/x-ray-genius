@@ -117,6 +117,7 @@ resource "aws_imagebuilder_component" "image_builder" {
               # Create celery user/group for systemd service
               "sudo useradd celery",
               "sudo mkdir /home/celery",
+              "sudo mkdir --parents /home/celery/.ssh",
               # Install AWS CLI + jq
               "sudo apt-get --yes install awscli jq",
               # Add GitHub's ssh host key to avoid prompts on git clone
@@ -217,16 +218,16 @@ Environment=LANG=C.UTF-8
 EnvironmentFile=-${local.environment_file_location}
 
 ExecStartPre=bash -c "export HEROKU_API_KEY='${var.heroku_api_key}' && \
-    heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location}" && \
-    ssh-keyscan -H github.com >> ~/.ssh/known_hosts && \
+    heroku config --shell --app ${local.heroku_app_name} > ${local.environment_file_location} && \
+    ssh-keyscan -H github.com >> /home/celery/.ssh/known_hosts && \
     eval $(ssh-agent -s) && \
     aws secretsmanager get-secret-value --region ${data.aws_region.current.name} --secret-id ${aws_secretsmanager_secret.private_deploy_key.arn} --query SecretString --output text | ssh-add - && \
     git pull origin main && \
     ssh-add -D && \
-    ssh-agent -k" && \
+    ssh-agent -k && \
     git pull origin main && source ${local.django_project_location}/venv/bin/activate && \
     pip install --upgrade pip && \
-    pip install -r requirements.worker.txt
+    pip install -r requirements.worker.txt"
 
 ExecStart=/home/celery/xray-genius/venv/bin/celery \
     --app xray_genius.celery \
