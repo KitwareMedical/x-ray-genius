@@ -36,7 +36,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'celery[redis]>=5.4',
+        'celery[redis]>=5.5',  # 5.5 fixes some critical connectivity issues with redis
         'channels[daphne]',
         'channels-redis',
         'django>=5.1,<5.2',
