@@ -41,7 +41,7 @@ setup(
         'channels-redis',
         'django>=5.1,<5.2',
         'django-allauth[socialaccount]',
-        'django-allauth-ui==1.6.0',  # https://github.com/danihodovic/django-allauth-ui/issues/137
+        'django-allauth-ui',
         'django-axes[ipware]',
         'django-celery-results',
         'django-click',
