@@ -65,6 +65,14 @@ data "aws_ami" "ec2_worker_launch_default" {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
+
+  filter {
+    name   = "image-id"
+    # This is the AMI ID for the latest Ubuntu 22.04 LTS AMI as of 4/30/25.
+    # We specify this to prevent Terraform from destroying and recreating the AMI
+    # if a new AMI is released.
+    values = ["ami-0f9de6e2d2f067fca"]
+  }
 }
 
 resource "aws_imagebuilder_component" "image_builder" {
