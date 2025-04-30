@@ -42,3 +42,9 @@ variable "viewer_sentry_dsn" {
   description = "The Sentry DSN for the VolView Vue.js application."
   sensitive   = true
 }
+
+variable "redirect_url" {
+  type        = string
+  default     = null
+  description = "If supplied, the Heroku app URL will redirect to whatever this URL is instead of the Heroku web dyno."
+}
