@@ -15,7 +15,7 @@ This is the simplest configuration for developers to start with.
 
 ### Initial Setup
 1. **Note**: Ensure that you clone the repository with submodules. If you've already cloned it without submodules, run `git submodule update --init --recursive`.
-2. Install Nvidia GPU drivers, cuda, and the `nvidia-container-toolkit` if they are not already installed.
+2. Install Nvidia GPU drivers, cuda (<=11), and the `nvidia-container-toolkit` if they are not already installed.
    - You can verify that the `nvidia-container-toolkit` is installed by running `nvidia-ctk --version`.
 3. Run `docker compose run --rm django ./manage.py migrate`
 4. Run `docker compose run --rm django ./manage.py createsuperuser`
@@ -46,7 +46,7 @@ but allows developers to run Python code on their native system.
 3. Install Python 3.13 and Node.js 18
 4. Install
    [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)
-5. Install Nvidia GPU drivers and cuda if they are not already installed.
+5. Install Nvidia GPU drivers and cuda (<=11) if they are not already installed.
 6. Create and activate a new Python virtualenv
 7. Run `pip install -e .[dev]`
 8. Run `source ./dev/export-env.sh`
