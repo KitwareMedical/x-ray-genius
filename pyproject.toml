@@ -39,6 +39,10 @@ ignore = [
 
   # Try to fix upstream
   "RUF012", #  Mutable class attributes should be annotated with `typing.ClassVar`
+
+  # We need to put some imports inside function bodies due to different dependencies
+  # between the web server and celery worker
+  "PLC0415",
 ]
 
 [tool.ruff.lint.per-file-ignores]
