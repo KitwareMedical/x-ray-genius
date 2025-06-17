@@ -41,7 +41,7 @@ def user_has_reached_session_limit(user: User) -> bool:
     return Session.objects.filter(owner=user).count() >= settings.USER_SESSION_LIMIT
 
 
-def quota_check(view: Callable[P, T]) -> Callable[P, T]:
+def quota_check[**P, T](view: Callable[P, T]) -> Callable[P, T]:
     def check(request: HttpRequest, *args, **kwargs):
         if user_has_reached_session_limit(request.user):
             raise SuspiciousOperation(
@@ -52,7 +52,7 @@ def quota_check(view: Callable[P, T]) -> Callable[P, T]:
     return check
 
 
-def permission_check(view: Callable[P, T]) -> Callable[P, T]:
+def permission_check[**P, T](view: Callable[P, T]) -> Callable[P, T]:
     def check(request: HttpRequest, *args, **kwargs):
         if session_pk := kwargs.get('session_pk'):
             session = get_object_or_404(Session, pk=session_pk)
