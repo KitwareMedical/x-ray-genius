@@ -52,7 +52,7 @@ but allows developers to run Python code on their native system.
 8. Run `source ./dev/export-env.sh`
 9. Run `./manage.py migrate`
 10. Run `npm ci`
-11. Run `cd viewer && npm i && npm run build`
+11. Run `cd viewer && npm install && npm run build`
 12. Run `cd ..` 
 13. Run `./manage.py createsuperuser` and follow the prompts to create your own user
 
