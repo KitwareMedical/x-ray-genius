@@ -52,7 +52,9 @@ but allows developers to run Python code on their native system.
 8. Run `source ./dev/export-env.sh`
 9. Run `./manage.py migrate`
 10. Run `npm ci`
-11. Run `./manage.py createsuperuser` and follow the prompts to create your own user
+11. Run `cd viewer && npm install && npm run build`
+12. Run `cd ..` 
+13. Run `./manage.py createsuperuser` and follow the prompts to create your own user
 
 ### Run Application
 1.  Ensure `docker compose -f ./docker-compose.yml up -d` is still active
