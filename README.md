@@ -48,7 +48,7 @@ but allows developers to run Python code on their native system.
    [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)
 5. Install Nvidia GPU drivers and cuda (<=11) if they are not already installed.
 6. Create and activate a new Python virtualenv
-7. Run `pip install -e .[dev]`
+7. Run `pip install -r requirements.dev.txt -r requirements.worker.txt`
 8. Run `source ./dev/export-env.sh`
 9. Run `./manage.py migrate`
 10. Run `npm ci`
