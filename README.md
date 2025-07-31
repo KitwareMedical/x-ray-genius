@@ -49,6 +49,7 @@ but allows developers to run Python code on their native system.
 5. Install Nvidia GPU drivers and cuda (<=11) if they are not already installed.
 6. Create and activate a new Python virtualenv
 7. Run `pip install -r requirements.dev.txt -r requirements.worker.txt`
+   1. If you have multiple versions of CUDA installed, you must ensure that this `pip install` command uses CUDA <= 11 to build `pycuda`. e.g. something like `CUDA_ROOT=/usr/local/cuda-11.5 PATH=/usr/local/cuda-11.5/bin:$PATH pip install pycuda==2025.1`
 8. Run `source ./dev/export-env.sh`
 9. Run `./manage.py migrate`
 10. Run `npm ci`
