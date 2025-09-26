@@ -1,7 +1,20 @@
 # X-ray Genius
 
-**Note: running the X-Ray simulation requires Cuda. The web application can still run without it, but the celery worker will
-fail if any batch simulations are kicked off.**
+X-ray Genius is an integrated cloud application that leverages modern simulation pipelines to generate **Digitally Reconstructed Radiographs (DRRs)** from input CT images.  
+
+- 🩻 **Orthopedic utility:** addresses cases where intraoperative fluoroscopic imaging is unavailable or unarchived.  
+- ☁️ **Cloud-native:** accessible through a web-enabled interface and scalable backend.  
+- ⚙️ **Modular & customizable:** designed to support **AI/ML biomedical research pipelines**.  
+
+---
+
+## ✨ Features
+- Generate **synthetic X-rays (DRRs)** directly from CT data  
+- Cloud-deployable with a user-friendly web UI  
+- GPU-accelerated computation (CUDA required for simulations)  
+- Modular design for extension and integration into AI pipelines  
+
+---
 
 ## Prepare the repository 
 1. `git clone <repo-url>`
