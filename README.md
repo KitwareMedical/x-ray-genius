@@ -43,7 +43,7 @@ but allows developers to run Python code on their native system.
 ### Initial Setup
 1. **Note**: Ensure that you clone the repository with submodules. If you've already cloned it without submodules, run `git submodule update --init --recursive`.
 2. Run `docker compose -f ./docker-compose.yml up -d`
-3. Install Python 3.13 and Node.js 18
+3. Install Python 3.12 and Node.js 18
 4. Install
    [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)
 5. Install Nvidia GPU drivers and cuda (<=11) if they are not already installed.
