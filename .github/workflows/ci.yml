@@ -25,7 +25,7 @@ jobs:
           - 6379:6379
       minio:
         # This image does not require any command arguments (which GitHub Actions don't support)
-        image: bitnami/minio:latest
+        image: bitnamilegacy/minio:latest
         env:
           MINIO_ROOT_USER: minioAccessKey
           MINIO_ROOT_PASSWORD: minioSecretKey
