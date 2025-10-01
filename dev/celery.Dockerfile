@@ -2,11 +2,11 @@ FROM nvidia/cuda:11.6.1-cudnn8-devel-ubuntu20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install Python 3.13
+# Install Python 3.12
 RUN apt-get update && \
     apt-get --yes install software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa --yes && \
-    apt-get --yes install python3.13 python3.13-dev python3.13-venv
+    apt-get --yes install python3.12 python3.12-dev python3.12-venv
 
 # Install system libraries for Python packages:
 # * psycopg2
@@ -29,7 +29,7 @@ COPY ./requirements.dev.txt /opt/django-project/requirements.dev.txt
 COPY ./requirements.worker.txt /opt/django-project/requirements.worker.txt
 COPY ./setup.py /opt/django-project/setup.py
 
-RUN python3.13 -m venv /opt/venv
+RUN python3.12 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --requirement /opt/django-project/requirements.worker.txt
 RUN /opt/venv/bin/pip install --requirement /opt/django-project/requirements.dev.txt
 
