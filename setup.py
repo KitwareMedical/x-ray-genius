@@ -69,7 +69,7 @@ setup(
     ],
     extras_require={
         'worker': [
-            'deepdrr',
+            'deepdrr==1.1.3',
             'pypng',
         ],
         'dev': [
