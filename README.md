@@ -33,10 +33,8 @@ This is the simplest configuration for developers to start with.
 3. Run `docker compose run --rm django ./manage.py migrate`
 4. Run `docker compose run --rm django ./manage.py createsuperuser`
    and follow the prompts to create your own user
-5. Optionally, run `docker compose run --rm django ./manage.py load_test_data <girder_api_key>`
-   to load some sample data into your system.
-   1. Make sure to replace `<girder_api_key>` with your DKC API key.
-
+5. Optionally, run `docker compose run --rm django ./manage.py load_test_data` to load some sample data into your system.
+   
 ### Run Application
 1. Run `docker compose up`
 2. Access the site, starting at http://localhost:8000/admin/
