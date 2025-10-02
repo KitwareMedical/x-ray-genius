@@ -80,12 +80,9 @@ but allows developers to run Python code on their native system.
    2. `celery --app xray_genius.celery worker --loglevel INFO --pool solo`
 4. Run in a separate terminal:
    1. `npm start`
-5. Optionally, run `./manage.py load_test_data <girder_api_key>`
-   to load some sample data into your system.
-   1. Make sure to replace `<girder_api_key>` with your DKC API key. Alternatively, set the
-      `GIRDER_API_KEY` environment variable to your DKC API key.
-5. When finished, run `docker compose stop`
-6. To destroy the stack and start fresh, run `docker compose down -v`
+5. Optionally, run `./manage.py load_test_data` to load some sample data into your system.
+6. When finished, run `docker compose stop`
+7. To destroy the stack and start fresh, run `docker compose down -v`
 
 ## Testing
 ### Initial Setup
