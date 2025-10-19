@@ -6,6 +6,32 @@ X-ray Genius is an integrated cloud application that leverages modern simulation
 - ☁️ **Cloud-native:** accessible through a web-enabled interface and scalable backend.  
 - ⚙️ **Modular & customizable:** designed to support **AI/ML biomedical research pipelines**.  
 
+## 📺 Demo & Resources
+
+### Webinar
+Watch our webinar discussing X-ray Genius and its applications in medical imaging:
+
+[![X-ray Genius Webinar](https://img.youtube.com/vi/tnVnI_sslZs/maxresdefault.jpg)](https://youtu.be/tnVnI_sslZs?si=5rY2p9k0rJ55gZBU)
+
+[🎥 **X-ray Genius Webinar**](https://youtu.be/tnVnI_sslZs?si=5rY2p9k0rJ55gZBU)
+
+### Screenshot
+![X-ray Genius Interface](screenshot.png)
+*X-ray Genius web interface showing DRR generation from CT data*
+
+---
+
+## 📋 Table of Contents
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+- [🐳 Develop with Docker (Recommended)](#-develop-with-docker-recommended)
+- [💻 Develop Natively (Advanced)](#-develop-natively-advanced)
+- [🧪 Testing](#-testing)
+- [📋 Requirements](#-requirements)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🏥 Medical Disclaimer](#-medical-disclaimer)
+
 ---
 
 ## ✨ Features
@@ -16,14 +42,16 @@ X-ray Genius is an integrated cloud application that leverages modern simulation
 
 ---
 
-## Prepare the repository 
+## 🚀 Quick Start
+
+### Prepare the repository 
 1. `git clone <repo-url>`
 
 2. `cd <repo-folder>`
 
 3. `git submodule update --init --recursive`
 
-## Develop with Docker (recommended quickstart)
+## 🐳 Develop with Docker (Recommended)
 This is the simplest configuration for developers to start with.
 
 ### Initial Setup
@@ -47,7 +75,7 @@ maintenance. To non-destructively update your development stack at any time:
 2. Run `docker compose build --pull --no-cache`
 3. Run `docker compose run --rm django ./manage.py migrate`
 
-## Develop Natively (advanced)
+## 💻 Develop Natively (Advanced)
 This configuration still uses Docker to run attached services in the background,
 but allows developers to run Python code on their native system.
 
@@ -82,7 +110,7 @@ but allows developers to run Python code on their native system.
 6. When finished, run `docker compose stop`
 7. To destroy the stack and start fresh, run `docker compose down -v`
 
-## Testing
+## 🧪 Testing
 ### Initial Setup
 tox is used to execute all tests.
 tox is installed automatically with the `dev` package extra.
@@ -102,3 +130,39 @@ Useful sub-commands include:
 
 To automatically reformat all code to comply with
 some (but not all) of the style checks, run `tox -e format`.
+
+## 📋 Requirements
+
+### System Requirements
+- **GPU**: NVIDIA GPU with CUDA support (CUDA ≤ 11)
+- **OS**: Linux, macOS, or Windows with WSL2
+- **Docker**: Docker and Docker Compose
+- **Python**: 3.12+ (for native development)
+- **Node.js**: 18+ (for native development)
+
+### Hardware Recommendations
+- **GPU Memory**: 8GB+ VRAM recommended for processing large CT volumes
+- **RAM**: 16GB+ system memory
+- **Storage**: 50GB+ available space for Docker images and data
+
+## 🤝 Contributing
+
+We welcome contributions! Please feel free to:
+- Submit bug reports and feature requests via [GitHub Issues](https://github.com/KitwareMedical/x-ray-genius/issues)
+- Fork the repository and submit pull requests
+- Improve documentation and examples
+
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the [LICENSE](LICENSE) file in the repository.
+
+## 🏥 Medical Disclaimer
+
+X-ray Genius is a research tool intended for educational and research purposes. It is not intended for clinical diagnosis or treatment decisions. Always consult with qualified medical professionals for any medical-related applications.
