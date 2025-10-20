@@ -152,45 +152,6 @@ some (but not all) of the style checks, run `tox -e format`.
 
 ---
 
-## ☁️ Cloud Deployment Notes
-
-### Kitware's Production Architecture
-
-Kitware has successfully deployed X-ray Genius in production using the following AWS-based architecture:
-
-**Components:**
-- **Web Application**: Heroku (Django application)
-- **Database**: Heroku PostgreSQL 
-- **Task Queue**: Redis on Heroku
-- **GPU Processing**: AWS EC2 instances with NVIDIA GPUs running Celery workers
-- **File Storage**: AWS S3 for CT scans and generated X-ray images
-- **Infrastructure**: Managed via Terraform Cloud
-- **Monitoring**: Papertrail (logs), Sentry (errors), Heroku metrics
-
-**Data Flow:**
-1. Users access the web app at `app.xray-genius.com`
-2. CT uploads are stored in S3, metadata in PostgreSQL
-3. Simulation tasks are queued in Redis
-4. EC2 GPU workers process tasks using DeepDRR
-5. Results are stored back to S3 and users notified
-
-### Deployment Considerations
-
-⚠️ **Important**: The production deployment infrastructure, Terraform configurations, and operational procedures are not included in this open-source release.
-
-**For your own cloud deployment, consider:**
-- GPU-enabled compute instances (AWS EC2 P3/P4, GCP A100, Azure NC-series)
-- Scalable object storage (S3, GCS, Azure Blob)
-- Managed databases and Redis instances
-- Load balancers and auto-scaling groups
-- Monitoring and logging solutions
-- Infrastructure as Code (Terraform, CloudFormation, etc.)
-
-**This repository provides the containerized application ready for deployment on any cloud platform that supports Docker.**
-
-**Need help with cloud deployment?** Contact [Kitware](https://www.kitware.com/contact/) for consulting and support services.
-
----
 
 ## 🚀 Production Deployment
 
