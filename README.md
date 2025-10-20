@@ -1,10 +1,12 @@
 # X-ray Genius
 
-X-ray Genius is an integrated cloud application that leverages modern simulation pipelines to generate **Digitally Reconstructed Radiographs (DRRs)** from input CT images.  
+X-ray Genius is a web-based application that leverages modern simulation pipelines to generate **Digitally Reconstructed Radiographs (DRRs)** from input CT images.  
 
-- 🩻 **Orthopedic utility:** addresses cases where intraoperative fluoroscopic imaging is unavailable or unarchived.  
-- ☁️ **Cloud-native:** accessible through a web-enabled interface and scalable backend.  
-- ⚙️ **Modular & customizable:** designed to support **AI/ML biomedical research pipelines**.  
+- 🏥 **Clinical utility:** generates X-ray images from CT scans for orthopedic, surgical planning, radiation therapy, and other medical applications where X-ray imaging is unavailable or unarchived.  
+- 🌐 **Web-based:** accessible through a modern web interface with containerized deployment.  
+- ⚙️ **Modular & customizable:** designed to support **AI/ML biomedical research pipelines**.
+
+  
 
 ## 📺 Demo & Resources
 
@@ -22,11 +24,14 @@ Watch our webinar discussing X-ray Genius and its applications in medical imagin
 ---
 
 ## 📋 Table of Contents
-- [✨ Features](#-features)
+- [✨ Features](#-features)  
 - [🚀 Quick Start](#-quick-start)
 - [🐳 Develop with Docker (Recommended)](#-develop-with-docker-recommended)
 - [💻 Develop Natively (Advanced)](#-develop-natively-advanced)
 - [🧪 Testing](#-testing)
+- [📋 Requirements](#-requirements)
+- [☁️ Cloud Deployment Notes](#️-cloud-deployment-notes)
+- [� Contributing](#-contributing)
 - [📋 Requirements](#-requirements)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -36,7 +41,7 @@ Watch our webinar discussing X-ray Genius and its applications in medical imagin
 
 ## ✨ Features
 - Generate **synthetic X-rays (DRRs)** directly from CT data  
-- Cloud-deployable with a user-friendly web UI  
+- **Web-based interface** with containerized deployment using Docker Compose
 - GPU-accelerated computation (CUDA required for simulations)  
 - Modular design for extension and integration into AI pipelines  
 
@@ -144,6 +149,56 @@ some (but not all) of the style checks, run `tox -e format`.
 - **GPU Memory**: 8GB+ VRAM recommended for processing large CT volumes
 - **RAM**: 16GB+ system memory
 - **Storage**: 50GB+ available space for Docker images and data
+
+---
+
+## ☁️ Cloud Deployment Notes
+
+### Kitware's Production Architecture
+
+Kitware has successfully deployed X-ray Genius in production using the following AWS-based architecture:
+
+**Components:**
+- **Web Application**: Heroku (Django application)
+- **Database**: Heroku PostgreSQL 
+- **Task Queue**: Redis on Heroku
+- **GPU Processing**: AWS EC2 instances with NVIDIA GPUs running Celery workers
+- **File Storage**: AWS S3 for CT scans and generated X-ray images
+- **Infrastructure**: Managed via Terraform Cloud
+- **Monitoring**: Papertrail (logs), Sentry (errors), Heroku metrics
+
+**Data Flow:**
+1. Users access the web app at `app.xray-genius.com`
+2. CT uploads are stored in S3, metadata in PostgreSQL
+3. Simulation tasks are queued in Redis
+4. EC2 GPU workers process tasks using DeepDRR
+5. Results are stored back to S3 and users notified
+
+### Deployment Considerations
+
+⚠️ **Important**: The production deployment infrastructure, Terraform configurations, and operational procedures are not included in this open-source release.
+
+**For your own cloud deployment, consider:**
+- GPU-enabled compute instances (AWS EC2 P3/P4, GCP A100, Azure NC-series)
+- Scalable object storage (S3, GCS, Azure Blob)
+- Managed databases and Redis instances
+- Load balancers and auto-scaling groups
+- Monitoring and logging solutions
+- Infrastructure as Code (Terraform, CloudFormation, etc.)
+
+**This repository provides the containerized application ready for deployment on any cloud platform that supports Docker.**
+
+**Need help with cloud deployment?** Contact [Kitware](https://www.kitware.com/contact/) for consulting and support services.
+
+---
+
+## 🚀 Production Deployment
+
+> **Note**: While Kitware has deployed X-ray Genius in production using AWS (Heroku + EC2 + S3), the cloud deployment infrastructure and operational procedures are **not included** in this open-source distribution. This repository provides the application code for **local development and testing** using Docker Compose.
+> 
+> For production cloud deployment, organizations will need to implement their own infrastructure setup. The containerized architecture makes it suitable for various cloud platforms.
+
+---
 
 ## 🤝 Contributing
 
