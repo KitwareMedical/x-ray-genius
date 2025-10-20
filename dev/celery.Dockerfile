@@ -1,17 +1,15 @@
-FROM nvidia/cuda:11.6.1-cudnn8-devel-ubuntu20.04
+# CUDA 11.x on Ubuntu 22.04 (Jammy)
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install Python 3.12
+# Install Python 3.12 (+ dev/venv) from deadsnakes and system deps
 RUN apt-get update && \
-    apt-get --yes install software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa --yes && \
-    apt-get --yes install python3.12 python3.12-dev python3.12-venv
-
-# Install system libraries for Python packages:
-# * psycopg2
-RUN apt-get update && \
-    apt-get install --no-install-recommends --yes \
+    apt-get install -y --no-install-recommends software-properties-common ca-certificates gnupg && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        python3.12 python3.12-dev python3.12-venv \
         libpq-dev gcc libc6-dev libgl1-mesa-glx libxrender1 build-essential && \
     rm -rf /var/lib/apt/lists/*
 
