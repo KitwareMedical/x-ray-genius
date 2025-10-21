@@ -1,3 +1,4 @@
+
 # X-ray Genius
 
 X-ray Genius is a web-based application that leverages modern simulation pipelines to generate **Digitally Reconstructed Radiographs (DRRs)** from input CT images.  
@@ -10,6 +11,14 @@ X-ray Genius is a web-based application that leverages modern simulation pipelin
 
 ## 📺 Demo & Resources
 
+### Demo
+See X-ray Genius in action. Watch a short video showing how it generates X-ray images.
+
+[![X-ray Genius Demo](https://img.youtube.com/vi/ARvFu7EMO28/maxresdefault.jpg)](https://www.youtube.com/watch?v=ARvFu7EMO28)
+
+[🎥 **X-ray demonstration**](https://www.youtube.com/watch?v=ARvFu7EMO28)
+
+
 ### Webinar
 Watch our webinar discussing X-ray Genius and its applications in medical imaging:
 
@@ -17,35 +26,6 @@ Watch our webinar discussing X-ray Genius and its applications in medical imagin
 
 [🎥 **X-ray Genius Webinar**](https://youtu.be/tnVnI_sslZs?si=5rY2p9k0rJ55gZBU)
 
-### Screenshot
-![X-ray Genius Interface](screenshot.png)
-*X-ray Genius web interface showing DRR generation from CT data*
-
----
-
-## 📋 Table of Contents
-- [✨ Features](#-features)  
-- [🚀 Quick Start](#-quick-start)
-- [🐳 Develop with Docker (Recommended)](#-develop-with-docker-recommended)
-- [💻 Develop Natively (Advanced)](#-develop-natively-advanced)
-- [🧪 Testing](#-testing)
-- [📋 Requirements](#-requirements)
-- [☁️ Cloud Deployment Notes](#️-cloud-deployment-notes)
-- [� Contributing](#-contributing)
-- [📋 Requirements](#-requirements)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-- [🏥 Medical Disclaimer](#-medical-disclaimer)
-
----
-
-## ✨ Features
-- Generate **synthetic X-rays (DRRs)** directly from CT data  
-- **Web-based interface** with containerized deployment using Docker Compose
-- GPU-accelerated computation (CUDA required for simulations)  
-- Modular design for extension and integration into AI pipelines  
-
----
 
 ## 🚀 Quick Start
 
